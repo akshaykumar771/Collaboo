@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import * as Font from 'expo-font';
 import {AppLoading} from 'expo';
 import CollabooNavigator from './navigation/CollabooNavigator';
+import SignUpScreen from './screens/SignUpScreen';
 
 const fetchFont = () =>{
   return Font.loadAsync({
@@ -19,7 +20,7 @@ export default function App() {
   if(!fontLoaded){
     return <AppLoading startAsync={fetchFont} onFinish={() =>setFontLoaded(true)} onError={(err) => {console.log(err)}}/>
   }
-  return <CollabooNavigator/>;
+  return <CollabooNavigator />;
 }
 
 const styles = StyleSheet.create({

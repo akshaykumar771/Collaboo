@@ -22,7 +22,7 @@ class AddToDoScreen extends Component {
             </Item>
             <Item stackedLabel last>
               <Label>Description</Label>
-              <Input />
+              <Input/>
             </Item>
           </Form>
           <View style={styles.beginDate}>
