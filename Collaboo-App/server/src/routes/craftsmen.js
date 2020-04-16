@@ -12,4 +12,15 @@ route.post("/craftsmen", async (req, res) => {
       res.status(400).send(e);
     }
   });
+
+  route.get("/craftsmen", async (req, res) => {
+
+  
+    try {
+      const craftsmen = await(Craftsmen.find({}))
+      res.status(200).send(craftsmen);
+    } catch (e) {
+      res.status(500).send(e); 
+    }
+  });
   module.exports = route;

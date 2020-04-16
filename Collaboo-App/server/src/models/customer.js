@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-
-const Customer = mongoose.model("Customer", {
+const bcrypt = require('bcrypt');
+var Schema = mongoose.Schema;
+var CustomerSchema = new Schema(
+  {
   name: {
     type: String,
     required: true,
@@ -9,6 +11,7 @@ const Customer = mongoose.model("Customer", {
   },
   email: {
     type: String,
+    unique: true,
     required: true,
     trim: true,
     lowercase: true,
@@ -35,6 +38,7 @@ const Customer = mongoose.model("Customer", {
   mobile: {
     type: String,
     required: true,
+    unique: true
     
   },
   role:{
@@ -54,4 +58,3 @@ const Customer = mongoose.model("Customer", {
   },
 });
 
-module.exports = Customer;

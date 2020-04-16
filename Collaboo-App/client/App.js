@@ -4,6 +4,7 @@ import * as Font from 'expo-font';
 import {AppLoading} from 'expo';
 import CollabooNavigator from './navigation/CollabooNavigator';
 import SignUpScreen from './screens/SignUpScreen';
+import SingleChatScreen from './screens/SingleChatScreen';
 
 const fetchFont = () =>{
   return Font.loadAsync({
@@ -20,7 +21,8 @@ export default function App() {
   if(!fontLoaded){
     return <AppLoading startAsync={fetchFont} onFinish={() =>setFontLoaded(true)} onError={(err) => {console.log(err)}}/>
   }
-  return <CollabooNavigator />;
+  //return <CollabooNavigator />;
+  return <SingleChatScreen />
 }
 
 const styles = StyleSheet.create({
