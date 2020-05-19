@@ -10,6 +10,7 @@ export default class SearchList extends Component {
       isLoading: true,
       search: "",
     };
+    this.arrayholder = [];
   }
   search = (text) => {
     console.log(text);

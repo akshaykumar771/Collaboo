@@ -1,215 +1,186 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Button, Text, Alert } from "react-native";
+import { StyleSheet, View } from "react-native";
 import {
   Container,
   Content,
   Form,
   Item,
   Input,
-  Label,
   Picker,
+  Icon,
 } from "native-base";
-import { Formik } from "formik";
+import FormButton from "../components/FormButton";
 import Colors from "../constants/Colors";
 import RegisterCraftsmen from "../components/RegisterCraftsmen";
-import * as yup from 'yup';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import RegisterAddress from "../components/RegisterAddress";
 
-const signUpSchema = yup.object({
-  fullname: yup.string()
-  .required('Please enter your Full Name')
-  .min(3),
-  email: yup.string()
-  .required('Please enter your valid email address')
-  .email('Enter valid email'),
-  address:yup.string()
-  .min(3),
-  PLZ: yup.string()
-  .min(5, 'Postalzeit must be atleast 5 digits')
-  .test('isNumber', 'Postalzeit must be a number', (val) => {
-    return parseInt(val)
-  }),
-  city:yup.string(),
-  role: yup.string()
-  .required('Please choose your role'),
-  company: yup.string()
-  .required('Please enter your company name'),
-  mobilenumber: yup.string()
-  .required('Please enter your valid phone number')
-  .test('isMobile', 'Mobile number must be a number', (val) => {
-    return parseInt(val)
-  }),
-  password: yup.string()
-  .required()
-  .min(6, 'Password must have atleast 6 characters')
-})
-export default class SignupScreen extends Component {
+
+export default class SignUpScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
-      dataSource:[],
-      selectedRole: "",
-      selectedCraftsmen: false,
+      firstname: "",
+      lastname: "",
+      email: "",
+      role: "",
+      street: "",
+      pcode: "",
+      city: "",
+      company: "",
+      category: "",
+      phno: "",
+      password: "",
     };
   }
 
-  componentDidMount(){
-    fetch("https://jsonplaceholder.typicode.com/users")
-    .then(response => response.json())
-    .then((responseJson)=> {
-      this.setState({
-       loading: false,
-       dataSource: responseJson
-      })
+  makeRemoteRequest = () => {
+    const url =
+      // Platform.OS === "android"
+      //   ? "http://10.0.2.2:3000/craftsmen"
+      //   : "http://192.168.0.213:3000/craftsmen";
+      "http://81.89.193.99:3001/api/user/register";
+    const data = {
+      firstName: this.state.firstname,
+      lastName: this.state.lastname,
+      email: this.state.email,
+      role: this.state.role,
+      selfEmployed: this.state.selfemployed,
+      company: this.state.company,
+      category: this.state.category,
+      street: this.state.street,
+      city: this.state.city,
+      pcode: this.state.pcode,
+      phno: this.state.phno,
+      password: this.state.password,
+    };
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
     })
-    .catch(error=>console.log(error)) //to catch the errors if any
-    }
-
-  handleRoleSelect = (itemValue) => {
-    this.setState({
-      selectedRole: itemValue,
-    });
-    if (this.state.selectedRole === "Craftsmen") {
-      this.setState({
-        selectedCraftsmen: true,
+      .then((response) => response.json())
+      .then((response) =>{ return response} )
+      .catch((error) => {
+        console.error(error);
       });
-    }
   };
+addAddress = (address) =>{
+    this.setState ({
+      street: address.street,
+      city: address.city,
+      pcode: address.pcode
+    })
+  } 
+  handleSubmit = (values) => {
+    console.log(this.state);
+  };
+
   render() {
     return (
-      <Formik
-        initialValues={{
-          fullname: "",
-          email: "",
-          address: "",
-          PLZ: "",
-          city: "",
-          role: "",
-          company:"",
-          mobilenumber: "",
-          password: "",
-        }}
-        validationSchema={signUpSchema}
-        onSubmit={(values) => {
-          console.log(values)
-        }}
-      >
-        {(props) => {
-          return (
-            <Container>
-              <Content>
-                <Form>
-                  <Item stackedLabel>
-                    <Label>Full Name</Label>
-                    <Input
-                      placeholder="FullName"
-                      value={props.values.fullname}
-                      onChangeText={props.handleChange("fullname")}
-                    />
-                  </Item>
-                  {props.touched.fullname && props.errors.fullname &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.fullname}</Text> }
-                  <Item stackedLabel>
-                    <Label>Email</Label>
-                    <Input
-                      placeholder="Email"
-                      value={props.values.email}
-                      onChangeText={props.handleChange("email")}
-                    />
-                  </Item>
-                  {props.touched.email && props.errors.email &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.email}</Text> }
-                  <Item stackedLabel>
-                    <Label>Address</Label>
-                    <Input
-                      placeholder="Address"
-                      value={props.values.address}
-                      onChangeText={props.handleChange("address")}
-                    />
-                  </Item>
-                  {props.touched.address && props.errors.address &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.address}</Text> }
-                  <Item stackedLabel>
-                    <Label>Postalzeit</Label>
-                    <Input
-                      placeholder="Postalzeit"
-                      value={props.values.PLZ}
-                      onChangeText={props.handleChange("PLZ")}
-                    />
-                  </Item>
-                  {props.touched.PLZ && props.errors.PLZ &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.PLZ}</Text> }
-                  <Item stackedLabel>
-                    <Label>City</Label>
-                    <Input
-                      placeholder="City"
-                      value={props.values.city}
-                      onChangeText={props.handleChange("city")}
-                    />
-                  </Item>
-                  {props.touched.city && props.errors.city &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.city}</Text> }
-                  <Item stackedLabel>
-                    <Label>Who are you</Label>
-                    <Picker
-                      style={{ height: 40, width: 400 }}
-                      mode="dropdown"
-                      prompt={"Who are you"}
-                      itemStyle={{ backgroundColor: "grey" }}
-                      selectedValue={this.state.selectedRole}
-                      onValueChange={(itemValue, itemIndex) =>
-                        //this.setState({ selectedRole: itemValue })
-                        this.handleRoleSelect(itemValue)
-                      }
-                    >
-                      <Picker.Item
-                        label="Choose your role"
-                        value={null}
-                        key={0}
-                      />
-                      <Picker.Item label="Customer" value={1} key={1} />
-                      <Picker.Item label="Craftsmen" value={2} key={2} />
-                      <Picker.Item label="Agent" value={3} key={3} />
-                    </Picker>
-                  </Item>
-                  
-                  {this.state.selectedRole === 2 && <RegisterCraftsmen />}
-                  {this.state.selectedRole === 3 && <RegisterCraftsmen />}
-                  {props.touched.role && props.errors.role &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.role}</Text> }
-                  <Item stackedLabel>
-                    <Label>Mobile Number</Label>
-                    <Input
-                      placeholder="Mobile Number"
-                      value={props.values.mobilenumber}
-                      onChangeText={props.handleChange("mobilenumber")}
-                    />
-                  </Item>
-                  {props.touched.mobilenumber && props.errors.mobilenumber &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.mobilenumber}</Text> }
-                  <Item stackedLabel last>
-                    <Label>Password</Label>
-                    <Input
-                      placeholder="Enter Password"
-                      value={props.values.password}
-                      secureTextEntry={true}
-                      onChangeText={props.handleChange("password")}
-                    />
-                  </Item>
-                  {props.touched.password && props.errors.password &&
-                  <Text style = {{fontSize:10, color:'red'}}>{props.errors.password}</Text> }
-                </Form>
-                <View style={styles.buttonContainer}>
-                  <Button title="Sign up" onPress={props.handleSubmit}/>
-                </View>
-              </Content>
-            </Container>
-          );
-        }}
-      </Formik>
+        <Container>
+        <Content style={{ paddingVertical: 15 }}>
+          <KeyboardAwareScrollView
+            enableOnAndroid={true}
+            enableAutomaticScroll={Platform.OS === "ios"}
+          >
+            <Form>
+              <Item>
+                <Icon active name="ios-person" />
+                <Input
+                  placeholder="Enter your FirstName"
+                  onChangeText={(text) => {
+                    this.setState({ firstname: text });
+                  }}
+                  value={this.state.firstname}
+                />
+              </Item>
+              <Item>
+                <Icon active name="ios-person" />
+                <Input
+                  placeholder="Enter your LastName"
+                  onChangeText={(text) => {
+                    this.setState({ lastname: text });
+                  }}
+                  value={this.state.lastname}
+                />
+              </Item>
+              <Item style={{ paddingVertical: 10 }}>
+                <Icon active name="ios-mail" />
+                <Input
+                  placeholder="Email"
+                  onChangeText={(text) => {
+                    this.setState({ email: text });
+                  }}
+                  value={this.state.email}
+                />
+              </Item>
+              <Item style={{ paddingVertical: 10 }}>
+                <Icon active name="ios-people" />
+                <Picker
+                  style={{ height: 40, width: 400 }}
+                  mode="dropdown"
+                  placeholder="Choose your role"
+                  prompt={"Who are you"}
+                  itemStyle={{ backgroundColor: "grey" }}
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ role: itemValue });
+                  }}
+                  selectedValue={this.state.role}
+                >
+                  <Picker.Item
+                    style={{ paddingVertical: 10 }}
+                    label="Choose your role"
+                    value={null}
+                    key={0}
+                  />
+                  <Picker.Item label="Customer" value={1} key={1} />
+                  <Picker.Item label="Craftsmen" value={2} key={2} />
+                  <Picker.Item label="Agent" value={3} key={3} />
+                </Picker>
+              </Item>
+              {this.state.role === 1 ? <RegisterAddress addAddress={this.addAddress}/> : []}
+              {this.state.role === 2 ? <RegisterCraftsmen /> : []}
+              {this.state.role === 3 ? <RegisterCraftsmen /> : []}
+              <Item style={{ paddingVertical: 10 }}>
+                <Icon active name="ios-phone-portrait" />
+                <Input
+                  placeholder=" Enter your Mobile Number"
+                  keyboardType="numeric"
+                  onChangeText={(text) => {
+                    this.setState({ phno: text });
+                  }}
+                  value={this.state.phno}
+                />
+              </Item>
+              <Item style={{ paddingVertical: 10 }}>
+                <Icon active name="ios-lock" />
+                <Input
+                  placeholder="Enter Password"
+                  secureTextEntry={true}
+                  onChangeText={(text) => {
+                    this.setState({ password: text });
+                  }}
+                  value={this.state.password}
+                />
+              </Item>
+            </Form>
+            <View style={styles.buttonContainer}>
+              <FormButton
+                buttonType="outline"
+                onPress={this.handleSubmit}
+                title="SIGN UP"
+                buttonColor="#039BE5"
+              />
+            </View>
+          </KeyboardAwareScrollView>
+        </Content>
+      </Container>
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -226,8 +197,6 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-    width: "100%",
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    margin: 25,
   },
 });

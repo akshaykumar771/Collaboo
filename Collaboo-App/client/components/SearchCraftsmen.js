@@ -16,7 +16,7 @@ import { Form, Input, Item, Label, Textarea } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import SearchList from "./SearchList";
+//import SearchList from "./SearchList";
 export default class SearchCraftsmen extends Component {
   constructor(props) {
     super(props);
@@ -26,6 +26,7 @@ export default class SearchCraftsmen extends Component {
       isModalOpen: false,
       title: "",
       description: "",
+      search: ""
     };
     this.arrayholder = [];
   }
@@ -54,7 +55,30 @@ export default class SearchCraftsmen extends Component {
         console.error(error);
       });
   };
+  search = (text) => {
+    console.log(text);
+  };
+  clear = () => {
+    this.search.clear();
+  };
+  SearchFilterFunction(text) {
+    //passing the inserted text in textinput
+    const newData = this.arrayholder.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      const nameData = item.name ? item.name.toUpperCase() : "".toUpperCase();
+      const companyData = item.company ? item.company.toUpperCase() : "".toUpperCase();
+      const textData = text.toUpperCase();
+      const itemData = nameData + companyData;
+      return itemData.indexOf(textData) > -1;
+    });
 
+    this.setState({
+      //setting the filtered newData on datasource
+      //After setting the data it will automatically re-render the view
+      dataSource: newData,
+      search: text,
+    });
+  }
 
   openModal() {
     this.setState({ isModalOpen: true });
@@ -106,8 +130,19 @@ export default class SearchCraftsmen extends Component {
         Keyboard.dismiss()
       }}>
       <View style={styles.viewStyle}>
-        <SearchList />
-
+      <SearchBar
+        lightTheme={true}
+        platform="default"
+        only
+        round
+        platform="default"
+        only
+        searchIcon={{ size: 24 }}
+        onChangeText={(text) => this.SearchFilterFunction(text)}
+        onClear={(text) => this.SearchFilterFunction("")}
+        placeholder="Type Here..."
+        value={this.state.search}
+      />
         <Modal transparent={true} visible={this.state.isModalOpen}>
           <View
             style={{

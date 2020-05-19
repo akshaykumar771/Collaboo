@@ -3,6 +3,7 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import SignUpScreen from "../screens/SignUpScreen";
+import SignInScreen from "../screens/SignInScreen";
 import ChatScreen from "../screens/ChatScreen";
 import ToDoScreen from "../screens/ToDoScreen";
 import WorkLogScreen from "../screens/WorkLogScreen";
@@ -107,7 +108,7 @@ const CustomerDetailNavigator = createStackNavigator(
   }
 );
 
-const CollabooStackNavigator =
+const CollabooNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
@@ -140,13 +141,21 @@ const CollabooStackNavigator =
         }
       );
 
-const AuthNavigator = createStackNavigator({
-  SignUp: SignUpScreen,
-});
+// const SignedOut = createStackNavigator(
+//   {
+//   SignIn: SignInScreen,
+//   SignUp: SignUpScreen
+  
+// },
+// {
+// defaultNavigationOptions: defaultNavOptions,
+// }
+// );
 
-const MainNavigator = createSwitchNavigator({
-  //Auth: AuthNavigator,
-  Collaboo: CollabooStackNavigator,
-});
+// const MainNavigator = createSwitchNavigator({
+//   Auth: SignedOut,
+//   Collaboo: SignedIn,
+// });
 
-export default createAppContainer(MainNavigator);
+//export default createAppContainer(MainNavigator);
+export default CollabooNavigator

@@ -2,9 +2,8 @@ import React, {useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import * as Font from 'expo-font';
 import {AppLoading} from 'expo';
-import CollabooNavigator from './navigation/CollabooNavigator';
-import SignUpScreen from './screens/SignUpScreen';
-import SingleChatScreen from './screens/SingleChatScreen';
+//import CollabooNavigator from './navigation/CollabooNavigator';
+import AppNavigation from './navigation/AppNavigator';
 
 const fetchFont = () =>{
   return Font.loadAsync({
@@ -21,8 +20,7 @@ export default function App() {
   if(!fontLoaded){
     return <AppLoading startAsync={fetchFont} onFinish={() =>setFontLoaded(true)} onError={(err) => {console.log(err)}}/>
   }
-  //return <CollabooNavigator />;
-  return <SingleChatScreen />
+  return <AppNavigation />;
 }
 
 const styles = StyleSheet.create({
