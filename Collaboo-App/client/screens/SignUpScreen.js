@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Alert } from "react-native";
 import {
   Container,
   Content,
@@ -14,7 +14,6 @@ import Colors from "../constants/Colors";
 import RegisterCraftsmen from "../components/RegisterCraftsmen";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import RegisterAddress from "../components/RegisterAddress";
-
 
 export default class SignUpScreen extends Component {
   constructor(props) {
@@ -44,42 +43,62 @@ export default class SignUpScreen extends Component {
     const data = {
       firstName: this.state.firstname,
       lastName: this.state.lastname,
-      email: this.state.email,
+      emailId: this.state.email,
       role: this.state.role,
       selfEmployed: this.state.selfemployed,
       company: this.state.company,
-      category: this.state.category,
+      categories: this.state.category,
       street: this.state.street,
       city: this.state.city,
-      pcode: this.state.pcode,
-      phno: this.state.phno,
-      password: this.state.password,
+      postalCode: this.state.pcode,
+      phNo: this.state.phno,
+      pwd: this.state.password,
     };
     fetch(url, {
       method: "POST",
       body: JSON.stringify(data),
       headers: { "Content-Type": "application/json" },
     })
-      .then((response) => response.json())
-      .then((response) =>{ return response} )
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        console.log(response)
+        if (response) {
+          Alert.alert("Successful","Registered Successfully", [
+            {
+              text: "Ok",
+              style: "cancel",
+              onPress: () => this.props.navigation.navigate("Customer"),
+            },
+          ]);
+        }
+      })
       .catch((error) => {
         console.error(error);
       });
   };
-addAddress = (address) =>{
-    this.setState ({
-      street: address.street,
-      city: address.city,
-      pcode: address.pcode
-    })
-  } 
-  handleSubmit = (values) => {
-    console.log(this.state);
+
+  addAddress = (address) => {
+    //console.log("address" + address)
+    this.setState(
+      {
+        street: address.street,
+        city: address.city,
+        pcode: address.pcode,
+      },
+      () => {}
+    );
+  };
+  handleSubmit = () => {
+    //console.log("state" + JSON.stringify(this.state));
+    this.makeRemoteRequest();
   };
 
   render() {
+    //console.log("role"+this.state.role)
     return (
-        <Container>
+      <Container>
         <Content style={{ paddingVertical: 15 }}>
           <KeyboardAwareScrollView
             enableOnAndroid={true}
@@ -135,14 +154,18 @@ addAddress = (address) =>{
                     value={null}
                     key={0}
                   />
-                  <Picker.Item label="Customer" value={1} key={1} />
-                  <Picker.Item label="Craftsmen" value={2} key={2} />
-                  <Picker.Item label="Agent" value={3} key={3} />
+                  <Picker.Item label="Customer" value={"CUSTOMER"} key={1} />
+                  <Picker.Item label="Craftsmen" value={"CRAFTSMEN"} key={2} />
+                  <Picker.Item label="Agent" value={"AGENT"} key={3} />
                 </Picker>
               </Item>
-              {this.state.role === 1 ? <RegisterAddress addAddress={this.addAddress}/> : []}
-              {this.state.role === 2 ? <RegisterCraftsmen /> : []}
-              {this.state.role === 3 ? <RegisterCraftsmen /> : []}
+              {this.state.role === "CUSTOMER" ? (
+                <RegisterAddress addAddress={this.addAddress} />
+              ) : (
+                []
+              )}
+              {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen /> : []}
+              {this.state.role === "AGENT" ? <RegisterCraftsmen /> : []}
               <Item style={{ paddingVertical: 10 }}>
                 <Icon active name="ios-phone-portrait" />
                 <Input

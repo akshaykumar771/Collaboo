@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Button, Text } from "react-native";
+import { StyleSheet, View, Button, Text, CheckBox } from "react-native";
 import {
   Container,
   Content,
@@ -19,12 +19,24 @@ export default class RegisterCraftsmen extends Component {
     super(props);
     this.state = {
       company:"",
-      category:""
+      category:"",
+      checked: false
     };
   }
+  CheckBoxText(){
+    this.setState({
+      check:!this.state.check,
+    })
+}
   render() {
     return (
             <Form>
+            <View>
+            <CheckBox value={this.state.check} onChange={()=>this.CheckBoxText()} style={styles.selfEmployed}/>      
+          </View>
+          <View>
+            <Text style = {styles.checkText}>Self Employed</Text>
+          </View>
               <Item>
                 <Icon active name="ios-business" />
                 <Categories />
@@ -38,3 +50,15 @@ export default class RegisterCraftsmen extends Component {
           );
   }
 }
+const styles = StyleSheet.create({
+  selfEmployed: {
+    marginTop: 20,
+    marginLeft: 10,
+
+  },
+  checkText:{
+    position: "relative",
+    marginTop: -25,
+    paddingHorizontal: 50
+  }
+})

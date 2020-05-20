@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import SignUpScreen from "../screens/SignUpScreen";
+import SignUpScreen from "../screens/SignUpScreen-old";
 import SignInScreen from "../screens/SignInScreen";
 import ChatScreen from "../screens/ChatScreen";
 import ToDoScreen from "../screens/ToDoScreen";
