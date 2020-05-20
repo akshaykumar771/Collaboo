@@ -90,6 +90,12 @@ export default class SignUpScreen extends Component {
       () => {}
     );
   };
+
+  showCategory = (category) =>{
+    this.setState({
+      category: category.category
+    })
+  }
   handleSubmit = () => {
     //console.log("state" + JSON.stringify(this.state));
     this.makeRemoteRequest();
@@ -164,7 +170,7 @@ export default class SignUpScreen extends Component {
               ) : (
                 []
               )}
-              {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen /> : []}
+              {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen showCategory = {this.showCategory}/> : []}
               {this.state.role === "AGENT" ? <RegisterCraftsmen /> : []}
               <Item style={{ paddingVertical: 10 }}>
                 <Icon active name="ios-phone-portrait" />

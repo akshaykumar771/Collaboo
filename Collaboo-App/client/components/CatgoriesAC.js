@@ -41,9 +41,13 @@ class CategoriesAC extends Component {
     //making a case insensitive regular expression to get similar value from the film json
     const regex = new RegExp(`${query.trim()}`, 'i');
     //return the filtered film array according the query from the input
-    return categories.filter(categories => categories.title.search(regex) >= 0);
+    return categories.filter(categories => categories.catname.search(regex) >= 0);
   }
- 
+  handleChange = () =>{
+    // console.log(this.state)
+    this.setState({ query: item.catname })
+     this.props.showCategories(this.state.categories)
+   }
   render() {
     const { query } = this.state;
     const categories = this.findCategory(query);
@@ -65,7 +69,7 @@ class CategoriesAC extends Component {
           placeholder="Enter your offered specializations"
           renderItem={({ item }) => (
             //you can change the view you want to show in suggestion from here
-            <TouchableOpacity onPress={() => this.setState({ query: item.catname })}>
+            <TouchableOpacity onPress={this.handleChange}>
               <Text style={styles.itemText}>
                 {item.catname}
               </Text>
