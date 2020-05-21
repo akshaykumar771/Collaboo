@@ -22,7 +22,11 @@ export default class RegisterAddress extends Component {
   handleChange = () =>{
    // console.log(this.state)
     this.props.addAddress(this.state)
+   
   }
+  // handleCraftsmenAddress = () =>{
+  //   this.props.sendAddress(this.state)
+  // }
   render() {
     return (
             <Form>

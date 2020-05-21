@@ -47,7 +47,7 @@ class CompanyAC extends Component {
     }
  
     const {companies}  = this.state;
-    console.log("firstlog" + companies)
+    //console.log("firstlog" + companies)
     //making a case insensitive regular expression to get similar value from the category json
     const regex = new RegExp(`${query.trim()}`, 'i');
     //return the filtered category array according the query from the input
@@ -79,7 +79,7 @@ class CompanyAC extends Component {
           /*onchange of the text changing the state of the query which will trigger
           the findFilm method to show the suggestions*/
           onChangeText={text => this.setState({ query: text })}
-          placeholder="Enter your offered specializations"
+          placeholder="Enter your Company Name"
           renderItem={({ item }) => (
             //you can change the view you want to show in suggestion from here
             <TouchableOpacity onPress={() => this.handleChange(item)}>
@@ -97,8 +97,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
     flex: 1,
-     padding: 5,
-     marginTop: 5,
+     padding: 10,
+     marginTop: 0,
      marginBottom:0
   },
   autocompleteContainer: {

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Alert } from "react-native";
+import { StyleSheet, View, Alert, Text } from "react-native";
 import {
   Container,
   Content,
@@ -27,10 +27,15 @@ export default class SignUpScreen extends Component {
       street: "",
       pcode: "",
       city: "",
-      company: "",
-      category: "",
+      company: [],
+      category: [],
       phno: "",
       password: "",
+      firstnameVal:"",
+      emailVal:"",
+      roleVal:"",
+      phnoVal:"",
+      passwordVal:""
     };
   }
 
@@ -63,8 +68,8 @@ export default class SignUpScreen extends Component {
         return response.json();
       })
       .then((response) => {
-        //console.log(response)
-        if (response) {
+        //console.log(JSON.stringify(response))
+        if (response.role === 'CUSTOMER') {
           Alert.alert("Successful","Registered Successfully", [
             {
               text: "Ok",
@@ -96,13 +101,75 @@ export default class SignUpScreen extends Component {
   //     category: category.category
   //   })
   // }
-  showCompany = (company) =>{
+  showCompany = (company,category, street, pcode, city) =>{
     this.setState({
-      company: company.company
+      company: company && company,
+      category: category && category,
+      street: street && street,
+      pcode: pcode && pcode,
+      city: city && city
     })
   }
+  // showCategory = (category) => {
+  //   this.setState ({
+  //     category: category.category
+  //   })
+  // }
+
+  validateName = () => {
+    let regEx = /^[a-zA-z]+$/
+    let isValid = regEx.test(this.state.firstname)
+   // console.warn(isValid);
+    if(!isValid) {
+      this.setState({firstnameVal:"Name field must be alphabets"})
+    }
+    else{
+      this.setState({firstnameVal:""})
+    }
+  }
+  validateEmail = () => {
+    let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    let isValid = regEx.test(this.state.email)
+    console.warn(isValid)
+    if(!isValid){
+      this.setState({emailVal:"Please enter valid email"})
+    }
+    else{
+      this.setState({emailVal:""})
+    }
+  }
+  validateRole = () => {
+    if(this.state.role = ""){
+      this.setState({roleVal:"Role cannot be empty"})
+    }
+    else{
+      this.setState({roleVal:""})
+    }
+  }
+
+  validateMobNo = () => {
+    //let regEx = /^\(?\+\(?49\)?[ ()]?([- ()]?\d[- ()]?){10}/
+    let regEx = /^(((\+|00+)49)|0)[1-9]\d+/
+    let isValid = regEx.test(this.state.phno)
+    if(!isValid) {
+      this.setState({phnoVal:"Please enter valid number"})
+    }
+    else{
+      this.setState({phnoVal: ""})
+    }
+  }
+  validatePassword = () =>{
+    let regEx = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+    let isValid = regEx.test(this.state.password)
+    if(!isValid) {
+      this.setState({passwordVal: "Password should contain atleast 8 characters with atlease one letter and one number "})
+    }
+    else{
+      this.setState({passwordVal:""})
+    }
+  }
   handleSubmit = () => {
-    //console.log("state" + JSON.stringify(this.state));
+    console.log("state" + JSON.stringify(this.state));
     this.makeRemoteRequest();
   };
 
@@ -124,8 +191,10 @@ export default class SignUpScreen extends Component {
                     this.setState({ firstname: text });
                   }}
                   value={this.state.firstname}
+                  onBlur = {this.validateName}
                 />
               </Item>
+              <Text style = {{color:'red', marginLeft: 10}}>{this.state.firstnameVal}</Text>
               <Item>
                 <Icon active name="ios-person" />
                 <Input
@@ -134,9 +203,11 @@ export default class SignUpScreen extends Component {
                     this.setState({ lastname: text });
                   }}
                   value={this.state.lastname}
+                  onBlur = {this.validateName}
                 />
               </Item>
-              <Item style={{ paddingVertical: 10 }}>
+              <Text style = {{color:'red', marginLeft: 10}}>{this.state.firstnameVal}</Text>
+              <Item>
                 <Icon active name="ios-mail" />
                 <Input
                   placeholder="Email"
@@ -144,8 +215,10 @@ export default class SignUpScreen extends Component {
                     this.setState({ email: text });
                   }}
                   value={this.state.email}
+                  onBlur = {this.validateEmail}
                 />
               </Item>
+              <Text style = {{color:'red', marginLeft: 10}}>{this.state.emailVal}</Text>
               <Item style={{ paddingVertical: 10 }}>
                 <Icon active name="ios-people" />
                 <Picker
@@ -158,6 +231,7 @@ export default class SignUpScreen extends Component {
                     this.setState({ role: itemValue });
                   }}
                   selectedValue={this.state.role}
+                  onBlur = {this.validateRole}
                 >
                   <Picker.Item
                     style={{ paddingVertical: 10 }}
@@ -170,6 +244,7 @@ export default class SignUpScreen extends Component {
                   <Picker.Item label="Agent" value={"AGENT"} key={3} />
                 </Picker>
               </Item>
+              <Text style = {{color:'red', marginLeft: 10}}>{this.state.roleVal}</Text>
               {this.state.role === "CUSTOMER" ? (
                 <RegisterAddress addAddress={this.addAddress} />
               ) : (
@@ -177,7 +252,8 @@ export default class SignUpScreen extends Component {
               )}
               {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen showCompany = {this.showCompany}/> : []}
               {this.state.role === "AGENT" ? <RegisterCraftsmen /> : []}
-              <Item style={{ paddingVertical: 10 }}>
+              
+              <Item>
                 <Icon active name="ios-phone-portrait" />
                 <Input
                   placeholder=" Enter your Mobile Number"
@@ -186,9 +262,11 @@ export default class SignUpScreen extends Component {
                     this.setState({ phno: text });
                   }}
                   value={this.state.phno}
+                  onBlur={this.validateMobNo}
                 />
               </Item>
-              <Item style={{ paddingVertical: 10 }}>
+              <Text style = {{color:'red', marginLeft: 10}}>{this.state.phnoVal}</Text>
+              <Item>
                 <Icon active name="ios-lock" />
                 <Input
                   placeholder="Enter Password"
@@ -197,8 +275,11 @@ export default class SignUpScreen extends Component {
                     this.setState({ password: text });
                   }}
                   value={this.state.password}
+                  onBlur = {this.validatePassword}
+                  
                 />
               </Item>
+              <Text style = {{color:'red', marginLeft: 10}}>{this.state.passwordVal}</Text>
             </Form>
             <View style={styles.buttonContainer}>
               <FormButton
@@ -206,6 +287,7 @@ export default class SignUpScreen extends Component {
                 onPress={this.handleSubmit}
                 title="SIGN UP"
                 buttonColor="#039BE5"
+                onBlur={this.validatePassword}
               />
             </View>
           </KeyboardAwareScrollView>
