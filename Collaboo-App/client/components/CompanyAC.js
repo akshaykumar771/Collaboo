@@ -6,30 +6,39 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 //import Autocomplete component
  
-const API = 'http://81.89.193.99:3001/api/category';
+//const API = 'http://81.89.193.99:3001/api/category';
 //Demo base API to get the data for the Autocomplete suggestion
-class CategoriesAC extends Component {
+class CompanyAC extends Component {
   constructor(props) {
     super(props);
     //Initialization of state
     //films will contain the array of suggestion
     //query will have the input from the autocomplete input
     this.state = {
-      categories: [],
+      companies: [],
       query: '',
     };
   }
   componentDidMount() {
     //First method to be called after components mount
     //fetch the data from the server for the suggestion
-    fetch(`${API}`)
-      .then(res => res.json())
-      .then(json => {
-        const { results: categories } = json;
-        this.setState({ categories });
-        //setting the data in the films state
+    const url = 'http://81.89.193.99:3001/api/company';
+    const data = {companies: this.state.companies};
+    fetch(url,{
+      method:"GET",
+    })
+      .then(res => {return res.json()})
+      .then((res) => {
+        //const { results: categories } = json;
+        if(res){
+          const result = res;
+
+        this.setState({ companies: result });
+        //console.log(this.state)
+        }
+        //setting the data in the categories state
       });
-  }
+  };
   findCategory(query) {
     //method called everytime when we change the value of the input
     if (query === '') {
@@ -37,20 +46,24 @@ class CategoriesAC extends Component {
       return [];
     }
  
-    const { categories } = this.state;
-    //making a case insensitive regular expression to get similar value from the film json
+    const {companies}  = this.state;
+    console.log("firstlog" + companies)
+    //making a case insensitive regular expression to get similar value from the category json
     const regex = new RegExp(`${query.trim()}`, 'i');
-    //return the filtered film array according the query from the input
-    return categories.filter(categories => categories.catname.search(regex) >= 0);
+    //return the filtered category array according the query from the input
+    //console.log("what am i getting here" + this.state.categories)
+    return companies && companies.filter(companies => (companies.compname).search(regex) >= 0);
   }
-  handleChange = () =>{
+  handleChange = (item) =>{
     // console.log(this.state)
-    this.setState({ query: item.catname })
-     this.props.showCategories(this.state.categories)
+    console.log(item)
+    this.setState({ query: item.compname })
+     this.props.showCompanies(this.state.companies)
    }
   render() {
     const { query } = this.state;
-    const categories = this.findCategory(query);
+    //console.log("********" + this.state.categories)
+    const companies = this.findCategory(query);
     const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
  
     return (
@@ -60,7 +73,7 @@ class CategoriesAC extends Component {
           autoCorrect={false}
           containerStyle={styles.autocompleteContainer}
           //data to show in suggestion
-          data={categories.length === 1 && comp(query, categories[0].catname) ? [] : categories}
+          data={companies && companies.length === 1 && comp(query, companies[0].compname) ? [] : companies}
           //default value if you want to set something in input
           defaultValue={query}
           /*onchange of the text changing the state of the query which will trigger
@@ -69,20 +82,13 @@ class CategoriesAC extends Component {
           placeholder="Enter your offered specializations"
           renderItem={({ item }) => (
             //you can change the view you want to show in suggestion from here
-            <TouchableOpacity onPress={this.handleChange}>
+            <TouchableOpacity onPress={() => this.handleChange(item)}>
               <Text style={styles.itemText}>
-                {item.catname}
+                {item.compname}
               </Text>
             </TouchableOpacity>
           )}
         />
-        <View style={styles.descriptionContainer}>
-          {categories.length > 0 ? (
-            <Text style={styles.infoText}>{this.state.query}</Text>
-          ) : (
-            <Text style={styles.infoText}></Text>
-          )}
-        </View>
       </View>
     );
   }
@@ -115,4 +121,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-export default CategoriesAC;
+export default CompanyAC;

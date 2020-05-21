@@ -12,8 +12,9 @@ import {
 } from "native-base";
 import { Formik } from "formik";
 import Colors from "../constants/Colors";
-import Categories from "../components/CatgoriesAC";
+import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
+import Company from "../components/CompanyAC";
 export default class RegisterCraftsmen extends Component {
   constructor(props) {
     super(props);
@@ -28,12 +29,20 @@ export default class RegisterCraftsmen extends Component {
       check: !this.state.check,
     });
   }
-  showCategories = (name) => {
+  // showCategories = (name) => {
+  //   this.setState(
+  //     {
+  //       category: name.category,
+  //     }, () => 
+  //     this.props.showCategory(this.state)
+  //   );
+  // };
+  showCompanies = (name) => {
     this.setState(
       {
-        category: name.category,
-      },
-      () => {}
+        company: name.company,
+      }, () => 
+      this.props.showCompany(this.state)
     );
   };
   render() {
@@ -51,7 +60,7 @@ export default class RegisterCraftsmen extends Component {
         </View>
         <Item>
           <Icon active name="ios-business" />
-          <Categories showCategories={this.showCategories} />
+          <Company showCompanies={this.showCompanies} />
         </Item>
         <Item>
           <Icon active name="ios-circle" />

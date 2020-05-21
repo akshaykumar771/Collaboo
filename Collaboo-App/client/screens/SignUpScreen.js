@@ -63,7 +63,7 @@ export default class SignUpScreen extends Component {
         return response.json();
       })
       .then((response) => {
-        console.log(response)
+        //console.log(response)
         if (response) {
           Alert.alert("Successful","Registered Successfully", [
             {
@@ -91,9 +91,14 @@ export default class SignUpScreen extends Component {
     );
   };
 
-  showCategory = (category) =>{
+  // showCategory = (category) =>{
+  //   this.setState({
+  //     category: category.category
+  //   })
+  // }
+  showCompany = (company) =>{
     this.setState({
-      category: category.category
+      company: company.company
     })
   }
   handleSubmit = () => {
@@ -170,7 +175,7 @@ export default class SignUpScreen extends Component {
               ) : (
                 []
               )}
-              {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen showCategory = {this.showCategory}/> : []}
+              {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen showCompany = {this.showCompany}/> : []}
               {this.state.role === "AGENT" ? <RegisterCraftsmen /> : []}
               <Item style={{ paddingVertical: 10 }}>
                 <Icon active name="ios-phone-portrait" />
