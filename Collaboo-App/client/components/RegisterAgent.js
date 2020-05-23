@@ -10,17 +10,14 @@ import {
   Picker,
   Icon,
 } from "native-base";
-import { Formik } from "formik";
-import Colors from "../constants/Colors";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
-import Company from "../components/CompanyAC";
-import AddCompany from "./AddCompany";
-export default class RegisterCraftsmen extends Component {
+
+export default class RegisterAgent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      company: "",
+      company: [],
       categories: [],
       selfEmployed: false,
       street: "",
@@ -33,21 +30,20 @@ export default class RegisterCraftsmen extends Component {
     //console.log("---------", name[0].compname)
     this.setState(
       {
-        company: name,
+        company: name[0].compname,
       },
-      () => {this.props.showCompany(this.state.company)}
+      //console.log("----", this.state),
+      () => this.props.showAgentDetails(this.state.company)
     );
   };
   showCategories = (categories) => {
     this.setState(
       {
-        categories: categories,
+        categories: categories && categories,
       },
-      () => 
-      {}
+      //console.log("//////", this.state),
+      () => this.props.showAgentDetails(this.state.category)
     );
-    this.props.showCompany(this.state.categories)
-    
   };
   addAddress = (add) => {
     this.setState(
@@ -58,37 +54,30 @@ export default class RegisterCraftsmen extends Component {
       },
       //console.log("++++++", this.state),
       () =>
-        this.props.showCompany(
+        this.props.showAgentDetails(
           this.state.street,
           this.state.pcode,
           this.state.city,
+          this.state.company,
           this.state.categories,
-          this.state.selfEmployed,
         )
     );
   };
   render() {
     return (
       <Form>
-        <View>
-          <CheckBox
-            value={this.state.selfEmployed}
-            onChange={() => this.setState({selfEmployed: !this.state.selfEmployed})}
-            style={styles.selfEmployed}
-          />
-        </View>
-        <View>
-          <Text style={styles.checkText}>Self Employed</Text>
-        </View>
-        {this.state.selfEmployed === true ?<View style={styles.category}>
+       <Item>
+            <Icon active name="ios-business" />
+            <Input placeholder=" Enter your Company Name"
+                    onChangeText={(text) => {
+                      this.setState({ company: text });
+                    }}
+                    value={this.state.company}/>
+          </Item> 
+        <View style={styles.category}>
           <Categories showCategories={this.showCategories} />
-        </View> :
-        (<Item>
-          <Icon active name="ios-business" />
-          <Company showCompanies={this.showCompanies} />
-        </Item>)}
-        {this.state.selfEmployed === true ?
-        <RegisterAddress addAddress={this.addAddress} /> : [] }
+        </View>
+        <RegisterAddress addAddress={this.addAddress} />
       </Form>
     );
   }

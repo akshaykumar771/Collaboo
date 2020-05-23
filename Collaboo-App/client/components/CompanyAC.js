@@ -17,6 +17,7 @@ class CompanyAC extends Component {
     this.state = {
       companies: [],
       query: '',
+      companyName:""
     };
   }
   componentDidMount() {
@@ -56,13 +57,14 @@ class CompanyAC extends Component {
   }
   handleChange = (item) =>{
     // console.log(this.state)
-    console.log(item)
-    this.setState({ query: item.compname })
-     this.props.showCompanies(this.state.companies)
+    console.log("company", item)
+    this.setState({ query: item.compname }, () => {this.props.showCompanies(this.state.query)})
+     
    }
+   
   render() {
     const { query } = this.state;
-    //console.log("********" + this.state.categories)
+    //onsole.log("********" + JSON.stringify(this.state.companies))
     const companies = this.findCategory(query);
     const comp = (a, b) => a.toLowerCase().trim() === b.toLowerCase().trim();
  

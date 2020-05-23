@@ -1,0 +1,65 @@
+
+openModal() {
+    this.setState({ isModalOpen: true });
+    console.log("heelloooo", this.state);
+  }
+
+  closeModal() {
+    this.setState({ isModalOpen: false });
+  }
+<View style={styles.viewStyle}>
+        <Item onPress={() => this.openModal()}>
+          <Icon active name="ios-mail" />
+        </Item>
+        <Modal transparent={true} visible={this.state.isModalOpen}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#00000080",
+            }}
+          >
+            <View
+              style={{
+                width: 300,
+                height: 600,
+                backgroundColor: "#fff",
+                paddingVertical: 40,
+                paddingHorizontal: 10,
+              }}
+            >
+              <MaterialIcons
+                style={styles.modalCloseIcon}
+                name="close"
+                size={24}
+                onPress={() => this.closeModal()}
+              />
+              <Text style={styles.modalHeader}>Choose your Categories</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  marginVertical: 30,
+                }}
+              >
+                <FlatList
+                style={{}}
+                  data={this.state.modaldata}
+                  renderItem={({ item }) => (
+            <View>
+            <CheckBox value = {this.state.check} onPress = {() => this.setState({check: !this.state}) }/>
+            <Text>{item}</Text>
+            </View>
+          )}
+          enableEmptySections={true}
+          style={{ marginTop: 10 }}
+          keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </View>

@@ -14,6 +14,7 @@ import Colors from "../constants/Colors";
 import RegisterCraftsmen from "../components/RegisterCraftsmen";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import RegisterAddress from "../components/RegisterAddress";
+import RegisterAgent from "../components/RegisterAgent";
 
 export default class SignUpScreen extends Component {
   constructor(props) {
@@ -24,11 +25,12 @@ export default class SignUpScreen extends Component {
       lastname: "",
       email: "",
       role: "",
+      company: "",
       street: "",
       pcode: "",
       city: "",
-      company: [],
-      category: [],
+      categories: [],
+      selfEmployed:false,
       phno: "",
       password: "",
       firstnameVal:"",
@@ -51,13 +53,13 @@ export default class SignUpScreen extends Component {
       emailId: this.state.email,
       role: this.state.role,
       selfEmployed: this.state.selfemployed,
-      company: this.state.company,
-      categories: this.state.category,
+      companyName: this.state.company,
+      categories: this.state.categories,
       street: this.state.street,
       city: this.state.city,
       postalCode: this.state.pcode,
       phNo: this.state.phno,
-      pwd: this.state.password,
+      pwd: this.state.password
     };
     fetch(url, {
       method: "POST",
@@ -68,13 +70,22 @@ export default class SignUpScreen extends Component {
         return response.json();
       })
       .then((response) => {
-        //console.log(JSON.stringify(response))
+        //console.log("backend response",JSON.stringify(response))
         if (response.role === 'CUSTOMER') {
           Alert.alert("Successful","Registered Successfully", [
             {
               text: "Ok",
               style: "cancel",
               onPress: () => this.props.navigation.navigate("Customer"),
+            },
+          ]);
+        }
+        else if (response.role === 'CRAFTSMEN') {
+          Alert.alert("Successful","Registered Successfully", [
+            {
+              text: "Ok",
+              style: "cancel",
+              onPress: () => this.props.navigation.navigate("Agent"),
             },
           ]);
         }
@@ -101,15 +112,27 @@ export default class SignUpScreen extends Component {
   //     category: category.category
   //   })
   // }
-  showCompany = (company,category, street, pcode, city) =>{
+  showCompany = (company, street, pcode, city, categories, selfEmployed) =>{
     this.setState({
       company: company && company,
-      category: category && category,
       street: street && street,
       pcode: pcode && pcode,
-      city: city && city
+      city: city && city,
+      categories: categories && categories,
+      selfEmployed: selfEmployed && selfEmployed
     })
   }
+
+  showAgentDetails = (street, pcode, city, company, categories) => {
+    this.setState({
+      street: street && street,
+      pcode: pcode && pcode,
+      city: city && city,
+      company: company && company,
+      categories: categories && categories
+    })
+  }
+
   // showCategory = (category) => {
   //   this.setState ({
   //     category: category.category
@@ -251,7 +274,7 @@ export default class SignUpScreen extends Component {
                 []
               )}
               {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen showCompany = {this.showCompany}/> : []}
-              {this.state.role === "AGENT" ? <RegisterCraftsmen /> : []}
+              {this.state.role === "AGENT" ? <RegisterAgent showAgentDetails = {this.showAgentDetails} /> : []}
               
               <Item>
                 <Icon active name="ios-phone-portrait" />
