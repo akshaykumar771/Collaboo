@@ -17,40 +17,35 @@ export default class RegisterAgent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      company: [],
+      company: "",
       categories: [],
-      selfEmployed: false,
       street: "",
       pcode: "",
       city: "",
     };
   }
 
-  showCompanies = (name) => {
-    //console.log("---------", name[0].compname)
-    this.setState(
-      {
-        company: name[0].compname,
-      },
-      //console.log("----", this.state),
-      () => this.props.showAgentDetails(this.state.company)
-    );
-  };
   showCategories = (categories) => {
     this.setState(
       {
         categories: categories && categories,
       },
-      //console.log("//////", this.state),
-      () => this.props.showAgentDetails(this.state.category)
+      () =>
+        this.props.showAgentDetails(
+          this.state.street,
+          this.state.pcode,
+          this.state.city,
+          this.state.company,
+          this.state.categories
+        )
     );
   };
   addAddress = (add) => {
     this.setState(
       {
-        street: add.street,
-        pcode: add.pcode,
-        city: add.city,
+        street: add.street && add.street,
+        pcode: add.pcode && add.pcode,
+        city: add.city && add.city,
       },
       //console.log("++++++", this.state),
       () =>
@@ -59,21 +54,24 @@ export default class RegisterAgent extends Component {
           this.state.pcode,
           this.state.city,
           this.state.company,
-          this.state.categories,
+          this.state.categories
         )
+        // console.log("Agent", this.state)
     );
   };
   render() {
     return (
       <Form>
-       <Item>
-            <Icon active name="ios-business" />
-            <Input placeholder=" Enter your Company Name"
-                    onChangeText={(text) => {
-                      this.setState({ company: text });
-                    }}
-                    value={this.state.company}/>
-          </Item> 
+        <Item>
+          <Icon active name="ios-business" />
+          <Input
+            placeholder=" Enter your Company Name"
+            onChangeText={(text) => {
+              this.setState({ company: text });
+            }}
+            value={this.state.company}
+          />
+        </Item>
         <View style={styles.category}>
           <Categories showCategories={this.showCategories} />
         </View>

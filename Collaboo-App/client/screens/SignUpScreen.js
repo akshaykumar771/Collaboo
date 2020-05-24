@@ -25,19 +25,19 @@ export default class SignUpScreen extends Component {
       lastname: "",
       email: "",
       role: "",
-      company: "",
       street: "",
       pcode: "",
       city: "",
+      company: "",
       categories: [],
-      selfEmployed:false,
+      selfEmployed: false,
       phno: "",
       password: "",
-      firstnameVal:"",
-      emailVal:"",
-      roleVal:"",
-      phnoVal:"",
-      passwordVal:""
+      firstnameVal: "",
+      emailVal: "",
+      roleVal: "",
+      phnoVal: "",
+      passwordVal: "",
     };
   }
 
@@ -52,15 +52,16 @@ export default class SignUpScreen extends Component {
       lastName: this.state.lastname,
       emailId: this.state.email,
       role: this.state.role,
-      selfEmployed: this.state.selfemployed,
+      selfEmployed: this.state.selfEmployed,
       companyName: this.state.company,
       categories: this.state.categories,
       street: this.state.street,
       city: this.state.city,
       postalCode: this.state.pcode,
       phNo: this.state.phno,
-      pwd: this.state.password
+      pwd: this.state.password,
     };
+    console.log("data", JSON.stringify(data))
     fetch(url, {
       method: "POST",
       body: JSON.stringify(data),
@@ -71,17 +72,25 @@ export default class SignUpScreen extends Component {
       })
       .then((response) => {
         //console.log("backend response",JSON.stringify(response))
-        if (response.role === 'CUSTOMER') {
-          Alert.alert("Successful","Registered Successfully", [
+        if (response.role === "CUSTOMER") {
+          Alert.alert("Successful", "Registered Successfully", [
             {
               text: "Ok",
               style: "cancel",
               onPress: () => this.props.navigation.navigate("Customer"),
             },
           ]);
+        } else if (response.role === "CRAFTSMEN") {
+          Alert.alert("Successful", "Registered Successfully", [
+            {
+              text: "Ok",
+              style: "cancel",
+              onPress: () => this.props.navigation.navigate("Agent"),
+            },
+          ]);
         }
-        else if (response.role === 'CRAFTSMEN') {
-          Alert.alert("Successful","Registered Successfully", [
+        else if (response.role === "AGENT") {
+          Alert.alert("Successful", "Registered Successfully", [
             {
               text: "Ok",
               style: "cancel",
@@ -96,7 +105,6 @@ export default class SignUpScreen extends Component {
   };
 
   addAddress = (address) => {
-    //console.log("address" + address)
     this.setState(
       {
         street: address.street,
@@ -107,31 +115,34 @@ export default class SignUpScreen extends Component {
     );
   };
 
-  // showCategory = (category) =>{
-  //   this.setState({
-  //     category: category.category
-  //   })
-  // }
-  showCompany = (company, street, pcode, city, categories, selfEmployed) =>{
+  showCompany = (selfEmployed, street, pcode, city, company, categories) => {
+    console.log("cat",selfEmployed)
+    if(selfEmployed === true) {
+      this.setState({
+        selfEmployed: selfEmployed && selfEmployed,
+        categories: categories && categories,
+        street: street && street,
+        pcode: pcode && pcode,
+        city: city && city
+      })
+    }
+    else {
     this.setState({
+      selfEmployed: selfEmployed && selfEmployed,
       company: company && company,
-      street: street && street,
-      pcode: pcode && pcode,
-      city: city && city,
-      categories: categories && categories,
-      selfEmployed: selfEmployed && selfEmployed
-    })
+    });
   }
+  };
 
   showAgentDetails = (street, pcode, city, company, categories) => {
     this.setState({
-      street: street && street,
-      pcode: pcode && pcode,
+      categories: categories && categories,
       city: city && city,
       company: company && company,
-      categories: categories && categories
-    })
-  }
+      pcode: pcode && pcode,
+      street: street && street
+    });
+  };
 
   // showCategory = (category) => {
   //   this.setState ({
@@ -140,57 +151,55 @@ export default class SignUpScreen extends Component {
   // }
 
   validateName = () => {
-    let regEx = /^[a-zA-z]+$/
-    let isValid = regEx.test(this.state.firstname)
-   // console.warn(isValid);
-    if(!isValid) {
-      this.setState({firstnameVal:"Name field must be alphabets"})
+    let regEx = /^[a-zA-z]+$/;
+    let isValid = regEx.test(this.state.firstname);
+    // console.warn(isValid);
+    if (!isValid) {
+      this.setState({ firstnameVal: "Name field must be alphabets" });
+    } else {
+      this.setState({ firstnameVal: "" });
     }
-    else{
-      this.setState({firstnameVal:""})
-    }
-  }
+  };
   validateEmail = () => {
-    let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
-    let isValid = regEx.test(this.state.email)
-    console.warn(isValid)
-    if(!isValid){
-      this.setState({emailVal:"Please enter valid email"})
+    let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    let isValid = regEx.test(this.state.email);
+    console.warn(isValid);
+    if (!isValid) {
+      this.setState({ emailVal: "Please enter valid email" });
+    } else {
+      this.setState({ emailVal: "" });
     }
-    else{
-      this.setState({emailVal:""})
-    }
-  }
+  };
   validateRole = () => {
-    if(this.state.role = ""){
-      this.setState({roleVal:"Role cannot be empty"})
+    if ((this.state.role = "")) {
+      this.setState({ roleVal: "Role cannot be empty" });
+    } else {
+      this.setState({ roleVal: "" });
     }
-    else{
-      this.setState({roleVal:""})
-    }
-  }
+  };
 
   validateMobNo = () => {
     //let regEx = /^\(?\+\(?49\)?[ ()]?([- ()]?\d[- ()]?){10}/
-    let regEx = /^(((\+|00+)49)|0)[1-9]\d+/
-    let isValid = regEx.test(this.state.phno)
-    if(!isValid) {
-      this.setState({phnoVal:"Please enter valid number"})
+    let regEx = /^(((\+|00+)49)|0)[1-9]\d+/;
+    let isValid = regEx.test(this.state.phno);
+    if (!isValid) {
+      this.setState({ phnoVal: "Please enter valid number" });
+    } else {
+      this.setState({ phnoVal: "" });
     }
-    else{
-      this.setState({phnoVal: ""})
+  };
+  validatePassword = () => {
+    let regEx = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    let isValid = regEx.test(this.state.password);
+    if (!isValid) {
+      this.setState({
+        passwordVal:
+          "Password should contain atleast 8 characters with atlease one letter and one number ",
+      });
+    } else {
+      this.setState({ passwordVal: "" });
     }
-  }
-  validatePassword = () =>{
-    let regEx = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
-    let isValid = regEx.test(this.state.password)
-    if(!isValid) {
-      this.setState({passwordVal: "Password should contain atleast 8 characters with atlease one letter and one number "})
-    }
-    else{
-      this.setState({passwordVal:""})
-    }
-  }
+  };
   handleSubmit = () => {
     console.log("state" + JSON.stringify(this.state));
     this.makeRemoteRequest();
@@ -214,10 +223,12 @@ export default class SignUpScreen extends Component {
                     this.setState({ firstname: text });
                   }}
                   value={this.state.firstname}
-                  onBlur = {this.validateName}
+                  onBlur={this.validateName}
                 />
               </Item>
-              <Text style = {{color:'red', marginLeft: 10}}>{this.state.firstnameVal}</Text>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.firstnameVal}
+              </Text>
               <Item>
                 <Icon active name="ios-person" />
                 <Input
@@ -226,10 +237,12 @@ export default class SignUpScreen extends Component {
                     this.setState({ lastname: text });
                   }}
                   value={this.state.lastname}
-                  onBlur = {this.validateName}
+                  onBlur={this.validateName}
                 />
               </Item>
-              <Text style = {{color:'red', marginLeft: 10}}>{this.state.firstnameVal}</Text>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.firstnameVal}
+              </Text>
               <Item>
                 <Icon active name="ios-mail" />
                 <Input
@@ -238,10 +251,12 @@ export default class SignUpScreen extends Component {
                     this.setState({ email: text });
                   }}
                   value={this.state.email}
-                  onBlur = {this.validateEmail}
+                  onBlur={this.validateEmail}
                 />
               </Item>
-              <Text style = {{color:'red', marginLeft: 10}}>{this.state.emailVal}</Text>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.emailVal}
+              </Text>
               <Item style={{ paddingVertical: 10 }}>
                 <Icon active name="ios-people" />
                 <Picker
@@ -254,7 +269,7 @@ export default class SignUpScreen extends Component {
                     this.setState({ role: itemValue });
                   }}
                   selectedValue={this.state.role}
-                  onBlur = {this.validateRole}
+                  onBlur={this.validateRole}
                 >
                   <Picker.Item
                     style={{ paddingVertical: 10 }}
@@ -267,15 +282,25 @@ export default class SignUpScreen extends Component {
                   <Picker.Item label="Agent" value={"AGENT"} key={3} />
                 </Picker>
               </Item>
-              <Text style = {{color:'red', marginLeft: 10}}>{this.state.roleVal}</Text>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.roleVal}
+              </Text>
               {this.state.role === "CUSTOMER" ? (
                 <RegisterAddress addAddress={this.addAddress} />
               ) : (
                 []
               )}
-              {this.state.role === "CRAFTSMEN" ? <RegisterCraftsmen showCompany = {this.showCompany}/> : []}
-              {this.state.role === "AGENT" ? <RegisterAgent showAgentDetails = {this.showAgentDetails} /> : []}
-              
+              {this.state.role === "CRAFTSMEN" ? (
+                <RegisterCraftsmen showCompany={this.showCompany} />
+              ) : (
+                []
+              )}
+              {this.state.role === "AGENT" ? (
+                <RegisterAgent showAgentDetails={this.showAgentDetails} />
+              ) : (
+                []
+              )}
+
               <Item>
                 <Icon active name="ios-phone-portrait" />
                 <Input
@@ -288,7 +313,9 @@ export default class SignUpScreen extends Component {
                   onBlur={this.validateMobNo}
                 />
               </Item>
-              <Text style = {{color:'red', marginLeft: 10}}>{this.state.phnoVal}</Text>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.phnoVal}
+              </Text>
               <Item>
                 <Icon active name="ios-lock" />
                 <Input
@@ -298,11 +325,12 @@ export default class SignUpScreen extends Component {
                     this.setState({ password: text });
                   }}
                   value={this.state.password}
-                  onBlur = {this.validatePassword}
-                  
+                  onBlur={this.validatePassword}
                 />
               </Item>
-              <Text style = {{color:'red', marginLeft: 10}}>{this.state.passwordVal}</Text>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.passwordVal}
+              </Text>
             </Form>
             <View style={styles.buttonContainer}>
               <FormButton
