@@ -4,6 +4,7 @@ import { Form, Item, Icon } from "native-base";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
 import Company from "../components/CompanyAC";
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 export default class RegisterCraftsmen extends Component {
   constructor(props) {
     super(props);
@@ -87,6 +88,7 @@ export default class RegisterCraftsmen extends Component {
         </View>
         {this.state.selfEmployed === true ? (
           <View style={styles.category}>
+          <MaterialCommunityIcons style = {styles.categoryIcon} name="briefcase-plus" size={24} color="black" />
             <Categories showCategories={this.showCategories} />
           </View>
         ) : (
@@ -117,5 +119,12 @@ const styles = StyleSheet.create({
     padding: 5,
     borderBottomColor: "black",
     borderBottomWidth: 0.25,
+    marginTop: 10
   },
+  categoryIcon: {
+    position: "absolute",
+    top: 15,
+    paddingLeft: 13.5
+  }
+
 });

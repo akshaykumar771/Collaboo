@@ -34,10 +34,10 @@ export default class SearchCraftsmen extends Component {
     this.makeRemoteRequest();
   }
   makeRemoteRequest = () => {
-    const url =
-      Platform.OS === "android"
-        ? "http://10.0.2.2:3000/craftsmen"
-        : "http://192.168.0.213:3000/craftsmen";
+    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent"
+      // Platform.OS === "android"
+      //   ? "http://10.0.2.2:3000/craftsmen"
+      //   : "http://192.168.0.213:3000/craftsmen";
     fetch(url, { method: "GET" })
       .then((response) => response.json())
       .then((responseJson) => {
@@ -65,10 +65,13 @@ export default class SearchCraftsmen extends Component {
     //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
-      const nameData = item.name ? item.name.toUpperCase() : "".toUpperCase();
-      const companyData = item.company ? item.company.toUpperCase() : "".toUpperCase();
+      console.log("itemdata", item)
+      const fNameData = item.fname ? item.fname.toUpperCase() : "".toUpperCase();
+      const lNameData = item.lname ? item.lname.toUpperCase() : "".toUpperCase();
+      //const companyName = item.compid.compname
+      const companyData = item && item.compid ? item.compid.compname.toUpperCase() : "".toUpperCase();
       const textData = text.toUpperCase();
-      const itemData = nameData + companyData;
+      const itemData = fNameData + lNameData + companyData;
       return itemData.indexOf(textData) > -1;
     });
 
@@ -156,7 +159,7 @@ export default class SearchCraftsmen extends Component {
             <View
               style={{
                 width: 300,
-                height: 400,
+                height: 500,
                 backgroundColor: "#fff",
                 paddingVertical: 40,
                 paddingHorizontal: 10,
@@ -182,7 +185,7 @@ export default class SearchCraftsmen extends Component {
                   <Label style={{ paddingVertical: 10 }}>Description</Label>
                   <Textarea
                     value={this.state.description}
-                    rowSpan={5}
+                    rowSpan={7}
                     bordered
                     placeholder="Enter your description"
                     width="100%"
@@ -199,7 +202,7 @@ export default class SearchCraftsmen extends Component {
                   flexDirection: "row",
                   alignItems: "center",
                   justifyContent: "space-evenly",
-                  marginVertical: 30,
+                  marginVertical: 60,
                 }}
               >
                 <TouchableOpacity
@@ -222,7 +225,7 @@ export default class SearchCraftsmen extends Component {
             // Single Comes here which will be repeatative for the FlatListItems
             //<Text style={styles.textStyle}>{item.name}</Text>
             <ListItem
-              title={item.name}
+              title={item.fname + item.lname}
               subtitle={item.email}
               containerStyle={{ borderBottomWidth: 0 }}
               rightIcon={{ name: "chevron-right" }}

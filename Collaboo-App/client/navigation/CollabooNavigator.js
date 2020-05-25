@@ -91,22 +91,7 @@ const WorkLogNavigator = createStackNavigator(
     defaultNavigationOptions: defaultNavOptions,
   }
 );
-const CustomerDetailNavigator = createStackNavigator(
-  {
-    CustomerDetails: CustomerDetailScreen,
-    AddCustomerDetails: AddCustomerDetailScreen,
-  },
-  {
-    navigationOptions: {
-      tabBarIcon: (tabInfo) => {
-        return (
-          <Ionicons name="ios-people" size={25} color={tabInfo.tintColor} />
-        );
-      },
-    },
-    defaultNavigationOptions: defaultNavOptions,
-  }
-);
+
 
 const CollabooNavigator =
   Platform.OS === "android"
@@ -116,7 +101,6 @@ const CollabooNavigator =
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
-          CustomerDetail: CustomerDetailNavigator,
         },
         {
           activeTintColor: "white",
@@ -132,7 +116,6 @@ const CollabooNavigator =
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
-          CustomerDetail: CustomerDetailNavigator,
         },
         {
           tabBarOptions: {

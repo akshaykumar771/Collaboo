@@ -85,7 +85,7 @@ export default class SignUpScreen extends Component {
             {
               text: "Ok",
               style: "cancel",
-              onPress: () => this.props.navigation.navigate("Agent"),
+              onPress: () => this.props.navigation.navigate("App"),
             },
           ]);
         }

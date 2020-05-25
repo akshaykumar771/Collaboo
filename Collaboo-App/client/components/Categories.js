@@ -65,11 +65,11 @@ export default class Categories extends Component {
   }
 
   handleConfirm = (pItems) => {
-    const check1 = pItems.map((item) => {
+    const catName = pItems.map((item) => {
       return item.catname
     })
     
-    this.setState({ categories: check1 }, ()=> {this.props.showCategories(this.state.categories)});
+    this.setState({ categories: catName }, ()=> {this.props.showCategories(this.state.categories)});
     
     // const data = this.state.categories.filter((item) => item.catname);
     // console.log("123", data);
@@ -106,15 +106,15 @@ export default class Categories extends Component {
     return (
       <PickerCheckBox
         data={this.state.dataSource}
-        headerComponent={<Text style={{ fontSize: 25 }}>items</Text>}
+        headerComponent={<Text style={{ fontSize: 25 }}>Select your Categories</Text>}
         OnConfirm={(pItems) => this.handleConfirm(pItems)}
         ConfirmButtonTitle="OK"
         DescriptionField="catname"
         KeyField="_id"
-        placeholder="select some items"
+        placeholder="       Selct your specializations"
         arrowColor="#FFD740"
         arrowSize={10}
-        placeholderSelectedItems="$count selected item(s)"
+        placeholderSelectedItems="$count categories selected"
       />
     );
   }
@@ -122,7 +122,7 @@ export default class Categories extends Component {
 
 const styles = StyleSheet.create({
   picker: {
-    marginLeft: 20,
+    marginLeft: 50,
   },
   viewStyle: {
     justifyContent: "center",

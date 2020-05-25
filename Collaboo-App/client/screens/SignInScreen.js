@@ -34,8 +34,14 @@ export default class Login extends Component {
   onLogin = async () => {
     const { email, password } = this.state;
     try {
-      if (email.length > 0 && password.length > 0) {
+      if (email === "beyerle@gmail.com"  && password.length > 0) {
         this.props.navigation.navigate("App");
+      }
+      else if (email === "akshay@outlook.com" && password.length > 0) {
+        this.props.navigation.navigate("Customer");
+      }
+      else if(email === "sebastian@outlook.com" && password.length > 0) {
+        this.props.navigation.navigate("Agent");
       }
     } catch (error) {
       alert(error);
