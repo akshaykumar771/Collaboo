@@ -6,6 +6,7 @@ import CustomerDetailScreen from "../screens/CustomerDetailScreen";
 import AddCustomerDetailScreen from "../screens/AddCustomerDetailScreen";
 import CustomerRequestScreen from "../screens/CustomerRequestScreen";
 import InventoryScreen from "../screens/InventoryScreen";
+import ViewAppointmentsScreen from "../screens/ViewApoointmentsScreen";
 import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
@@ -14,6 +15,7 @@ const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
       Platform.OS === "android" ? Colors.primary : Colors.primary,
+      marginTop: Expo.Constants.statusBarHeight
   },
   headerTitleStyle: {
     fontFamily: "raleway-bold",
@@ -26,6 +28,7 @@ const defaultNavOptions = {
 const CustomerRequestNavigator = createStackNavigator(
   {
     Requests: CustomerRequestScreen,
+    ViewAppointments: ViewAppointmentsScreen
   },
   {
     navigationOptions: {

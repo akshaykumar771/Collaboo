@@ -14,15 +14,15 @@ import {
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
-import { ListItem } from "react-native-elements";
+import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
-import SearchList from "../components/SearchList";
 export default class ChatScreen extends Component {
   constructor(props) {
     super(props);
     //setting default state
     this.state = {
       isLoading: true,
+      search: ""
     };
     this.arrayholder = [];
   }
@@ -30,10 +30,10 @@ export default class ChatScreen extends Component {
     this.makeRemoteRequest();
   }
   makeRemoteRequest = () => {
-    const url =
-      Platform.OS === "android"
-        ? "http://10.0.2.2:3000/craftsmen"
-        : "http://192.168.0.213:3000/craftsmen";
+    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent"
+      // Platform.OS === "android"
+      //   ? "http://10.0.2.2:3000/craftsmen"
+      //   : "http://192.168.0.213:3000/craftsmen";
     fetch(url, { method: "GET" })
       .then((response) => response.json())
       .then((responseJson) => {
@@ -51,6 +51,33 @@ export default class ChatScreen extends Component {
         console.error(error);
       });
   };
+  search = (text) => {
+    console.log(text);
+  };
+  clear = () => {
+    this.search.clear();
+  };
+  SearchFilterFunction(text) {
+    //passing the inserted text in textinput
+    const newData = this.arrayholder.filter(function (item) {
+      //applying filter for the inserted text in search bar
+      console.log("itemdata", item)
+      const fNameData = item.fname ? item.fname.toUpperCase() : "".toUpperCase();
+      const lNameData = item.lname ? item.lname.toUpperCase() : "".toUpperCase();
+      //const companyName = item.compid.compname
+      const companyData = item && item.compid ? item.compid.compname.toUpperCase() : "".toUpperCase();
+      const textData = text.toUpperCase();
+      const itemData = fNameData + lNameData + companyData;
+      return itemData.indexOf(textData) > -1;
+    });
+
+    this.setState({
+      //setting the filtered newData on datasource
+      //After setting the data it will automatically re-render the view
+      dataSource: newData,
+      search: text,
+    });
+  }
 
   ListViewItemSeparator = () => {
     //Item sparator view
@@ -94,7 +121,19 @@ export default class ChatScreen extends Component {
         Keyboard.dismiss()
       }}>
       <View style={styles.viewStyle}>
-        <SearchList />
+      <SearchBar
+        lightTheme={true}
+        platform="default"
+        only
+        round
+        platform="default"
+        only
+        searchIcon={{ size: 24 }}
+        onChangeText={(text) => this.SearchFilterFunction(text)}
+        onClear={(text) => this.SearchFilterFunction("")}
+        placeholder="Type Here..."
+        value={this.state.search}
+      />
         <FlatList
           data={this.state.dataSource}
           ItemSeparatorComponent={this.ListViewItemSeparator}
@@ -104,8 +143,8 @@ export default class ChatScreen extends Component {
             // Single Comes here which will be repeatative for the FlatListItems
             //<Text style={styles.textStyle}>{item.name}</Text>
             <ListItem
-              title={item.name}
-              subtitle={item.mobile}
+              title={item.fname + item.lname}
+              subtitle={item.phno}
               containerStyle={{ borderBottomWidth: 0 }}
               rightIcon={{ name: "message" }}
             />

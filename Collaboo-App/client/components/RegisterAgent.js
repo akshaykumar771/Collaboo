@@ -12,6 +12,7 @@ import {
 } from "native-base";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default class RegisterAgent extends Component {
   constructor(props) {
@@ -73,6 +74,7 @@ export default class RegisterAgent extends Component {
           />
         </Item>
         <View style={styles.category}>
+        <MaterialCommunityIcons style = {styles.categoryIcon} name="briefcase-plus" size={24} color="black" />
           <Categories showCategories={this.showCategories} />
         </View>
         <RegisterAddress addAddress={this.addAddress} />
@@ -93,5 +95,11 @@ const styles = StyleSheet.create({
     padding: 5,
     borderBottomColor: "black",
     borderBottomWidth: 0.25,
+    marginTop: 10
   },
+  categoryIcon: {
+    position: "absolute",
+    top: 15,
+    paddingLeft: 13.5
+  }
 });

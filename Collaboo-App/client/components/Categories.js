@@ -114,7 +114,7 @@ export default class Categories extends Component {
         placeholder="       Selct your specializations"
         arrowColor="#FFD740"
         arrowSize={10}
-        placeholderSelectedItems="$count categories selected"
+        placeholderSelectedItems="       $count categories selected"
       />
     );
   }
