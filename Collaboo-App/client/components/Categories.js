@@ -2,30 +2,10 @@ import React, { Component } from "react";
 import {
   View,
   StyleSheet,
-  FlatList,
   ActivityIndicator,
   Platform,
-  Modal,
-  Button,
-  Text,
-  TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
-  ListView,
-  CheckBox,
+  Text
 } from "react-native";
-import {
-  Form,
-  Input,
-  Item,
-  Label,
-  Textarea,
-  Icon,
-  Container,
-  Content,
-  ListItem,
-} from "native-base";
-import { MaterialIcons } from "@expo/vector-icons";
 import Colors from "../constants/Colors";
 import PickerCheckBox from "react-native-picker-checkbox";
 
@@ -71,31 +51,10 @@ export default class Categories extends Component {
     
     this.setState({ categories: catName }, ()=> {this.props.showCategories(this.state.categories)});
     
-    // const data = this.state.categories.filter((item) => item.catname);
-    // console.log("123", data);
-    //console.log("outside",this.state.categories)
 
   };
 
   render() {
-    // const items = [
-    //   {
-    //     id: 1,
-    //     catname: "Dishwasher"
-    //   },
-    //   {
-    //     id: 2,
-    //     catname: "Washing Machine"
-    //   },
-    //   {
-    //     id: 3,
-    //     catname: "Heating"
-    //   },
-    //   {
-    //     id: 4,
-    //     catname: "Plumbing"
-    //   }
-    // ]
     if (this.state.isLoading) {
       return (
         <View style={{ flex: 1, paddingTop: 20 }}>

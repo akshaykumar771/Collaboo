@@ -12,10 +12,11 @@ import {
   Keyboard,
   TouchableWithoutFeedback
 } from "react-native";
-import { Form, Input, Item, Label, Textarea } from "native-base";
+import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
+import AppointmentPicker from './AppointmentPicker';
 //import SearchList from "./SearchList";
 export default class SearchCraftsmen extends Component {
   constructor(props) {
@@ -26,7 +27,9 @@ export default class SearchCraftsmen extends Component {
       isModalOpen: false,
       title: "",
       description: "",
-      search: ""
+      search: "",
+      id:"",
+      categoryValues:[]
     };
     this.arrayholder = [];
   }
@@ -83,14 +86,19 @@ export default class SearchCraftsmen extends Component {
     });
   }
 
-  openModal() {
-    this.setState({ isModalOpen: true });
+  openModal = (item) => {
+    this.setState({ isModalOpen: true, id: item._id, cat: item.catid });
+    
   }
 
   closeModal() {
     this.setState({ isModalOpen: false });
   }
-
+  showPicker = (category) => {
+    this.setState({
+        categoryValues: category && category
+    })
+  }
   ListViewItemSeparator = () => {
     //Item sparator view
     return (
@@ -173,6 +181,10 @@ export default class SearchCraftsmen extends Component {
               />
               <Text style={styles.modalHeader}>Give your Request</Text>
               <Form>
+              <Item style={{ paddingVertical: 10 }}>
+                <Icon active name="ios-people" />
+                <AppointmentPicker showPicker = {this.showPicker} showCategories = {this.state.cat}/>
+              </Item>
                 <Item stackedLabel>
                   <Label style={{ paddingVertical: 20 }}>Title</Label>
                   <Input
@@ -221,15 +233,16 @@ export default class SearchCraftsmen extends Component {
           ItemSeparatorComponent={this.ListViewItemSeparator}
           ListFooterComponent={this.renderFooter}
           //Item Separator View
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             // Single Comes here which will be repeatative for the FlatListItems
             //<Text style={styles.textStyle}>{item.name}</Text>
             <ListItem
+              id = {index}
               title={item.fname + item.lname}
               subtitle={item.email}
               containerStyle={{ borderBottomWidth: 0 }}
               rightIcon={{ name: "chevron-right" }}
-              onPress={() => this.openModal()}
+              onPress={() => this.openModal(item)}
             />
           )}
           enableEmptySections={true}

@@ -116,7 +116,6 @@ export default class SignUpScreen extends Component {
   };
 
   showCompany = (selfEmployed, street, pcode, city, company, categories) => {
-    console.log("cat",selfEmployed)
     if(selfEmployed === true) {
       this.setState({
         selfEmployed: selfEmployed && selfEmployed,

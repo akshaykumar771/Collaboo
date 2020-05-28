@@ -12,19 +12,17 @@ class CompanyAC extends Component {
   constructor(props) {
     super(props);
     //Initialization of state
-    //films will contain the array of suggestion
+    //Companies will contain the array of suggestion
     //query will have the input from the autocomplete input
     this.state = {
       companies: [],
-      query: '',
-      companyName:""
+      query: ''
     };
   }
   componentDidMount() {
     //First method to be called after components mount
     //fetch the data from the server for the suggestion
     const url = 'http://81.89.193.99:3001/api/company';
-    const data = {companies: this.state.companies};
     fetch(url,{
       method:"GET",
     })
@@ -48,13 +46,14 @@ class CompanyAC extends Component {
     }
  
     const {companies}  = this.state;
-    //console.log("firstlog" + companies)
+    console.log("firstlog" + companies)
     //making a case insensitive regular expression to get similar value from the category json
     const regex = new RegExp(`${query.trim()}`, 'i');
     //return the filtered category array according the query from the input
-    //console.log("what am i getting here" + this.state.categories)
+    //console.log("what am i getting here" + companies.compname)
     return companies && companies.filter(companies => (companies.compname).search(regex) >= 0);
   }
+  //
   handleChange = (item) =>{
     // console.log(this.state)
     console.log("company", item)

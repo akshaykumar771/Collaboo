@@ -18,7 +18,7 @@ export default class RegisterCraftsmen extends Component {
     };
   }
 
-  showCompanies = (name, selfEmployed) => {
+  showCompanies = (name) => {
     //console.log("---------", name[0].compname)
     this.setState(
       {

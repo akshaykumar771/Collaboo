@@ -1,133 +1,153 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
 import { StyleSheet, SafeAreaView, View, Text } from "react-native";
 import { Button } from "react-native-elements";
 import FormInput from "../components/FormInput";
 import FormButton from "../components/FormButton";
-import { Formik } from "formik";
-import * as Yup from "yup";
-const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .label("Email")
-    .email("Enter a valid email")
-    .required("Please enter a registered email"),
-  password: Yup.string()
-    .label("Password")
-    .required()
-    .min(4, "Password must have at least 4 characters "),
-});
+import {
+  Container,
+  Content,
+  Form,
+  Item,
+  Input,
+  Picker,
+  Icon,
+} from "native-base";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import axios from "axios";
+
 export default class Login extends Component {
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
+      isLoading: true,
       email: "",
       password: "",
+      loginData: "",
     };
   }
-  handleEmailChange = (email) => {
-    this.setState({ email });
-  };
 
-  handlePasswordChange = (password) => {
-    this.setState({ password });
-  };
-
+   
   onLogin = async () => {
-    const { email, password } = this.state;
+    //const { email, password } = this.state;
+    const emailId = this.state.dataSource.email
+    console.log("email", emailId)
+    //const pwd = this.state.dataSource.password
+    //console.log("onlogin function")
     try {
-      if (email === "beyerle@gmail.com"  && password.length > 0) {
-        this.props.navigation.navigate("App");
-      }
-      else if (email === "akshay@outlook.com" && password.length > 0) {
+      if (this.state.dataSource.role == 'CUSTOMER') {
         this.props.navigation.navigate("Customer");
       }
-      else if(email === "sebastian@outlook.com" && password.length > 0) {
+      else if (email === emailId  && password === pwd && role === 'CRAFTSMEN') {
+        this.props.navigation.navigate("App");
+      }
+      else if(email === emailId  && password === pwd && role === 'AGENT') {
         this.props.navigation.navigate("Agent");
       }
     } catch (error) {
       alert(error);
     }
   };
-  handleSubmit = (values) => {
-    if (values.email.length > 0 && values.password.length > 0) {
-      setTimeout(() => {
-        this.props.navigation.navigate("App");
-      }, 3000);
+  validateEmail = () => {
+    let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+    let isValid = regEx.test(this.state.email);
+    if (!isValid) {
+      this.setState({ emailVal: "Please enter valid email" });
+    } else {
+      this.setState({ emailVal: "" });
     }
   };
+  // validatePassword = () => {
+  //   let regEx = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+  //   let isValid = regEx.test(this.state.password);
+  //   if (!isValid) {
+  //     this.setState({
+  //       passwordVal:
+  //         "Password should contain atleast 8 characters with atlease one letter and one number ",
+  //     });
+  //   } else {
+  //     this.setState({ passwordVal: "" });
+  //   }
+  // };
+  handleSubmit = () => {
+    fetch(`http://81.89.193.99:3001/api/user/login?email=${this.state.email}&password=${this.state.password}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        // this.setState({
+        //   isLoading: false,
+        //   dataSource: responseJson,
+        // });
+        if(responseJson.role === 'CUSTOMER'){
+          this.props.navigation.navigate("Customer")
+        }
+        else if(responseJson.role === 'CRAFTSMEN'){
+          this.props.navigation.navigate("App")
+        }
+        else if(responseJson.role === 'AGENT'){
+          this.props.navigation.navigate("Agent")
+        }
+        console.log("testing purpose", this.state.dataSource);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   goToSignup = () => {
-    this.props.navigation.navigate("Signup")
+    this.props.navigation.navigate("Signup");
   };
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            this.handleSubmit(values);
-          }}
-        >
-          {({
-            handleChange,
-            values,
-            handleSubmit,
-            errors,
-            isValid,
-            isSubmitting,
-            touched,
-            handleBlur,
-          }) => (
-            <View>
-              <FormInput
-                name="email"
-                value={values.email}
-                onChangeText={handleChange("email")}
-                placeholder="Enter email"
-                autoCapitalize="none"
-                iconName="ios-mail"
-                iconColor="#2C384A"
-                onBlur={handleBlur("email")}
-              />
-              <Text style={{ color: "red" }}>
-                {touched.email && errors.email}
-              </Text>
-              <FormInput
-                name="password"
-                value={values.password}
-                onChangeText={handleChange("password")}
-                placeholder="Enter password"
-                secureTextEntry
-                iconName="ios-lock"
-                iconColor="#2C384A"
-                onBlur={handleBlur("password")}
-              />
-              <Text style={{ color: "red" }}>
-                {touched.password && errors.password}
-              </Text>
-              <View style={styles.buttonContainer}>
-                <FormButton
-                  buttonType="outline"
-                  onPress={handleSubmit}
-                  title="LOGIN"
-                  buttonColor="#039BE5"
-                  disabled={!isValid}
-                  loading={isSubmitting}
+      <Container>
+        <Content style={{ paddingVertical: 15 }}>
+          <KeyboardAwareScrollView
+            enableOnAndroid={true}
+            enableAutomaticScroll={Platform.OS === "ios"}
+          >
+            <Form>
+              <Item>
+                <Icon active name="ios-mail" />
+                <Input
+                  placeholder="Email"
+                  onChangeText={(text) => {
+                    this.setState({ email: text });
+                  }}
+                  value={this.state.email}
+                  onBlur={this.validateEmail}
                 />
-              </View>
+              </Item>
+              <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.emailVal}
+              </Text>
+              <Item>
+                <Icon active name="ios-lock" />
+                <Input
+                  placeholder="Enter Password"
+                  secureTextEntry={true}
+                  onChangeText={(text) => {
+                    this.setState({ password: text });
+                  }}
+                  value={this.state.password}
+                  onBlur={this.validatePassword}
+                />
+              </Item>
+              {/* <Text style={{ color: "red", marginLeft: 10 }}>
+                {this.state.passwordVal}
+              </Text> */}
+            </Form>
+            <View style={styles.buttonContainer}>
+              <FormButton
+                buttonType="outline"
+                onPress={this.handleSubmit}
+                title="LOGIN"
+                buttonColor="#039BE5"
+              />
             </View>
-          )}
-          
-        </Formik>
-        <Button
-          title="Don't have an account? Sign Up"
-          onPress={this.goToSignup}
-          titleStyle={{
-            color: "#F57C00",
-          }}
-          type="clear"
-        />
-      </SafeAreaView>
+          </KeyboardAwareScrollView>
+        </Content>
+      </Container>
     );
   }
 }
