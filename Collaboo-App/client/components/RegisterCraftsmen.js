@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, CheckBox } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { Form, Item, Icon } from "native-base";
+import CheckBox from 'react-native-check-box'
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
 import Company from "../components/CompanyAC";
@@ -76,10 +77,11 @@ export default class RegisterCraftsmen extends Component {
       <Form>
         <View>
           <CheckBox
-            value={this.state.selfEmployed}
-            onChange={() =>
+            //value={this.state.selfEmployed}
+            onClick={() =>
               this.setState({ selfEmployed: !this.state.selfEmployed })
             }
+            isChecked = {this.state.selfEmployed}
             style={styles.selfEmployed}
           />
         </View>

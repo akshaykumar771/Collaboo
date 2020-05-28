@@ -10,13 +10,13 @@ import {
   Text,
   TouchableOpacity,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import AppointmentPicker from './AppointmentPicker';
+
 //import SearchList from "./SearchList";
 export default class SearchCraftsmen extends Component {
   constructor(props) {
@@ -28,8 +28,7 @@ export default class SearchCraftsmen extends Component {
       title: "",
       description: "",
       search: "",
-      id:"",
-      categoryValues:[]
+      selectedValue: "",
     };
     this.arrayholder = [];
   }
@@ -37,10 +36,10 @@ export default class SearchCraftsmen extends Component {
     this.makeRemoteRequest();
   }
   makeRemoteRequest = () => {
-    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent"
-      // Platform.OS === "android"
-      //   ? "http://10.0.2.2:3000/craftsmen"
-      //   : "http://192.168.0.213:3000/craftsmen";
+    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
+    // Platform.OS === "android"
+    //   ? "http://10.0.2.2:3000/craftsmen"
+    //   : "http://192.168.0.213:3000/craftsmen";
     fetch(url, { method: "GET" })
       .then((response) => response.json())
       .then((responseJson) => {
@@ -68,11 +67,18 @@ export default class SearchCraftsmen extends Component {
     //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
-      console.log("itemdata", item)
-      const fNameData = item.fname ? item.fname.toUpperCase() : "".toUpperCase();
-      const lNameData = item.lname ? item.lname.toUpperCase() : "".toUpperCase();
+      console.log("itemdata", item);
+      const fNameData = item.fname
+        ? item.fname.toUpperCase()
+        : "".toUpperCase();
+      const lNameData = item.lname
+        ? item.lname.toUpperCase()
+        : "".toUpperCase();
       //const companyName = item.compid.compname
-      const companyData = item && item.compid ? item.compid.compname.toUpperCase() : "".toUpperCase();
+      const companyData =
+        item && item.compid
+          ? item.compid.compname.toUpperCase()
+          : "".toUpperCase();
       const textData = text.toUpperCase();
       const itemData = fNameData + lNameData + companyData;
       return itemData.indexOf(textData) > -1;
@@ -87,18 +93,21 @@ export default class SearchCraftsmen extends Component {
   }
 
   openModal = (item) => {
-    this.setState({ isModalOpen: true, id: item._id, cat: item.catid });
-    
-  }
+    console.log("yyyyy", item.compid.categories)
+    this.setState({ isModalOpen: true, selectedCats: item.compid.categories});
+  };
 
   closeModal() {
     this.setState({ isModalOpen: false });
   }
   showPicker = (category) => {
     this.setState({
-        categoryValues: category && category
-    })
-  }
+      categoryValues: category && category,
+    });
+  };
+  handleChange = (value) => {
+    this.setState({ selectedValue: value, categoryValues: value });
+  };
   ListViewItemSeparator = () => {
     //Item sparator view
     return (
@@ -137,121 +146,143 @@ export default class SearchCraftsmen extends Component {
     }
     return (
       //ListView to show with textinput used as search bar
-      <TouchableWithoutFeedback onPress = {() =>{
-        Keyboard.dismiss()
-      }}>
-      <View style={styles.viewStyle}>
-      <SearchBar
-        lightTheme={true}
-        platform="default"
-        only
-        round
-        platform="default"
-        only
-        searchIcon={{ size: 24 }}
-        onChangeText={(text) => this.SearchFilterFunction(text)}
-        onClear={(text) => this.SearchFilterFunction("")}
-        placeholder="Type Here..."
-        value={this.state.search}
-      />
-        <Modal transparent={true} visible={this.state.isModalOpen}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              backgroundColor: "#00000080",
-            }}
-          >
+      <TouchableWithoutFeedback
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+      >
+        <View style={styles.viewStyle}>
+          <SearchBar
+            lightTheme={true}
+            platform="default"
+            only
+            round
+            platform="default"
+            only
+            searchIcon={{ size: 24 }}
+            onChangeText={(text) => this.SearchFilterFunction(text)}
+            onClear={(text) => this.SearchFilterFunction("")}
+            placeholder="Type Here..."
+            value={this.state.search}
+          />
+          <Modal transparent={true} visible={this.state.isModalOpen}>
             <View
               style={{
-                width: 300,
-                height: 500,
-                backgroundColor: "#fff",
-                paddingVertical: 40,
-                paddingHorizontal: 10,
+                flex: 1,
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#00000080",
               }}
             >
-              <MaterialIcons
-                style={styles.modalCloseIcon}
-                name="close"
-                size={24}
-                onPress={() => this.closeModal()}
-              />
-              <Text style={styles.modalHeader}>Give your Request</Text>
-              <Form>
-              <Item style={{ paddingVertical: 10 }}>
-                <Icon active name="ios-people" />
-                <AppointmentPicker showPicker = {this.showPicker} showCategories = {this.state.cat}/>
-              </Item>
-                <Item stackedLabel>
-                  <Label style={{ paddingVertical: 20 }}>Title</Label>
-                  <Input
-                    placeholder="Write your problem here"
-                    value={this.state.title}
-                    onChangeText={(title) => this.setState({ title })}
-                  />
-                </Item>
-                <Item stackedLabel style={{paddingVertical: 20}}>
-                  <Label style={{ paddingVertical: 10 }}>Description</Label>
-                  <Textarea
-                    value={this.state.description}
-                    rowSpan={7}
-                    bordered
-                    placeholder="Enter your description"
-                    width="100%"
-                    borderColor={"grey"}
-                    onChangeText={(description) =>
-                      this.setState({ description })
-                    }
-                    style={{ padding: 10 }}
-                  />
-                </Item>
-              </Form>
+            {/* {this.state.craftsmenData.map((item)=>{console.log("22", item)})} */}
               <View
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-evenly",
-                  marginVertical: 60,
+                  width: 300,
+                  height: 550,
+                  backgroundColor: "#fff",
+                  paddingVertical: 40,
+                  paddingHorizontal: 10,
                 }}
               >
-                <TouchableOpacity
-                  style={styles.requestButton}
-                  underlayColor="#fff"
+              {/* {this.state.dataSource.filter((item) => {
+                console.log("filterrr",item._id !== this.state.id)
+              })} */}
+                <MaterialIcons
+                  style={styles.modalCloseIcon}
+                  name="close"
+                  size={24}
+                  onPress={() => this.closeModal()}
+                />
+                <Text style={styles.modalHeader}>Give your Request</Text>
+                <Form>
+                  <Item>
+                    <Icon active name="ios-people" />
+                    <Picker
+                      selectedValue={this.state.selectedValue}
+                      onValueChange={(value) => {
+                        this.handleChange (value);
+                      }}
+                    >
+                      {this.state.selectedCats && this.state.selectedCats.length
+                        ? this.state.selectedCats.map((item, myIndex) => {
+                            return (
+                              <Picker.Item
+                                label={item.catname}
+                                value={myIndex}
+                                key={myIndex}
+                              />
+                            );
+                          })
+                        : null}
+                    </Picker>
+                  </Item>
+                  <Item stackedLabel>
+                    <Label style={{ paddingVertical: 20 }}>Title</Label>
+                    <Input
+                      placeholder="Write your problem here"
+                      value={this.state.title}
+                      onChangeText={(title) => this.setState({ title })}
+                    />
+                  </Item>
+                  <Item stackedLabel style={{ paddingVertical: 20 }}>
+                    <Label style={{ paddingVertical: 10 }}>Description</Label>
+                    <Textarea
+                      value={this.state.description}
+                      rowSpan={7}
+                      bordered
+                      placeholder="Enter your description"
+                      width="100%"
+                      borderColor={"grey"}
+                      onChangeText={(description) =>
+                        this.setState({ description })
+                      }
+                      style={{ padding: 10 }}
+                    />
+                  </Item>
+                </Form>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-evenly",
+                    marginVertical: 60,
+                  }}
                 >
-                  <Text style={styles.buttonText}>Request Appointment</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.requestButton}
+                    underlayColor="#fff"
+                  >
+                    <Text style={styles.buttonText}>Request Appointment</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
 
-        <FlatList
-          data={this.state.dataSource}
-          ItemSeparatorComponent={this.ListViewItemSeparator}
-          ListFooterComponent={this.renderFooter}
-          //Item Separator View
-          renderItem={({ item, index }) => (
-            // Single Comes here which will be repeatative for the FlatListItems
-            //<Text style={styles.textStyle}>{item.name}</Text>
-            <ListItem
-              id = {index}
-              title={item.fname + item.lname}
-              subtitle={item.email}
-              containerStyle={{ borderBottomWidth: 0 }}
-              rightIcon={{ name: "chevron-right" }}
-              onPress={() => this.openModal(item)}
-            />
-          )}
-          enableEmptySections={true}
-          style={{ marginTop: 10 }}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
+          <FlatList
+            data={this.state.dataSource}
+            ItemSeparatorComponent={this.ListViewItemSeparator}
+            ListFooterComponent={this.renderFooter}
+            //Item Separator View
+            renderItem={({ item, index }) => (
+              // Single Comes here which will be repeatative for the FlatListItems
+              //<Text style={styles.textStyle}>{item.name}</Text>
+              <ListItem
+                id={index}
+                title={item.fname + item.lname}
+                subtitle={item.email}
+                containerStyle={{ borderBottomWidth: 0 }}
+                rightIcon={{ name: "chevron-right" }}
+                onPress={() => this.openModal(item)}
+              />
+            )}
+            enableEmptySections={true}
+            style={{ marginTop: 10 }}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
       </TouchableWithoutFeedback>
-      
     );
   }
 }
@@ -279,7 +310,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     borderRadius: 10,
     marginTop: -35,
-    position: 'relative',
+    position: "relative",
     borderWidth: 1,
     borderColor: "#fff",
   },
@@ -292,12 +323,12 @@ const styles = StyleSheet.create({
   modalHeader: {
     fontSize: 20,
     textAlign: "center",
-    marginBottom: 30
+    marginBottom: 30,
   },
   modalCloseIcon: {
     position: "absolute",
     right: 5,
     top: 5,
-    color:Colors.primary
+    color: Colors.primary,
   },
 });

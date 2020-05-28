@@ -15,28 +15,7 @@ export default class AppointmentPicker extends Component {
   }
     //First method to be called after components mount
     //fetch the data from the server for the suggestion
-  fetchCategory = () => {
-    fetch("http://81.89.193.99:3001/api/category", {
-        method: "GET",
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      })
-        .then((response) => response.json())
-        .then((responseJson) => {
-          this.setState(
-            {
-              isLoading: false,
-              dataSource: responseJson,
-            },
-            function () {
-              // In this block you can do something with new state.
-            }
-          );
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-  }
+ 
   handleChange = (value) => {
     this.setState({ selectedValue: value, categoryValues: value }, () => {
       this.props.showPicker(this.state.categoryValues);

@@ -24,6 +24,7 @@
     "react-native-audio": "^4.3.0",
     "react-native-autocomplete-input": "^4.1.0",
     "react-native-calendars": "^1.264.0",
+    "react-native-check-box": "^2.1.7",
     "react-native-easy-chat-ui": "^0.4.6",
     "react-native-elements": "^1.2.7",
     "react-native-fontawesome": "^7.0.0",

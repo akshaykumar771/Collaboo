@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, SafeAreaView, View, Text } from "react-native";
-import { Button } from "react-native-elements";
-import FormInput from "../components/FormInput";
+import { StyleSheet, SafeAreaView, View, Text, TouchableHighlight } from "react-native";
 import FormButton from "../components/FormButton";
 import {
   Container,
@@ -12,8 +10,7 @@ import {
   Picker,
   Icon,
 } from "native-base";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
-import axios from "axios";
+
 
 export default class Login extends Component {
   constructor(props) {
@@ -102,10 +99,6 @@ export default class Login extends Component {
     return (
       <Container>
         <Content style={{ paddingVertical: 15 }}>
-          <KeyboardAwareScrollView
-            enableOnAndroid={true}
-            enableAutomaticScroll={Platform.OS === "ios"}
-          >
             <Form>
               <Item>
                 <Icon active name="ios-mail" />
@@ -145,7 +138,9 @@ export default class Login extends Component {
                 buttonColor="#039BE5"
               />
             </View>
-          </KeyboardAwareScrollView>
+            <TouchableHighlight style={styles.linkContainer} onPress={() => this.goToSignup()}>
+            <Text style ={{color: 'orange', fontSize: 16, textAlign:'center'}}>Don't have an account? Sign up here</Text>
+        </TouchableHighlight>
         </Content>
       </Container>
     );
@@ -160,4 +155,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     margin: 25,
   },
+  // linkContainer: {
+  //   paddingLeft: 65,
+  // }
 });
