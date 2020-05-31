@@ -11,7 +11,6 @@ import {
   Icon,
 } from "native-base";
 
-
 export default class Login extends Component {
   constructor(props) {
     super(props);
@@ -24,26 +23,6 @@ export default class Login extends Component {
   }
 
    
-  onLogin = async () => {
-    //const { email, password } = this.state;
-    const emailId = this.state.dataSource.email
-    console.log("email", emailId)
-    //const pwd = this.state.dataSource.password
-    //console.log("onlogin function")
-    try {
-      if (this.state.dataSource.role == 'CUSTOMER') {
-        this.props.navigation.navigate("Customer");
-      }
-      else if (email === emailId  && password === pwd && role === 'CRAFTSMEN') {
-        this.props.navigation.navigate("App");
-      }
-      else if(email === emailId  && password === pwd && role === 'AGENT') {
-        this.props.navigation.navigate("Agent");
-      }
-    } catch (error) {
-      alert(error);
-    }
-  };
   validateEmail = () => {
     let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     let isValid = regEx.test(this.state.email);
@@ -96,7 +75,7 @@ export default class Login extends Component {
   };
 
   render() {
-    return (
+    return ( 
       <Container>
         <Content style={{ paddingVertical: 15 }}>
             <Form>

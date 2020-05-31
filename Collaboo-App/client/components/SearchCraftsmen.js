@@ -12,13 +12,16 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 
+
 //import SearchList from "./SearchList";
 export default class SearchCraftsmen extends Component {
+
   constructor(props) {
     super(props);
     //setting default state
@@ -28,6 +31,8 @@ export default class SearchCraftsmen extends Component {
       title: "",
       description: "",
       search: "",
+      id: "",
+      role: "",
       selectedValue: "",
     };
     this.arrayholder = [];
@@ -93,8 +98,14 @@ export default class SearchCraftsmen extends Component {
   }
 
   openModal = (item) => {
-    console.log("yyyyy", item.compid.categories)
-    this.setState({ isModalOpen: true, selectedCats: item.compid.categories});
+    //console.log("yyyyy", item.compid.categories)
+    this.setState({
+      isModalOpen: true,
+      selectedCats: item.compid.categories,
+      id: item._id,
+      role: item.role,
+    });
+    //console.log("whatttt", this.state)
   };
 
   closeModal() {
@@ -107,6 +118,54 @@ export default class SearchCraftsmen extends Component {
   };
   handleChange = (value) => {
     this.setState({ selectedValue: value, categoryValues: value });
+  };
+  handleRequestAppointment = () => {
+    const categoryId = this.state.selectedCats.map(
+      (item) => {
+        return item._id;
+      },
+      () => {
+        this.setState({ categoryId });
+        console.log("coming", this.state.categoryId);
+      }
+    );
+
+    const url =
+      // Platform.OS === "android"
+      //   ? "http://10.0.2.2:3000/craftsmen"
+      //   : "http://192.168.0.213:3000/craftsmen";
+      `http://81.89.193.99:3001/api/customer/register?=${this.state}/requestappointment`;
+    const data = {
+      title: this.state.title,
+      description: this.state.description,
+      role: this.state.role,
+      id: this.state.id,
+      service: this.state.categories,
+    };
+    console.log("data", JSON.stringify(data));
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(data),
+      headers: { "Content-Type": "application/json" },
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        //console.log("backend response",JSON.stringify(response))
+        if (response) {
+          Alert.alert("Successful", "Appointment Requested", [
+            {
+              text: "Ok",
+              style: "cancel",
+              onPress: () => this.props.navigation.navigate("Customer"),
+            },
+          ]);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
   ListViewItemSeparator = () => {
     //Item sparator view
@@ -136,6 +195,8 @@ export default class SearchCraftsmen extends Component {
     );
   };
   render() {
+    //const value = useContext(UserContext);
+
     if (this.state.isLoading) {
       //Loading View while data is loading
       return (
@@ -145,144 +206,158 @@ export default class SearchCraftsmen extends Component {
       );
     }
     return (
-      //ListView to show with textinput used as search bar
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-        }}
-      >
-        <View style={styles.viewStyle}>
-          <SearchBar
-            lightTheme={true}
-            platform="default"
-            only
-            round
-            platform="default"
-            only
-            searchIcon={{ size: 24 }}
-            onChangeText={(text) => this.SearchFilterFunction(text)}
-            onClear={(text) => this.SearchFilterFunction("")}
-            placeholder="Type Here..."
-            value={this.state.search}
-          />
-          <Modal transparent={true} visible={this.state.isModalOpen}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#00000080",
-              }}
+            <KeyboardAwareScrollView
+              enableOnAndroid={true}
+              enableAutomaticScroll={Platform.OS === "ios"}
             >
-            {/* {this.state.craftsmenData.map((item)=>{console.log("22", item)})} */}
-              <View
-                style={{
-                  width: 300,
-                  height: 550,
-                  backgroundColor: "#fff",
-                  paddingVertical: 40,
-                  paddingHorizontal: 10,
-                }}
-              >
-              {/* {this.state.dataSource.filter((item) => {
-                console.log("filterrr",item._id !== this.state.id)
-              })} */}
-                <MaterialIcons
-                  style={styles.modalCloseIcon}
-                  name="close"
-                  size={24}
-                  onPress={() => this.closeModal()}
+              <View style={styles.viewStyle}>
+                <SearchBar
+                  lightTheme={true}
+                  platform="default"
+                  only
+                  round
+                  platform="default"
+                  only
+                  searchIcon={{ size: 24 }}
+                  onChangeText={(text) => this.SearchFilterFunction(text)}
+                  onClear={(text) => this.SearchFilterFunction("")}
+                  placeholder="Type Here..."
+                  value={this.state.search}
                 />
-                <Text style={styles.modalHeader}>Give your Request</Text>
-                <Form>
-                  <Item>
-                    <Icon active name="ios-people" />
-                    <Picker
-                      selectedValue={this.state.selectedValue}
-                      onValueChange={(value) => {
-                        this.handleChange (value);
+
+                <Modal transparent={true} visible={this.state.isModalOpen}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "column",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#00000080",
+                    }}
+                  >
+                    {/* {this.state.craftsmenData.map((item)=>{console.log("22", item)})} */}
+                    <View
+                      style={{
+                        width: 300,
+                        height: 550,
+                        backgroundColor: "#fff",
+                        paddingVertical: 40,
+                        paddingHorizontal: 10,
                       }}
                     >
-                      {this.state.selectedCats && this.state.selectedCats.length
-                        ? this.state.selectedCats.map((item, myIndex) => {
-                            return (
-                              <Picker.Item
-                                label={item.catname}
-                                value={myIndex}
-                                key={myIndex}
-                              />
-                            );
-                          })
-                        : null}
-                    </Picker>
-                  </Item>
-                  <Item stackedLabel>
-                    <Label style={{ paddingVertical: 20 }}>Title</Label>
-                    <Input
-                      placeholder="Write your problem here"
-                      value={this.state.title}
-                      onChangeText={(title) => this.setState({ title })}
-                    />
-                  </Item>
-                  <Item stackedLabel style={{ paddingVertical: 20 }}>
-                    <Label style={{ paddingVertical: 10 }}>Description</Label>
-                    <Textarea
-                      value={this.state.description}
-                      rowSpan={7}
-                      bordered
-                      placeholder="Enter your description"
-                      width="100%"
-                      borderColor={"grey"}
-                      onChangeText={(description) =>
-                        this.setState({ description })
-                      }
-                      style={{ padding: 10 }}
-                    />
-                  </Item>
-                </Form>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-evenly",
-                    marginVertical: 60,
-                  }}
-                >
-                  <TouchableOpacity
-                    style={styles.requestButton}
-                    underlayColor="#fff"
-                  >
-                    <Text style={styles.buttonText}>Request Appointment</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
-          </Modal>
+                      {/* {this.state.dataSource.filter((item) => {
+                console.log("filterrr",item._id !== this.state.id)
+              })} */}
+                      <MaterialIcons
+                        style={styles.modalCloseIcon}
+                        name="close"
+                        size={24}
+                        onPress={() => this.closeModal()}
+                      />
+                      <Text style={styles.modalHeader}>Give your Request</Text>
+                      <Form>
+                        <Item>
+                          <Icon active name="ios-people" />
+                          <Picker
+                            selectedValue={this.state.selectedValue}
+                            onValueChange={(value) => {
+                              this.handleChange(value);
+                            }}
+                          >
+                            {this.state.selectedCats &&
+                            this.state.selectedCats.length
+                              ? this.state.selectedCats.map((item, myIndex) => {
+                                  return (
+                                    <Picker.Item
+                                      label={item.catname}
+                                      value={myIndex}
+                                      key={myIndex}
+                                    />
+                                  );
+                                })
+                              : null}
+                          </Picker>
+                        </Item>
+                        {/* {console.log("ok",this.state)} */}
+                        <Item stackedLabel>
+                          <Label style={{ paddingVertical: 20 }}>Title</Label>
+                          <Input
+                            placeholder="Write your problem here"
+                            value={this.state.title}
+                            onChangeText={(title) => this.setState({ title })}
+                          />
+                        </Item>
+                        <Item stackedLabel style={{ paddingVertical: 20 }}>
+                          <Label style={{ paddingVertical: 10 }}>
+                            Description
+                          </Label>
+                          <Textarea
+                            value={this.state.description}
+                            rowSpan={7}
+                            bordered
+                            placeholder="Enter your description"
+                            width="100%"
+                            borderColor={"grey"}
+                            onChangeText={(description) =>
+                              this.setState({ description })
+                            }
+                            style={{ padding: 10 }}
+                          />
+                        </Item>
+                      </Form>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          alignItems: "center",
+                          justifyContent: "space-evenly",
+                          marginVertical: 60,
+                        }}
+                      >
+                        <TouchableOpacity
+                          style={styles.requestButton}
+                          underlayColor="#fff"
+                          onPress={this.handleRequestAppointment}
+                        >
+                          <Text style={styles.buttonText}>
+                            Request Appointment
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </View>
+                </Modal>
 
-          <FlatList
-            data={this.state.dataSource}
-            ItemSeparatorComponent={this.ListViewItemSeparator}
-            ListFooterComponent={this.renderFooter}
-            //Item Separator View
-            renderItem={({ item, index }) => (
-              // Single Comes here which will be repeatative for the FlatListItems
-              //<Text style={styles.textStyle}>{item.name}</Text>
-              <ListItem
-                id={index}
-                title={item.fname + item.lname}
-                subtitle={item.email}
-                containerStyle={{ borderBottomWidth: 0 }}
-                rightIcon={{ name: "chevron-right" }}
-                onPress={() => this.openModal(item)}
-              />
-            )}
-            enableEmptySections={true}
-            style={{ marginTop: 10 }}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
-      </TouchableWithoutFeedback>
+                <FlatList
+                  data={this.state.dataSource}
+                  ItemSeparatorComponent={this.ListViewItemSeparator}
+                  ListFooterComponent={this.renderFooter}
+                  //Item Separator View
+                  renderItem={({ item, index }) => (
+                    // Single Comes here which will be repeatative for the FlatListItems
+                    //<Text style={styles.textStyle}>{item.name}</Text>
+                    <ListItem
+                      id={index}
+                      title={item.fname + item.lname}
+                      subtitle={item.email}
+                      containerStyle={{ borderBottomWidth: 0 }}
+                      rightIcon={{ name: "chevron-right" }}
+                      onPress={() => this.openModal(item)}
+                    />
+                  )}
+                  enableEmptySections={true}
+                  style={{ marginTop: 10 }}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </KeyboardAwareScrollView>
+      //ListView to show with textinput used as search bar
+      // <TouchableWithoutFeedback
+      //   onPress={() => {
+      //     Keyboard.dismiss();
+      //   }}
+      // >
+
+      // </TouchableWithoutFeedback>
     );
   }
 }
