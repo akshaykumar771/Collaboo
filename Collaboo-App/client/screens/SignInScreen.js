@@ -10,8 +10,10 @@ import {
   Picker,
   Icon,
 } from "native-base";
+import {userLoginFetch} from '../actions/action';
+import {connect} from 'react-redux';
 
-export default class Login extends Component {
+ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -45,30 +47,31 @@ export default class Login extends Component {
   //   }
   // };
   handleSubmit = () => {
-    fetch(`http://81.89.193.99:3001/api/user/login?email=${this.state.email}&password=${this.state.password}`, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        // this.setState({
-        //   isLoading: false,
-        //   dataSource: responseJson,
-        // });
-        if(responseJson.role === 'CUSTOMER'){
-          this.props.navigation.navigate("Customer")
-        }
-        else if(responseJson.role === 'CRAFTSMEN'){
-          this.props.navigation.navigate("App")
-        }
-        else if(responseJson.role === 'AGENT'){
-          this.props.navigation.navigate("Agent")
-        }
-        console.log("testing purpose", this.state.dataSource);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    this.props.userLoginFetch(this.state)
+    // fetch(`http://81.89.193.99:3001/api/user/login?email=${this.state.email}&password=${this.state.password}`, {
+    //   method: "GET",
+    //   headers: { "Content-Type": "application/json" },
+    // })
+    //   .then((response) => response.json())
+    //   .then((responseJson) => {
+    //     // this.setState({
+    //     //   isLoading: false,
+    //     //   dataSource: responseJson,
+    //     // });
+    //     if(responseJson.role === 'CUSTOMER'){
+    //       this.props.navigation.navigate("Customer")
+    //     }
+    //     else if(responseJson.role === 'CRAFTSMEN'){
+    //       this.props.navigation.navigate("App")
+    //     }
+    //     else if(responseJson.role === 'AGENT'){
+    //       this.props.navigation.navigate("Agent")
+    //     }
+    //     console.log("testing purpose", this.state.dataSource);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
   };
   goToSignup = () => {
     this.props.navigation.navigate("Signup");
@@ -88,6 +91,8 @@ export default class Login extends Component {
                   }}
                   value={this.state.email}
                   onBlur={this.validateEmail}
+                  keyboardType = "email-address"
+                  autoCapitalize="none"
                 />
               </Item>
               <Text style={{ color: "red", marginLeft: 10 }}>
@@ -105,10 +110,11 @@ export default class Login extends Component {
                   onBlur={this.validatePassword}
                 />
               </Item>
-              {/* <Text style={{ color: "red", marginLeft: 10 }}>
+             {/* <Text style={{ color: "red", marginLeft: 10 }}>
                 {this.state.passwordVal}
               </Text> */}
-            </Form>
+          </Form>
+
             <View style={styles.buttonContainer}>
               <FormButton
                 buttonType="outline"
@@ -138,3 +144,8 @@ const styles = StyleSheet.create({
   //   paddingLeft: 65,
   // }
 });
+const mapDispatchToProps = dispatch => ({
+  userLoginFetch: userInfo => dispatch(userLoginFetch(userInfo))
+})
+
+export default connect(null, mapDispatchToProps)(Login);

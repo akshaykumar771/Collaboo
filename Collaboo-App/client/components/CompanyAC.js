@@ -46,7 +46,7 @@ class CompanyAC extends Component {
     }
  
     const {companies}  = this.state;
-    console.log("firstlog" + companies)
+    //console.log("firstlog" + companies)
     //making a case insensitive regular expression to get similar value from the category json
     const regex = new RegExp(`${query.trim()}`, 'i');
     //return the filtered category array according the query from the input

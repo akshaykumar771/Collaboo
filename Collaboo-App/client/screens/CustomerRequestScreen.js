@@ -9,7 +9,9 @@ export default class CustomerRequestScreen extends Component {
     this.state = {
     };
   }
+  toggleDrawer = () =>{
 
+  }
   render() {
     return( 
     <View style = {{flex: 1}}>
@@ -31,6 +33,17 @@ CustomerRequestScreen.navigationOptions = navData => {
           iconName="history"
           onPress={() => {
             navData.navigation.navigate("ViewAppointments");
+          }}
+        />
+      </HeaderButtons>
+    ),
+    headerLeft: (
+      <HeaderButtons HeaderButtonComponent={MaterialCommunityIconsHeader}>
+        <Item
+          title="Menu"
+          iconName="menu"
+          onPress={() => {
+            navData.navigation.toggleDrawer();
           }}
         />
       </HeaderButtons>

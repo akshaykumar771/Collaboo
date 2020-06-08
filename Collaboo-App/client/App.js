@@ -4,8 +4,15 @@ import * as Font from "expo-font";
 import { AppLoading } from "expo";
 //import CollabooNavigator from './navigation/CollabooNavigator';
 import AppNavigation from "./navigation/AppNavigator";
+import { createStore, applyMiddleware } from "redux";
+import { Provider } from "react-redux";
+import reducer from "./reducers/reducer";
+import { setNavigator } from './navigationRef';
+import ReduxThunk from 'redux-thunk';
+import logger from 'redux-logger';
 
 
+const store = createStore(reducer, applyMiddleware(ReduxThunk));
 const fetchFont = () => {
   return Font.loadAsync({
     "raleway-bold": require("./assets/fonts/Raleway-Bold.ttf"),
@@ -30,7 +37,9 @@ export default function App() {
     );
   }
   return (
-      <AppNavigation />
+    <Provider store={store}>
+      <AppNavigation ref = {(navigator) => {setNavigator(navigator)}} />
+    </Provider>
   );
 }
 
