@@ -7,7 +7,8 @@ export const userPostFetch = user =>{
         return fetch("http://81.89.193.99:3001/api/user/register", {
             method: "POST",
             headers: {
-              'content-type': 'application/json'
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
             },
             body: JSON.stringify(user)
           })

@@ -43,68 +43,68 @@ class SignUpScreen extends Component {
     };
   }
 
-  makeRemoteRequest = () => {
-    const url =
-      // Platform.OS === "android"
-      //   ? "http://10.0.2.2:3000/craftsmen"
-      //   : "http://192.168.0.213:3000/craftsmen";
-      "http://81.89.193.99:3001/api/user/register";
-    const data = {
-      firstName: this.state.firstName,
-      lastName: this.state.lastName,
-      emailId: this.state.emailId,
-      role: this.state.role,
-      selfEmployed: this.state.selfEmployed,
-      companyName: this.state.companyName,
-      categories: this.state.categories,
-      street: this.state.street,
-      city: this.state.city,
-      postalCode: this.state.postalCode,
-      phNo: this.state.phNo,
-      pwd: this.state.pwd,
-    };
-    console.log("data", JSON.stringify(data))
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        //console.log("backend response",JSON.stringify(response))
-        if (response.role === "CUSTOMER") {
-          Alert.alert("Successful", "Registered Successfully", [
-            {
-              text: "Ok",
-              style: "cancel",
-              onPress: () => this.props.navigation.navigate("Customer"),
-            },
-          ]);
-        } else if (response.role === "CRAFTSMEN") {
-          Alert.alert("Successful", "Registered Successfully", [
-            {
-              text: "Ok",
-              style: "cancel",
-              onPress: () => this.props.navigation.navigate("App"),
-            },
-          ]);
-        }
-        else if (response.role === "AGENT") {
-          Alert.alert("Successful", "Registered Successfully", [
-            {
-              text: "Ok",
-              style: "cancel",
-              onPress: () => this.props.navigation.navigate("Agent"),
-            },
-          ]);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  // makeRemoteRequest = () => {
+  //   const url =
+  //     // Platform.OS === "android"
+  //     //   ? "http://10.0.2.2:3000/craftsmen"
+  //     //   : "http://192.168.0.213:3000/craftsmen";
+  //     "http://81.89.193.99:3001/api/user/register";
+  //   const data = {
+  //     firstName: this.state.firstName,
+  //     lastName: this.state.lastName,
+  //     emailId: this.state.emailId,
+  //     role: this.state.role,
+  //     selfEmployed: this.state.selfEmployed,
+  //     companyName: this.state.companyName,
+  //     categories: this.state.categories,
+  //     street: this.state.street,
+  //     city: this.state.city,
+  //     postalCode: this.state.postalCode,
+  //     phNo: this.state.phNo,
+  //     pwd: this.state.pwd,
+  //   };
+  //   console.log("data", JSON.stringify(data))
+  //   fetch(url, {
+  //     method: "POST",
+  //     body: JSON.stringify(data),
+  //     headers: { "Content-Type": "application/json" },
+  //   })
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((response) => {
+  //       //console.log("backend response",JSON.stringify(response))
+  //       if (response.role === "CUSTOMER") {
+  //         Alert.alert("Successful", "Registered Successfully", [
+  //           {
+  //             text: "Ok",
+  //             style: "cancel",
+  //             onPress: () => this.props.navigation.navigate("Customer"),
+  //           },
+  //         ]);
+  //       } else if (response.role === "CRAFTSMEN") {
+  //         Alert.alert("Successful", "Registered Successfully", [
+  //           {
+  //             text: "Ok",
+  //             style: "cancel",
+  //             onPress: () => this.props.navigation.navigate("App"),
+  //           },
+  //         ]);
+  //       }
+  //       else if (response.role === "AGENT") {
+  //         Alert.alert("Successful", "Registered Successfully", [
+  //           {
+  //             text: "Ok",
+  //             style: "cancel",
+  //             onPress: () => this.props.navigation.navigate("Agent"),
+  //           },
+  //         ]);
+  //       }
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // };
 
   addAddress = (address) => {
     this.setState(

@@ -54,7 +54,9 @@
     "react-navigation-tabs": "^2.8.6",
     "react-redux": "^7.2.0",
     "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "redux-logger": "^3.0.6",
+    "redux-socket.io": "^1.4.0",
     "redux-thunk": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "yup": "^0.28.3"

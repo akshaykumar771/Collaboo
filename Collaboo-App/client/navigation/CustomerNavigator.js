@@ -11,6 +11,7 @@ import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import SingleChatScreen from "../screens/SingleChatScreen";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -42,6 +43,7 @@ const CustomerRequestNavigator = createStackNavigator(
 const chatNavigator = createStackNavigator(
   {
     Chats: ChatScreen,
+    SingleChat: SingleChatScreen
   },
   {
     navigationOptions: {

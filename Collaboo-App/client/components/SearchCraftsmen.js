@@ -37,15 +37,13 @@ class SearchCraftsmen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    this.timer = setInterval(
-      () => this.makeRemoteRequest(),
-      3000,
-  );
+    this.makeRemoteRequest()
   }
   makeRemoteRequest = () => {
+    console.log("searchCraftsmen", this.props.token)
     const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
     const bearer = "Bearer " + this.props.token;
-    console.log("bearer", bearer);
+    //console.log("bearer", bearer);
     // Platform.OS === "android"
     //   ? "http://10.0.2.2:3000/craftsmen"
     //   : "http://192.168.0.213:3000/craftsmen";
@@ -205,7 +203,7 @@ class SearchCraftsmen extends Component {
   };
   render() {
     //const value = useContext(UserContext);
-    console.log("props", this.props);
+    //console.log("props", this.props);
     if (this.state.isLoading) {
       //Loading View while data is loading
       return (

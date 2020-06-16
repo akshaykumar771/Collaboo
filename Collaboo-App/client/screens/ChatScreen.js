@@ -16,7 +16,9 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
-export default class ChatScreen extends Component {
+import SingleChatScreen from "../screens/SingleChatScreen";
+import { connect } from "react-redux";
+ class ChatScreen extends Component {
   constructor(props) {
     super(props);
     //setting default state
@@ -27,14 +29,18 @@ export default class ChatScreen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    this.makeRemoteRequest();
+    this.timer = setInterval(
+      () => this.makeRemoteRequest(),
+      3000,
+  );
   }
   makeRemoteRequest = () => {
     const url = "http://81.89.193.99:3001/api/search/craftsmen_agent"
+    const bearer = "Bearer " + this.props.token;
       // Platform.OS === "android"
       //   ? "http://10.0.2.2:3000/craftsmen"
       //   : "http://192.168.0.213:3000/craftsmen";
-    fetch(url, { method: "GET" })
+    fetch(url, { method: "GET", headers: { 'Authorization': bearer }})
       .then((response) => response.json())
       .then((responseJson) => {
         this.setState(
@@ -147,6 +153,12 @@ export default class ChatScreen extends Component {
               subtitle={item.phno}
               containerStyle={{ borderBottomWidth: 0 }}
               rightIcon={{ name: "message" }}
+              onPress={() =>
+                this.props.navigation.navigate("SingleChat", {
+                  name: item.fname + item.lname,
+                  userId: item._id
+                })
+              }
             />
           )}
           enableEmptySections={true}
@@ -171,6 +183,10 @@ ChatScreen.navigationOptions = {
       </HeaderButtons>
     )
   };
+
+  const mapStateToProps = (state) => ({
+    token: state.token,
+  });
 
   const styles = StyleSheet.create({
     viewStyle: {
@@ -206,3 +222,5 @@ ChatScreen.navigationOptions = {
       paddingRight: 10,
     },
   });
+
+  export default connect(mapStateToProps, null)(ChatScreen);
