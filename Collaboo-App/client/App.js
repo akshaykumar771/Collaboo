@@ -18,17 +18,12 @@ import { chatReducer } from "./reducers/chatReducer";
 
 // const socket = io("http://81.89.193.99:3001");
 // c
-const store = createStore(
-  combineReducers({ userReducer, chatReducer }),
-  applyMiddleware(ReduxThunk)
-);
+
 
 // let currentValue = store.getState().userReducer.token;
-// const socket = io.connect("http://81.89.193.99:3001/chat", {
-//   query: { token: token },
-// });
+//
 // console.log("CuurentValue", currentValue);
-//const socketIoMiddleware = createSocketIoMiddleware(socket, "chat:");
+//
 const fetchFont = () => {
   return Font.loadAsync({
     "raleway-bold": require("./assets/fonts/Raleway-Bold.ttf"),
@@ -38,16 +33,20 @@ const fetchFont = () => {
     Roboto_medium: require("./assets/fonts/Roboto-Regular.ttf"),
   });
 };
-
+const store = createStore(
+  combineReducers({ userReducer, chatReducer }),
+  applyMiddleware(ReduxThunk, socketIoMiddleware)
+);
 export default function App() {
-  useEffect(() => {
-    const tryLogin = async () => {
+  useEffect(async() => {
       const userData = await AsyncStorage.getItem("token");
       const transformedData = JSON.parse(userData);
       const { token, userId, userRole } = transformedData;
       console.log("App", transformedData);
-    };
-    tryLogin();
+      const socket = io.connect("http://81.89.193.99:3001/chat", {
+        query: { token: token },
+      });
+      const socketIoMiddleware = createSocketIoMiddleware(socket, "chat:");
   }, []);
   const [fontLoaded, setFontLoaded] = useState(false);
   if (!fontLoaded) {
