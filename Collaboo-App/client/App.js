@@ -1,43 +1,36 @@
 console.ignoredYellowBox = ["Remote debugger"];
 import { YellowBox } from "react-native";
 YellowBox.ignoreWarnings([
-  "Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?"
+  "Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?",
 ]);
-import React, { useState } from "react";
-import { StyleSheet, Text, View, AsyncStorage } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, AsyncStorage } from "react-native";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import AppNavigation from "./navigation/AppNavigator";
-//import { createStore, applyMiddleware, combineReducers } from "redux";
+import { createStore, applyMiddleware, combineReducers } from "redux";
 import { Provider } from "react-redux";
-import { setNavigator } from './navigationRef';
-//import ReduxThunk from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { setNavigator } from "./navigationRef";
+import ReduxThunk from "redux-thunk";
 import createSocketIoMiddleware from "redux-socket.io";
-import userReducer from "./reducers/userReducer";
-import chatReducer from "./reducers/chatReducer";
-import reducer from "./reducers/userReducer";
-//const socket = io("http://81.89.193.99:3001");
+import { userReducer } from "./reducers/userReducer";
+import { chatReducer } from "./reducers/chatReducer";
 
-const rootReducer = combineReducers({
-  auth: userReducer,
-  chat: chatReducer
-});
-//const store = createStore(rootReducer, applyMiddleware(ReduxThunk, createSocketIoMiddleware));
+// const socket = io("http://81.89.193.99:3001");
+// c
+const store = createStore(
+  combineReducers({ userReducer, chatReducer }),
+  applyMiddleware(ReduxThunk)
+);
 
-const store = createStore(reducer, applyMiddleware(ReduxThunk));
-let token = null;
-store.subscribe(() => {
-  token = store.getState().token;
-  console.log("new state", token);
-});
-//const uri = encodeURI(`http://81.89.193.99:3001/chat?token=${userToken}`)
-//  const socket = io.connect('http://81.89.193.99:3001/chat', {
-//   query: {token: token}
-//  })
+// let currentValue = store.getState().userReducer.token;
+// const socket = io.connect("http://81.89.193.99:3001/chat", {
+//   query: { token: token },
+// });
+// console.log("CuurentValue", currentValue);
 //const socketIoMiddleware = createSocketIoMiddleware(socket, "chat:");
 const fetchFont = () => {
-  return Font.loadAsync({ 
+  return Font.loadAsync({
     "raleway-bold": require("./assets/fonts/Raleway-Bold.ttf"),
     ralewayBold: require("./assets/fonts/Raleway-Bold.ttf"),
     "roboto-regular": require("./assets/fonts/Roboto-Regular.ttf"),
@@ -47,6 +40,15 @@ const fetchFont = () => {
 };
 
 export default function App() {
+  useEffect(() => {
+    const tryLogin = async () => {
+      const userData = await AsyncStorage.getItem("token");
+      const transformedData = JSON.parse(userData);
+      const { token, userId, userRole } = transformedData;
+      console.log("App", transformedData);
+    };
+    tryLogin();
+  }, []);
   const [fontLoaded, setFontLoaded] = useState(false);
   if (!fontLoaded) {
     return (
@@ -61,15 +63,15 @@ export default function App() {
   }
   return (
     <Provider store={store}>
-      <AppNavigation ref = {(navigator) => {setNavigator(navigator)}} {...store}/>
+      <AppNavigation
+        ref={(navigator) => {
+          setNavigator(navigator);
+        }}
+      />
     </Provider>
   );
 }
-/**
- *  <Provider store={store}>
-      <App />
-    </Provider>
- */
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -78,3 +80,90 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 });
+
+// console.ignoredYellowBox = ["Remote debugger"];
+// import { YellowBox } from "react-native";
+// YellowBox.ignoreWarnings([
+//   "Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?",
+// ]);
+// import React, { Component } from "react";
+// import { StyleSheet, Text, View, AsyncStorage } from "react-native";
+// import * as Font from "expo-font";
+// import { AppLoading } from "expo";
+// import AppNavigation from "./navigation/AppNavigator";
+// import { setNavigator } from "./navigationRef";
+// import {userReducer} from "./reducers/userReducer";
+// import {chatReducer} from "./reducers/chatReducer";
+// //import  {store}  from "./Store";
+// import { Provider, connect } from "react-redux";
+// import { createStore, applyMiddleware, combineReducers } from "redux";
+// import ReduxThunk from 'redux-thunk';
+// import createSocketIoMiddleware from "redux-socket.io";
+// import io from "socket.io-client";
+
+// // const store = createStore(combineReducers({userReducer, chatReducer}), applyMiddleware(ReduxThunk));
+// // store.subscribe(() => {
+// //       token = store.getState().userReducer.token;
+// //       console.log("new state", token);
+// //     });
+
+// class App extends Component {
+//   constructor(props) {
+//     super(props);
+//    const token = store.getState().userReducer.token;
+//     console.log("Testing: ", token)
+//    const socket = io.connect('http://81.89.193.99:3001/chat', {
+//   query: {token: token} })
+//     this.state = {
+//       fontLoaded: false
+//     };
+//   }
+
+//   render() {
+//     const fetchFont = () => {
+//       return Font.loadAsync({
+//         "raleway-bold": require("./assets/fonts/Raleway-Bold.ttf"),
+//         ralewayBold: require("./assets/fonts/Raleway-Bold.ttf"),
+//         "roboto-regular": require("./assets/fonts/Roboto-Regular.ttf"),
+//         robotoRegular: require("./assets/fonts/Roboto-Regular.ttf"),
+//         Roboto_medium: require("./assets/fonts/Roboto-Regular.ttf"),
+//       });
+//     };
+
+//     // const [fontLoaded, setFontLoaded] = useState(false);
+//     if (!this.state.fontLoaded) {
+//       return (
+//         <AppLoading
+//           startAsync={fetchFont}
+//           onFinish={() => this.setState({ fontLoaded: true })}
+//           onError={(err) => {
+//             console.log(err);
+//           }}
+//         />
+//       );
+//     }
+//     return (
+//       <Provider store={store}>
+//         <AppNavigation
+//           ref={(navigator) => {
+//             setNavigator(navigator);
+//           }}
+//         />
+//       </Provider>
+//     );
+//   }
+// }
+// const mapStateToProps = (state) => ({
+//   token: state.userReducer.token,
+// });
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//     alignItems: "center",
+//     justifyContent: "center",
+//   },
+// });
+
+// export default App;

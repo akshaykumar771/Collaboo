@@ -29,7 +29,7 @@ export default function SingleChatScreen({navigation}) {
   return (
     <View style={{ flex: 1 }}>
       <GiftedChat
-        messages={recvMessages}
+        messages={messages}
         onSend={messages => dispatch({
           type: "chat:chat/message/post",
           data: {text: messages[0].text, to: navigation.getParam("userId")}

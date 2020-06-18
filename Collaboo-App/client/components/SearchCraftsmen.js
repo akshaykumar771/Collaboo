@@ -37,12 +37,16 @@ class SearchCraftsmen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    this.makeRemoteRequest()
+    setTimeout(() => {this.makeRemoteRequest()}, 3000)
   }
+  // componentWillReceiveProps(nextProps) {
+  //  if(this.props.token != nextProps.token)
+  //   this.makeRemoteRequest();
+  // }
   makeRemoteRequest = () => {
     console.log("searchCraftsmen", this.props.token)
     const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
-    const bearer = "Bearer " + this.props.token;
+    const bearer = "Bearer " +this.props.token;
     //console.log("bearer", bearer);
     // Platform.OS === "android"
     //   ? "http://10.0.2.2:3000/craftsmen"
@@ -364,7 +368,7 @@ class SearchCraftsmen extends Component {
   }
 }
 const mapStateToProps = (state) => ({
-  token: state.token,
+  token: state.userReducer.token,
 });
 
 const styles = StyleSheet.create({

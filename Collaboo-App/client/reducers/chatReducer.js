@@ -2,7 +2,7 @@ const initState = {
   selfUser: null,
 };
 
-const chatReducer = (state = initState, action) => {
+export const chatReducer = (state = initState, action) => {
   switch (action.type) {
     case "self_user":
       // if(action.payload.token){

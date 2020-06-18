@@ -75,7 +75,11 @@ export const userLoginFetch = user => {
 }
 export const AUTHENTICATE = 'AUTHENTICATE';
 export const authenticate = (token, userId, userRole) => {
-  return {type: AUTHENTICATE, token : token, userId: userId, userRole: userRole}
+  
+  return dispatch => {
+    console.log("authenticate disoatch ", dispatch);
+    dispatch({type: AUTHENTICATE, token : token, userId: userId, userRole: userRole})
+  }
 }
 export const LOGOUT = 'LOGOUT';
 export const logout = () =>{
