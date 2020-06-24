@@ -136,6 +136,7 @@ const CollabooNavigator =
         {
           tabBarOptions: {
             activeTintColor: Colors.primary,
+            keyboardHidesTabBar: !(Platform.OS === 'ios')
           },
         }
       );

@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, AsyncStorage } from "react-native";
+import {
+  View,
+  Text,
+  AsyncStorage,
+  KeyboardAvoidingView,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
@@ -106,9 +113,8 @@ class ChatConversationScreen extends React.Component {
     console.log("from userId :", this.state.userId);
     const userId = { _id: this.state.userId || -1 };
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <GiftedChat
-          bottomOffset={54}
           messages={this.state.messages}
           onSend={this.onSend}
           renderBubble={(props) => {
@@ -136,11 +142,10 @@ class ChatConversationScreen extends React.Component {
           }}
           user={userId}
           inverted={false}
-          sent={true}
         />
-        {Platform.OS === "android" && (
-          <KeyboardAvoidingView behavior="padding" />
-        )}
+        {
+      Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
+   }
       </View>
     );
   }
@@ -160,5 +165,12 @@ const mapStateToProps = (state) => ({
   socket: state.userReducer.socket,
   userId: state.userReducer.userId,
 });
-
+const styles = StyleSheet.create({
+  container: {
+    flex: 2,
+  },
+  ScrollView: {
+    flexGrow: 1,
+  },
+});
 export default connect(mapStateToProps, null)(ChatConversationScreen);
