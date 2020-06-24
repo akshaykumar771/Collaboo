@@ -3,7 +3,8 @@ const initState = {
     currentUser: {},
     token: null,
     userId: null,
-    userRole: null
+    userRole: null,
+    socket: null
 }
 
 export const userReducer = (state = initState, action) => {
@@ -20,6 +21,9 @@ export const userReducer = (state = initState, action) => {
                 userId: action.userId,
                 userRole: action.userRole
               }
+
+          case 'SOCKET' :
+            return {...state, socket: action.socket}
           
           case 'LOGOUT':
               return initState;

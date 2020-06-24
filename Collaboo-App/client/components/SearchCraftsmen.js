@@ -46,7 +46,7 @@ class SearchCraftsmen extends Component {
   makeRemoteRequest = () => {
     console.log("searchCraftsmen", this.props.token)
     const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
-    const bearer = "Bearer " +this.props.token;
+    const bearer = "Bearer " + this.props.token;
     //console.log("bearer", bearer);
     // Platform.OS === "android"
     //   ? "http://10.0.2.2:3000/craftsmen"

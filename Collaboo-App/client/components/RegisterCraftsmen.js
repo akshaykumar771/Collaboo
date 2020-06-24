@@ -1,11 +1,12 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { Form, Item, Icon } from "native-base";
-import CheckBox from 'react-native-check-box'
+//import CheckBox from 'react-native-check-box'
+import { CheckBox } from "react-native-elements";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
 import Company from "../components/CompanyAC";
-import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 export default class RegisterCraftsmen extends Component {
   constructor(props) {
     super(props);
@@ -72,17 +73,18 @@ export default class RegisterCraftsmen extends Component {
         )
     );
   };
+  onChangeCheck = () => {
+    console.log("check box")
+    this.setState({ selfEmployed: !this.state.selfEmployed });
+  }
   render() {
     return (
       <Form>
         <View>
           <CheckBox
-            //value={this.state.selfEmployed}
-            onClick={() =>
-              this.setState({ selfEmployed: !this.state.selfEmployed })
-            }
-            isChecked = {this.state.selfEmployed}
             style={styles.selfEmployed}
+            checked={this.state.selfEmployed}
+            onPress={() => this.onChangeCheck()}
           />
         </View>
         <View>
@@ -90,7 +92,12 @@ export default class RegisterCraftsmen extends Component {
         </View>
         {this.state.selfEmployed === true ? (
           <View style={styles.category}>
-          <MaterialCommunityIcons style = {styles.categoryIcon} name="briefcase-plus" size={24} color="black" />
+            <MaterialCommunityIcons
+              style={styles.categoryIcon}
+              name="briefcase-plus"
+              size={24}
+              color="black"
+            />
             <Categories showCategories={this.showCategories} />
           </View>
         ) : (
@@ -114,19 +121,17 @@ const styles = StyleSheet.create({
   },
   checkText: {
     position: "relative",
-    marginTop: -25,
+    marginTop: -38,
     paddingHorizontal: 50,
   },
   category: {
     padding: 5,
     borderBottomColor: "black",
-    borderBottomWidth: 0.25,
-    marginTop: 10
+    borderBottomWidth: 0.25
   },
   categoryIcon: {
     position: "absolute",
     top: 15,
-    paddingLeft: 13.5
-  }
-
+    paddingLeft: 13.5,
+  },
 });

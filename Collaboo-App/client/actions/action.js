@@ -20,15 +20,15 @@ export const userPostFetch = user =>{
                 //dispatch(loginUser(data))
                 dispatch({type: 'LOGIN_USER', payload: data})
                 saveDataToStorage(data.token, data.user._id, data.user.role)
-                if(data.user.role === 'CUSTOMER'){
-                  navigate('Customer')
+                if(data.user){
+                  navigate('StartUp')
                 }
-                else if(data.user.role === 'CRAFTSMEN'){
-                  navigate('App')
-                }
-                else if(data.user.role === 'AGENT'){
-                  navigate('Agent')
-                }
+                // else if(data.user.role === 'CRAFTSMEN'){
+                //   navigate('App')
+                // }
+                // else if(data.user.role === 'AGENT'){
+                //   navigate('Agent')
+                // }
             })
       
     }
@@ -60,25 +60,25 @@ export const userLoginFetch = user => {
           //localStorage.setItem("token", data.token)
           dispatch({type: 'LOGIN_USER', payload: data});
           saveDataToStorage(data.token, data.user._id, data.user.role)
-          if(data.user.role === 'CUSTOMER'){
-            navigate('Customer')
-          }
-          else if(data.user.role === 'CRAFTSMEN'){
-            navigate('App')
-          }
-          else if(data.user.role === 'AGENT'){
-            navigate('Agent')
+          if(data.user){
+            navigate('StartUp')
           }
         }
       })
   }
 }
 export const AUTHENTICATE = 'AUTHENTICATE';
-export const authenticate = (token, userId, userRole) => {
+export const authenticate = (token, userId, userRole, socket) => {
   
   return dispatch => {
     console.log("authenticate disoatch ", dispatch);
-    dispatch({type: AUTHENTICATE, token : token, userId: userId, userRole: userRole})
+    dispatch({type: AUTHENTICATE, token : token, userId: userId, userRole: userRole, socket: socket})
+  }
+}
+export const SOCKET = 'SOCKET';
+export const socket = (socket) => {
+  return dispatch => {
+    dispatch({type: SOCKET, socket: socket})
   }
 }
 export const LOGOUT = 'LOGOUT';

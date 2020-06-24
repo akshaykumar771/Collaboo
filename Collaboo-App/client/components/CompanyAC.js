@@ -19,17 +19,22 @@ class CompanyAC extends Component {
       query: ''
     };
   }
-  componentDidMount() {
+   componentDidMount() {
+  this.companyAutoComplete();
     //First method to be called after components mount
     //fetch the data from the server for the suggestion
+  };
+
+  companyAutoComplete = () => {
     const url = 'http://81.89.193.99:3001/api/company';
-    fetch(url,{
+   fetch(url,{
       method:"GET",
     })
       .then(res => {return res.json()})
       .then((res) => {
         //const { results: categories } = json;
         if(res){
+          //console.log("res", res)
           const result = res;
 
         this.setState({ companies: result });
@@ -37,7 +42,7 @@ class CompanyAC extends Component {
         }
         //setting the data in the categories state
       });
-  };
+  }
   findCategory(query) {
     //method called everytime when we change the value of the input
     if (query === '') {
@@ -45,12 +50,12 @@ class CompanyAC extends Component {
       return [];
     }
  
-    const {companies}  = this.state;
-    //console.log("firstlog" + companies)
+    const companies  = this.state.companies;
+    //console.log("firstlog" + JSON.stringify(companies))
     //making a case insensitive regular expression to get similar value from the category json
     const regex = new RegExp(`${query.trim()}`, 'i');
     //return the filtered category array according the query from the input
-    //console.log("what am i getting here" + companies.compname)
+    // console.log("what am i getting here" + companies.compname)
     return companies && companies.filter(companies => (companies.compname).search(regex) >= 0);
   }
   //
@@ -94,6 +99,7 @@ class CompanyAC extends Component {
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',

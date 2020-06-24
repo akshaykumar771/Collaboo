@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
@@ -18,52 +19,47 @@ import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import SingleChatScreen from "../screens/SingleChatScreen";
 import { connect } from "react-redux";
-import createSocketIoMiddleware from "redux-socket.io";
-import io from "socket.io-client";
+import { NavigationEvents } from 'react-navigation';
 class ChatScreen extends Component {
   constructor(props) {
+    //console.log("testing constructor props: ",props)
     super(props);
     //setting default state
     this.state = {
       isLoading: true,
       search: "",
+      socket: props.socket,
+      users: [],
+      arrayHolder: [],
     };
-    this.arrayholder = [];
   }
-  componentDidMount() {
-    setTimeout(() => this.makeRemoteRequest(), 3000);
-  }
-  makeRemoteRequest = () => {
-    // const socket = io.connect("http://81.89.193.99:3001/chat", {
-    //  query: { token: this.props.token },
-    //  });
-    // console.log("Shocke", socket);
-    // console.log("Chat Screen:", this.props.token);
-    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
-    const bearer = "Bearer " + this.props.token;
-    // Platform.OS === "android"
-    //   ? "http://10.0.2.2:3000/craftsmen"
-    //   : "http://192.168.0.213:3000/craftsmen";
-    fetch(url, { method: "GET", headers: { Authorization: bearer } })
-      .then((response) => response.json())
-      .then((responseJson) => {
-        this.setState(
-          {
-            isLoading: false,
-            dataSource: responseJson,
-          },
-          function () {
-            this.arrayholder = responseJson;
-          }
-        );
-      })
-      .catch((error) => {
-        console.error(error);
+  // componentDidMount() {
+  //    //setTimeout(() => this.getAllChats(), 3000);
+  //   this.getAllChats();
+  // }
+ 
+  getAllChats() {
+    console.log("gettttt");
+    // const userId = this.props.navigation.getParam("userId");
+    // const messages = this.state.messages
+    const action = { type: "chat:allchats/get", data: {} };
+    this.state.socket.emit("action", action);
+    this.state.socket.on("action", (action) => {
+      //console.log("from postUserChats: ", action)
+      const allChats = action.type === "chats" ? action.data : "";
+      console.log("Get all chats: ", allChats);
+      this.setState({
+        isLoading: false,
+        users: allChats.data,
+        arrayHolder: allChats.data,
       });
+      console.log("from chat screen :", this.state.users)
+    });
+    this.state.socket.on("error", (error) => {
+      console.log("from get all chats", error);
+    });
   }
-  // makeRemoteRequest = () => {
-  //   
-  // };
+
   search = (text) => {
     console.log(text);
   };
@@ -72,22 +68,15 @@ class ChatScreen extends Component {
   };
   SearchFilterFunction(text) {
     //passing the inserted text in textinput
-    const newData = this.arrayholder.filter(function (item) {
+    //console.log("users of get all chats", this.state.arrayHolder);
+    const newData = this.arrayHolder.filter(function (item) {
       //applying filter for the inserted text in search bar
-      console.log("itemdata", item);
-      const fNameData = item.fname
-        ? item.fname.toUpperCase()
+      console.log("itemdata", item.toUser);
+      const fNameData = item.toUser.fullname
+        ? item.toUser.fullname.toUpperCase()
         : "".toUpperCase();
-      const lNameData = item.lname
-        ? item.lname.toUpperCase()
-        : "".toUpperCase();
-      //const companyName = item.compid.compname
-      const companyData =
-        item && item.compid
-          ? item.compid.compname.toUpperCase()
-          : "".toUpperCase();
       const textData = text.toUpperCase();
-      const itemData = fNameData + lNameData + companyData;
+      const itemData = fNameData;
       return itemData.indexOf(textData) > -1;
     });
 
@@ -97,6 +86,7 @@ class ChatScreen extends Component {
       dataSource: newData,
       search: text,
     });
+    //console.log("data", this.state.dataSource);
   }
 
   ListViewItemSeparator = () => {
@@ -127,16 +117,11 @@ class ChatScreen extends Component {
     );
   };
   render() {
-    if (this.state.isLoading) {
-      //Loading View while data is loading
-      return (
-        <View style={{ flex: 1, paddingTop: 20 }}>
-          <ActivityIndicator />
-        </View>
-      );
-    }
     return (
-      //ListView to show with textinput used as search bar
+      <View style={{flex:1}}>
+       <NavigationEvents
+                onDidFocus={() => this.getAllChats()}
+                />
       <TouchableWithoutFeedback
         onPress={() => {
           Keyboard.dismiss();
@@ -157,7 +142,7 @@ class ChatScreen extends Component {
             value={this.state.search}
           />
           <FlatList
-            data={this.state.dataSource}
+            data={this.state.users}
             ItemSeparatorComponent={this.ListViewItemSeparator}
             ListFooterComponent={this.renderFooter}
             //Item Separator View
@@ -165,14 +150,14 @@ class ChatScreen extends Component {
               // Single Comes here which will be repeatative for the FlatListItems
               //<Text style={styles.textStyle}>{item.name}</Text>
               <ListItem
-                title={item.fname + item.lname}
-                subtitle={item.phno}
+                title={item.toUser.fullname}
+                subtitle={item.toUser.phno}
                 containerStyle={{ borderBottomWidth: 0 }}
                 rightIcon={{ name: "message" }}
                 onPress={() =>
                   this.props.navigation.navigate("SingleChat", {
-                    name: item.fname + item.lname,
-                    userId: item._id,
+                    name: item.toUser.fullname,
+                    userId: item.toUser._id,
                   })
                 }
               />
@@ -183,6 +168,7 @@ class ChatScreen extends Component {
           />
         </View>
       </TouchableWithoutFeedback>
+      </View>
     );
   }
 }
@@ -202,7 +188,8 @@ ChatScreen.navigationOptions = {
 };
 
 const mapStateToProps = (state) => ({
-  token: state.userReducer.token,
+  //token: state.userReducer.token,
+  socket: state.userReducer.socket,
 });
 
 const styles = StyleSheet.create({

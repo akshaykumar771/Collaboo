@@ -1,26 +1,23 @@
 import React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import SignUpScreen from "../screens/SignUpScreen-old";
-import SignInScreen from "../screens/SignInScreen";
 import ChatScreen from "../screens/ChatScreen";
 import ToDoScreen from "../screens/ToDoScreen";
 import WorkLogScreen from "../screens/WorkLogScreen";
-import CustomerDetailScreen from "../screens/CustomerDetailScreen";
 import CalendarScreen from "../screens/CalendarScreen";
 import AddToDoScreen from "../screens/AddToDoScreen";
-import AddCustomerDetailScreen from "../screens/AddCustomerDetailScreen";
-import CustomerRequestScreen from "../screens/CustomerRequestScreen";
+import UserProfileScreen from "../screens/UserProfileScreen";
 import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import CraftsmenAppointmentScreen from "../screens/CraftsmenAppointmentScreen";
+import ChatConversationScreen from "../screens/ChatConversationScreen";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
       Platform.OS === "android" ? Colors.primary : Colors.primary,
-      marginTop: Expo.Constants.statusBarHeight
+    marginTop: Expo.Constants.statusBarHeight,
   },
   headerTitleStyle: {
     fontFamily: "raleway-bold",
@@ -30,9 +27,9 @@ const defaultNavOptions = {
   },
   headerTintColor: Platform.OS === "android" ? "white" : "white",
 };
-const CustomerRequestNavigator = createStackNavigator(
+const AppointmentsNavigator = createStackNavigator(
   {
-    Requests: CustomerRequestScreen,
+    Appointments: CraftsmenAppointmentScreen,
   },
   {
     navigationOptions: {
@@ -46,6 +43,7 @@ const CustomerRequestNavigator = createStackNavigator(
 const chatNavigator = createStackNavigator(
   {
     Chats: ChatScreen,
+    SingleChat: ChatConversationScreen,
   },
   {
     navigationOptions: {
@@ -93,15 +91,31 @@ const WorkLogNavigator = createStackNavigator(
   }
 );
 
+const UserProfileNavigator = createStackNavigator(
+  {
+    Profile: UserProfileScreen,
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: (tabInfo) => {
+        return (
+          <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+        );
+      },
+    },
+    defaultNavigationOptions: defaultNavOptions,
+  }
+);
 
 const CollabooNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
-          Requests: CustomerRequestNavigator,
+          Appointments: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
+          Profile: UserProfileNavigator,
         },
         {
           activeTintColor: "white",
@@ -113,10 +127,11 @@ const CollabooNavigator =
       )
     : createBottomTabNavigator(
         {
-          Requests: CustomerRequestNavigator,
+          Appointments: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
+          Profile: UserProfileNavigator,
         },
         {
           tabBarOptions: {
@@ -129,7 +144,7 @@ const CollabooNavigator =
 //   {
 //   SignIn: SignInScreen,
 //   SignUp: SignUpScreen
-  
+
 // },
 // {
 // defaultNavigationOptions: defaultNavOptions,
@@ -142,4 +157,4 @@ const CollabooNavigator =
 // });
 
 //export default createAppContainer(MainNavigator);
-export default CollabooNavigator
+export default CollabooNavigator;
