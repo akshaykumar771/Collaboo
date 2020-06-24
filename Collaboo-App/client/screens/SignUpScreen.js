@@ -14,11 +14,10 @@ import Colors from "../constants/Colors";
 import RegisterCraftsmen from "../components/RegisterCraftsmen";
 import RegisterAddress from "../components/RegisterAddress";
 import RegisterAgent from "../components/RegisterAgent";
-import {userPostFetch} from '../actions/action';
-import {connect} from 'react-redux';
+import { userPostFetch } from "../actions/action";
+import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 class SignUpScreen extends Component {
-  
   constructor(props) {
     super(props);
     this.state = {
@@ -43,69 +42,6 @@ class SignUpScreen extends Component {
     };
   }
 
-  // makeRemoteRequest = () => {
-  //   const url =
-  //     // Platform.OS === "android"
-  //     //   ? "http://10.0.2.2:3000/craftsmen"
-  //     //   : "http://192.168.0.213:3000/craftsmen";
-  //     "http://81.89.193.99:3001/api/user/register";
-  //   const data = {
-  //     firstName: this.state.firstName,
-  //     lastName: this.state.lastName,
-  //     emailId: this.state.emailId,
-  //     role: this.state.role,
-  //     selfEmployed: this.state.selfEmployed,
-  //     companyName: this.state.companyName,
-  //     categories: this.state.categories,
-  //     street: this.state.street,
-  //     city: this.state.city,
-  //     postalCode: this.state.postalCode,
-  //     phNo: this.state.phNo,
-  //     pwd: this.state.pwd,
-  //   };
-  //   console.log("data", JSON.stringify(data))
-  //   fetch(url, {
-  //     method: "POST",
-  //     body: JSON.stringify(data),
-  //     headers: { "Content-Type": "application/json" },
-  //   })
-  //     .then((response) => {
-  //       return response.json();
-  //     })
-  //     .then((response) => {
-  //       //console.log("backend response",JSON.stringify(response))
-  //       if (response.role === "CUSTOMER") {
-  //         Alert.alert("Successful", "Registered Successfully", [
-  //           {
-  //             text: "Ok",
-  //             style: "cancel",
-  //             onPress: () => this.props.navigation.navigate("Customer"),
-  //           },
-  //         ]);
-  //       } else if (response.role === "CRAFTSMEN") {
-  //         Alert.alert("Successful", "Registered Successfully", [
-  //           {
-  //             text: "Ok",
-  //             style: "cancel",
-  //             onPress: () => this.props.navigation.navigate("App"),
-  //           },
-  //         ]);
-  //       }
-  //       else if (response.role === "AGENT") {
-  //         Alert.alert("Successful", "Registered Successfully", [
-  //           {
-  //             text: "Ok",
-  //             style: "cancel",
-  //             onPress: () => this.props.navigation.navigate("Agent"),
-  //           },
-  //         ]);
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // };
-
   addAddress = (address) => {
     this.setState(
       {
@@ -118,21 +54,20 @@ class SignUpScreen extends Component {
   };
 
   showCompany = (selfEmployed, street, pcode, city, company, categories) => {
-    if(selfEmployed === true) {
+    if (selfEmployed === true) {
       this.setState({
         selfEmployed: selfEmployed && selfEmployed,
         categories: categories && categories,
         street: street && street,
         postalCode: pcode && pcode,
-        city: city && city
-      })
+        city: city && city,
+      });
+    } else {
+      this.setState({
+        selfEmployed: selfEmployed && selfEmployed,
+        companyName: company && company,
+      });
     }
-    else {
-    this.setState({
-      selfEmployed: selfEmployed && selfEmployed,
-      companyName: company && company,
-    });
-  }
   };
 
   showAgentDetails = (street, pcode, city, company, categories) => {
@@ -141,15 +76,9 @@ class SignUpScreen extends Component {
       city: city && city,
       companyName: company && company,
       postalCode: pcode && pcode,
-      street: street && street
+      street: street && street,
     });
   };
-
-  // showCategory = (category) => {
-  //   this.setState ({
-  //     category: category.category
-  //   })
-  // }
 
   validateName = () => {
     let regEx = /^[a-zA-z]+$/;
@@ -204,7 +133,7 @@ class SignUpScreen extends Component {
   handleSubmit = () => {
     console.log("state" + JSON.stringify(this.state));
     //this.makeRemoteRequest();
-    this.props.userPostFetch(this.state)
+    this.props.userPostFetch(this.state);
   };
 
   render() {
@@ -369,8 +298,8 @@ const styles = StyleSheet.create({
     margin: 25,
   },
 });
-const mapDispatchToProps = dispatch => ({
-  userPostFetch: userInfo => dispatch(userPostFetch(userInfo))
-})
+const mapDispatchToProps = (dispatch) => ({
+  userPostFetch: (userInfo) => dispatch(userPostFetch(userInfo)),
+});
 
 export default connect(null, mapDispatchToProps)(SignUpScreen);

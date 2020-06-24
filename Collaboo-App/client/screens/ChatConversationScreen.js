@@ -3,11 +3,6 @@ import { View, Text, AsyncStorage } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
-import KeyboardSpacer from "react-native-keyboard-spacer";
-// const USER_ID = '@userId';
-// ChatConversationScreen.navigationOptions = props => ({
-//     title: screenProps.navigation.getParam("name")
-//   });
 class ChatConversationScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: (navigation.state.params || {}).name || "Chat!",
@@ -72,24 +67,6 @@ class ChatConversationScreen extends React.Component {
     const data = { toUserId: userId };
     const action = { type: "chat:chat/messages/get", data: data };
     this.state.socket.emit("action", action);
-    // this.state.socket.on("action", (action) => {
-    //   //console.log("from postUserChats: ", action)
-    //   const previousMessages = action.type === "messages" ? action.data : "";
-    //   console.log("previousmessages :", previousMessages)
-    //   const messageText = previousMessages.data.messages.map(chatMessage => {
-    //     let gcm = {
-    //       _id: chatMessage._id,
-    //       text: chatMessage.msgtext,
-    //       createdAt: chatMessage.createdAt,
-    //       user: {
-    //       _id: chatMessage.senderid,
-    //       }
-    //       };
-    //       return gcm;
-    //   })
-    //   this.setState({
-    //     messages: messageText
-    //   })
     this.receiveSockets(this.state.socket);
     this.state.socket.on("error", (error) => {
       console.log("from chat conv", error);
@@ -109,14 +86,6 @@ class ChatConversationScreen extends React.Component {
     console.log("inside postfunc :", this.state.socket);
     return socket;
   }
-
-  // Event listeners
-  /**
-   * When the server sends a message to this.
-   */
-  // onReceivedMessage(messages) {
-  //   this._storeMessages(messages);
-  // }
 
   /**
    * When a message is sent, send the message to the server
@@ -169,8 +138,10 @@ class ChatConversationScreen extends React.Component {
           inverted={false}
           sent={true}
         />
-        {Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />}
-        </View>
+        {Platform.OS === "android" && (
+          <KeyboardAvoidingView behavior="padding" />
+        )}
+      </View>
     );
   }
 

@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
-  Alert
+  Alert,
 } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
@@ -19,12 +19,11 @@ import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import SingleChatScreen from "../screens/SingleChatScreen";
 import { connect } from "react-redux";
-import { NavigationEvents } from 'react-navigation';
+import { NavigationEvents } from "react-navigation";
 class ChatScreen extends Component {
   constructor(props) {
     //console.log("testing constructor props: ",props)
     super(props);
-    //setting default state
     this.state = {
       isLoading: true,
       search: "",
@@ -33,15 +32,8 @@ class ChatScreen extends Component {
       arrayHolder: [],
     };
   }
-  // componentDidMount() {
-  //    //setTimeout(() => this.getAllChats(), 3000);
-  //   this.getAllChats();
-  // }
- 
+
   getAllChats() {
-    console.log("gettttt");
-    // const userId = this.props.navigation.getParam("userId");
-    // const messages = this.state.messages
     const action = { type: "chat:allchats/get", data: {} };
     this.state.socket.emit("action", action);
     this.state.socket.on("action", (action) => {
@@ -53,7 +45,7 @@ class ChatScreen extends Component {
         users: allChats.data,
         arrayHolder: allChats.data,
       });
-      console.log("from chat screen :", this.state.users)
+      console.log("from chat screen :", this.state.users);
     });
     this.state.socket.on("error", (error) => {
       console.log("from get all chats", error);
@@ -118,56 +110,53 @@ class ChatScreen extends Component {
   };
   render() {
     return (
-      <View style={{flex:1}}>
-       <NavigationEvents
-                onDidFocus={() => this.getAllChats()}
+      <View style={{ flex: 1 }}>
+        <NavigationEvents onDidFocus={() => this.getAllChats()} />
+        <TouchableWithoutFeedback
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+        >
+          <View style={styles.viewStyle}>
+            <SearchBar
+              lightTheme={true}
+              platform="default"
+              only
+              round
+              platform="default"
+              only
+              searchIcon={{ size: 24 }}
+              onChangeText={(text) => this.SearchFilterFunction(text)}
+              onClear={(text) => this.SearchFilterFunction("")}
+              placeholder="Type Here..."
+              value={this.state.search}
+            />
+            <FlatList
+              data={this.state.users}
+              ItemSeparatorComponent={this.ListViewItemSeparator}
+              ListFooterComponent={this.renderFooter}
+              //Item Separator View
+              renderItem={({ item }) => (
+                // Single Comes here which will be repeatative for the FlatListItems
+                <ListItem
+                  title={item.toUser.fullname}
+                  subtitle={item.toUser.phno}
+                  containerStyle={{ borderBottomWidth: 0 }}
+                  rightIcon={{ name: "message" }}
+                  onPress={() =>
+                    this.props.navigation.navigate("SingleChat", {
+                      name: item.toUser.fullname,
+                      userId: item.toUser._id,
+                    })
+                  }
                 />
-      <TouchableWithoutFeedback
-        onPress={() => {
-          Keyboard.dismiss();
-        }}
-      >
-        <View style={styles.viewStyle}>
-          <SearchBar
-            lightTheme={true}
-            platform="default"
-            only
-            round
-            platform="default"
-            only
-            searchIcon={{ size: 24 }}
-            onChangeText={(text) => this.SearchFilterFunction(text)}
-            onClear={(text) => this.SearchFilterFunction("")}
-            placeholder="Type Here..."
-            value={this.state.search}
-          />
-          <FlatList
-            data={this.state.users}
-            ItemSeparatorComponent={this.ListViewItemSeparator}
-            ListFooterComponent={this.renderFooter}
-            //Item Separator View
-            renderItem={({ item }) => (
-              // Single Comes here which will be repeatative for the FlatListItems
-              //<Text style={styles.textStyle}>{item.name}</Text>
-              <ListItem
-                title={item.toUser.fullname}
-                subtitle={item.toUser.phno}
-                containerStyle={{ borderBottomWidth: 0 }}
-                rightIcon={{ name: "message" }}
-                onPress={() =>
-                  this.props.navigation.navigate("SingleChat", {
-                    name: item.toUser.fullname,
-                    userId: item.toUser._id,
-                  })
-                }
-              />
-            )}
-            enableEmptySections={true}
-            style={{ marginTop: 10 }}
-            keyExtractor={(item, index) => index.toString()}
-          />
-        </View>
-      </TouchableWithoutFeedback>
+              )}
+              enableEmptySections={true}
+              style={{ marginTop: 10 }}
+              keyExtractor={(item, index) => index.toString()}
+            />
+          </View>
+        </TouchableWithoutFeedback>
       </View>
     );
   }
