@@ -58,8 +58,43 @@ const chatNavigator = createStackNavigator(
       },
     },
     defaultNavigationOptions: defaultNavOptions,
-  }
-);
+  },
+  );
+  chatNavigator.navigationOptions = ({ navigation }) => {
+
+    let tabBarVisible = true;
+    if (navigation.state.index > 0 && navigation.state.routes[1].routeName === "SingleChat") {
+      tabBarVisible = false;
+    }
+  
+    return {
+      tabBarVisible,
+    };
+  };
+  // {
+  //   navigationOptions: {
+  //     tabBarVisible: false,
+  //     tabBarIcon: (tabInfo) => {
+  //       return (
+  //         <Ionicons
+  //           name="ios-chatbubbles"
+  //           size={25}
+  //           color={tabInfo.tintColor}
+  //         />
+  //       );
+  //     },
+  //   },
+  //   defaultNavigationOptions: defaultNavOptions,
+  // },
+
+  // chatNavigator.navigationOptions = ({ navigation }) => {   
+  //   let tabBarVisible = true;   
+  //   if (navigation.state.index > 0) {
+  //        tabBarVisible = false;   }
+  //      return {
+  //        tabBarVisible,
+  //  };
+  // }
 const CustomerDetailNavigator = createStackNavigator(
   {
     CustomerDetails: CustomerDetailScreen,
@@ -118,7 +153,7 @@ const CustomerNavigator =
         },
         {
           tabBarOptions: {
-            activeTintColor: Colors.primary,
+            activeTintColor: Colors.primary
           },
         }
       );
