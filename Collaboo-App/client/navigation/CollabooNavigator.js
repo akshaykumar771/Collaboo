@@ -57,6 +57,7 @@ const chatNavigator = createStackNavigator(
         );
       },
     },
+    keyboardHidesNavigationBar: false,
     defaultNavigationOptions: defaultNavOptions,
   }
 );

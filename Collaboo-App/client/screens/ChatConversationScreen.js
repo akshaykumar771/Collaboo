@@ -1,15 +1,11 @@
 import React from "react";
-import {
-  View,
-  Text,
-  AsyncStorage,
-  KeyboardAvoidingView,
-  StyleSheet,
-  ScrollView,
-} from "react-native";
+import { View, Text, AsyncStorage, KeyboardAvoidingView } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
+import KeyboardSpacer from "react-native-keyboard-spacer";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+
 class ChatConversationScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
     title: (navigation.state.params || {}).name || "Chat!",
@@ -21,20 +17,27 @@ class ChatConversationScreen extends React.Component {
       messages: [],
       userId: props.userId,
       socket: props.socket,
+      toUserID: this.props.navigation.getParam("userId")
     };
-
     this.postUserChats = this.postUserChats.bind(this);
     // this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
+    this.receiveSockets = this.receiveSockets.bind(this);
+    props.socket.on('action', this.receiveSockets);
+    props.socket.on("error", (error) => {
+      console.log("from chat conv", error);
+    });
   }
   componentDidMount() {
     this.getUserChats();
   }
-  async receiveSockets(socket) {
-    const userId = this.props.navigation.getParam("userId");
-    return await socket.on("action", (action) => {
-      console.log("action", action);
+  
+   receiveSockets(action) {
+    //const toUserId = this.props.navigation.getParam("userId");
+    //console.log("toUserID in recieve", this.state.toUserID)
+    // return await socket.on("action", (action) => {
+      //console.log("recieve sockets", action);
       switch (action.type) {
         case "messages": {
           const gcmMessages = action.data.data.messages.map((chatMessage) => {
@@ -49,50 +52,48 @@ class ChatConversationScreen extends React.Component {
             return gcm;
           });
           this.setState({
-            messages: gcmMessages,
+            messages: gcmMessages.reverse(),
           });
+          console.log("from messages state:", this.state.messages)
           break;
         }
         case "messageSent": {
-          if (action.data.data != undefined)
-            socket.messageSent = action.data.data;
+          console.log("from message sent: ", action.data)
+          if (action.data != undefined)
+            // this._storeMessages(messages);
+            console.log("data in msg sent: ", action.data)
+            this._storeMessages([{ _id:action.data._id , createdAt: action.data.createdAt,text: action.data.message,user:{_id: action.data.from}}]);
+            this.state.socket.messageSent = action.data.data;
           break;
         }
         case "sendMessage": {
-          console.log("from case sendmesg", action.data);
-          if (action.data.from === userId) {
-            this._storeMessages([{ text: action.data.message }]);
+          if (action.data.from === this.state.toUserID) {
+            console.log("from case sendmesg", action.data);
+            this._storeMessages([{ _id:action.data._id , createdAt: action.data.createdAt,text: action.data.message,user:{_id: action.data.from}}]);
           }
         }
       }
-    });
+    // });
   }
   getUserChats() {
-    const userId = this.props.navigation.getParam("userId");
-    console.log("userid: ", userId);
-    // const messages = this.state.messages
+    const userId = this.state.toUserID;
+    //console.log("toUserID in get", userId)
     const data = { toUserId: userId };
     const action = { type: "chat:chat/messages/get", data: data };
     this.state.socket.emit("action", action);
-    this.receiveSockets(this.state.socket);
-    this.state.socket.on("error", (error) => {
-      console.log("from chat conv", error);
-    });
+    //this.receiveSockets(this.state.socket);
   }
   async postUserChats(message) {
-    const userId = this.props.navigation.getParam("userId");
-    console.log("userid: ", userId);
+    const userId = this.state.toUserID;
+    //console.log("userid: ", userId);
     const data = {
       toUserId: userId,
       messageInfo: { text: message.text },
     };
     const action = { type: "chat:chat/message/post", data: data };
     this.state.socket.emit("action", action);
-
-    const socket = await this.receiveSockets(this.state.socket);
-    console.log("inside postfunc :", this.state.socket);
-    return socket;
   }
+
 
   /**
    * When a message is sent, send the message to the server
@@ -100,20 +101,18 @@ class ChatConversationScreen extends React.Component {
    */
   async onSend(messages = []) {
     console.log("message", messages);
-    // this.state.socket.emit('message', messages[0]);
-    const messageSent = await this.postUserChats(messages[0]);
-    if (messageSent) {
-      this._storeMessages(messages);
-    } else {
-      console.log("error");
-    }
+     await this.postUserChats(messages[0]);
+    // console.log("from on send function: ", socket);
+    // if (socket.messageSent) {
+    //   this._storeMessages(messages);
+    // } else {
+    //   console.log("error");
+    // }
   }
 
   render() {
-    console.log("from userId :", this.state.userId);
     const userId = { _id: this.state.userId || -1 };
     return (
-      <View style={{ flex: 1 }}>
         <GiftedChat
           messages={this.state.messages}
           onSend={this.onSend}
@@ -141,12 +140,8 @@ class ChatConversationScreen extends React.Component {
             );
           }}
           user={userId}
-          inverted={false}
+          // inverted={false}
         />
-        {
-      Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
-   }
-      </View>
     );
   }
 
@@ -165,12 +160,5 @@ const mapStateToProps = (state) => ({
   socket: state.userReducer.socket,
   userId: state.userReducer.userId,
 });
-const styles = StyleSheet.create({
-  container: {
-    flex: 2,
-  },
-  ScrollView: {
-    flexGrow: 1,
-  },
-});
+
 export default connect(mapStateToProps, null)(ChatConversationScreen);

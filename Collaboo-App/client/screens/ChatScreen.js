@@ -34,10 +34,13 @@ class ChatScreen extends Component {
   }
 
   getAllChats() {
+    //console.log("gettttt");
+    // const userId = this.props.navigation.getParam("userId");
+    // const messages = this.state.messages
     const action = { type: "chat:allchats/get", data: {} };
     this.state.socket.emit("action", action);
     this.state.socket.on("action", (action) => {
-      //console.log("from postUserChats: ", action)
+      console.log("from getAllChats: ", action)
       const allChats = action.type === "chats" ? action.data : "";
       console.log("Get all chats: ", allChats);
       this.setState({
