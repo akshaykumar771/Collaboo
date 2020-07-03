@@ -14,6 +14,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import ChatConversationScreen from "../screens/ChatConversationScreen";
+import AgentAppointmentScreen from "../screens/AgentAppointmentScreen";
+import UserProfileScreen from "../screens/UserProfileScreen";
+import AgentWorkLogScreen from "../screens/AgentWorkLogScreen";
+import ACWorkLogScreen from "../screens/ACWorkLogScreen";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -66,9 +70,25 @@ const ToDoNavigator = createStackNavigator(
     defaultNavigationOptions: defaultNavOptions,
   }
 );
+const AppointmentNavigator = createStackNavigator(
+  {
+    Appointments: AgentAppointmentScreen
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: (tabInfo) => {
+        return (
+          <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />
+        );
+      },
+    },
+    defaultNavigationOptions: defaultNavOptions,
+  }
+)
 const WorkLogNavigator = createStackNavigator(
   {
-    WorkLog: WorkLogScreen,
+    WorkLog: AgentWorkLogScreen,
+    ACWorkLog: ACWorkLogScreen
   },
   {
     navigationOptions: {
@@ -79,14 +99,30 @@ const WorkLogNavigator = createStackNavigator(
     defaultNavigationOptions: defaultNavOptions,
   }
 );
+const UserProfileNavigator = createStackNavigator(
+  {
+    Profile: UserProfileScreen,
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: (tabInfo) => {
+        return (
+          <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+        );
+      },
+    },
+    defaultNavigationOptions: defaultNavOptions,
+  }
+);
 
 const AgentNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
+          Appointments: AppointmentNavigator,
           Chat: chatNavigator,
-          ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
+          Profile: UserProfileNavigator
         },
         {
           activeTintColor: "white",
@@ -98,9 +134,10 @@ const AgentNavigator =
       )
     : createBottomTabNavigator(
         {
+          Appointments: AppointmentNavigator,
           Chat: chatNavigator,
-          ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
+          Profile: UserProfileNavigator,
         },
         {
           tabBarOptions: {

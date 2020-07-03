@@ -142,21 +142,4 @@ const CollabooNavigator =
         }
       );
 
-// const SignedOut = createStackNavigator(
-//   {
-//   SignIn: SignInScreen,
-//   SignUp: SignUpScreen
-
-// },
-// {
-// defaultNavigationOptions: defaultNavOptions,
-// }
-// );
-
-// const MainNavigator = createSwitchNavigator({
-//   Auth: SignedOut,
-//   Collaboo: SignedIn,
-// });
-
-//export default createAppContainer(MainNavigator);
 export default CollabooNavigator;

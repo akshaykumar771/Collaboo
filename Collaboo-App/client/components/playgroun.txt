@@ -346,3 +346,30 @@ ChatScreen.navigationOptions = {
   });
 
   export default connect(mapStateToProps, null)(ChatScreen);
+
+
+
+  onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || this.state.date;
+    this.setState({
+      show: Platform.OS === "ios",
+      date: currentDate,
+    });
+  };
+
+  showMode = (currentMode) => {
+    console.log("show mode", currentMode)
+    this.setState({
+      show: true,
+      mode: currentMode,
+    });
+  };
+
+  showDatepicker = () => {
+    console.log("Date picker")
+    this.showMode("date");
+  };
+
+  showTimepicker = () => {
+    this.showMode("time");
+  };

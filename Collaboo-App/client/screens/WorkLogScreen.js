@@ -5,41 +5,34 @@ import {
   Modal,
   Text,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import { Form, Item, Label, Picker } from "native-base";
 import Colors from "../constants/Colors";
 import WorkLogCard from "../components/WorkLogCard";
 import { MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
-
+import DateTimePicker from "react-native-modal-datetime-picker";
 class WorkLogScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isModalOpen: false,
-      date: new Date(1598051730000),
-      mode: 'date',
-      show: false
+      isDateTimePickerVisible: false
     };
   }
-//   onChange = (event, selectedDate) => {
-//     const currentDate = selectedDate || date;
-//     this.setState({Platform.OS === 'ios'});
-//     setDate(currentDate);
-//   };
-
-//   showMode = currentMode => {
-//     setShow(true);
-//     setMode(currentMode);
-//   };
-
-//  showDatepicker = () => {
-//     showMode('date');
-//   };
-
-//    showTimepicker = () => {
-//     showMode('time');
-//   };
+  showDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: true });
+  };
+ 
+  hideDateTimePicker = () => {
+    this.setState({ isDateTimePickerVisible: false });
+  };
+ 
+  handleDatePicked = date => {
+    console.log("A date has been picked: ", date);
+    this.hideDateTimePicker();
+  };
   openModal = () => {
     this.setState({ isModalOpen: true });
   };
@@ -49,14 +42,12 @@ class WorkLogScreen extends Component {
   }
   render() {
     return (
-      
-        <View>
+      <View>
         <KeyboardAwareScrollView
-        enableOnAndroid={true}
-       // enableAutomaticScroll={Platform.OS === "ios"}
-      >
+          enableOnAndroid={true}
+          // enableAutomaticScroll={Platform.OS === "ios"}
+        >
           <WorkLogCard />
-
           <Modal transparent={true} visible={this.state.isModalOpen}>
             <View
               style={{
@@ -83,8 +74,8 @@ class WorkLogScreen extends Component {
                   onPress={() => this.closeModal()}
                 />
                 <Text style={styles.modalHeader}>Work Log</Text>
-                <Form>
-                  <Item stackedLabel>
+                <View>
+                <Item>
                     <Label style={{ paddingVertical: 20 }}>Select Task</Label>
                     <Picker
                       Label="Select Task"
@@ -94,28 +85,26 @@ class WorkLogScreen extends Component {
                       // }}
                     ></Picker>
                   </Item>
-                  <Item stackedLabel>
-                    <Label style={{ paddingVertical: 20 }}>
-                      No. of Hours Worked
-                    </Label>
-                    <View style={{ flexDirection: "row" }}>
-                      <Picker
-                        Label="Hours"
-                        // selectedValue={this.state.selectedValue}
-                        // onValueChange={(value) => {
-                        //   this.handleChange(value);
-                        // }}
-                      ></Picker>
-                      <Picker
-                        Label="Minutes"
-                        // selectedValue={this.state.selectedValue}
-                        // onValueChange={(value) => {
-                        //   this.handleChange(value);
-                        // }}
-                      ></Picker>
-                    </View>
-                  </Item>
-                </Form>
+                </View>
+                <View style = {{marginTop: 20}}>
+                  <Text>Start Date & Time</Text>
+                </View>
+                <View style = {{marginTop: 30}}>
+                <Text>End Date & Time</Text>
+                </View>
+                <View style = {{marginTop: 15}}>
+                <Button
+                  title="Choose Date and Time"
+                  onPress={this.showDateTimePicker}
+                />
+                <DateTimePicker
+                  isVisible={this.state.isDateTimePickerVisible}
+                  onConfirm={this.handleDatePicked}
+                  onCancel={this.hideDateTimePicker}
+                  mode={'datetime'}
+                  is24Hour={true}
+                />
+                </View>
                 <View
                   style={{
                     flexDirection: "row",
@@ -135,17 +124,16 @@ class WorkLogScreen extends Component {
               </View>
             </View>
           </Modal>
-        
-      </KeyboardAwareScrollView>
-      <View style={{position:'absolute', bottom:0, width:'100%'}}>
-      <TouchableOpacity
-                    style={styles.workLogButton}
-                    underlayColor="#fff"
-                     onPress={() => this.openModal()}
-                  >
-                    <Text style={styles.buttonText}>Add Work</Text>
-                  </TouchableOpacity>
-      </View>
+        </KeyboardAwareScrollView>
+        <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
+          <TouchableOpacity
+            style={styles.workLogButton}
+            underlayColor="#fff"
+            onPress={() => this.openModal()}
+          >
+            <Text style={styles.buttonText}>Add Work</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -175,15 +163,15 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   workLogButton: {
-    position:'absolute',
-    bottom:0,
+    position: "absolute",
+    bottom: 0,
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: Colors.primary,
     borderRadius: 10,
     borderWidth: 1,
     borderColor: "#fff",
-    width: '100%'
+    width: "100%",
   },
   buttonText: {
     color: "#fff",

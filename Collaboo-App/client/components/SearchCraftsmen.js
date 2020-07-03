@@ -37,14 +37,16 @@ class SearchCraftsmen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    setTimeout(() => {this.makeRemoteRequest()}, 3000)
+    setTimeout(() => {
+      this.makeRemoteRequest();
+    }, 3000);
   }
   // componentWillReceiveProps(nextProps) {
   //  if(this.props.token != nextProps.token)
   //   this.makeRemoteRequest();
   // }
   makeRemoteRequest = () => {
-    console.log("searchCraftsmen", this.props.token)
+    console.log("searchCraftsmen", this.props.token);
     const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
     const bearer = "Bearer " + this.props.token;
     //console.log("bearer", bearer);
@@ -55,7 +57,7 @@ class SearchCraftsmen extends Component {
       method: "GET",
       // withCredentials: false,
       // credentials: "include",
-      headers: { 'Authorization': bearer },
+      headers: { Authorization: bearer },
     })
       .then((response) => response.json())
       .then((responseJson) => {
