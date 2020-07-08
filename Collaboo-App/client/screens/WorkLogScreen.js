@@ -5,38 +5,135 @@ import {
   Modal,
   Text,
   TouchableOpacity,
-  Button,
+  TextInput,
+  Alert
 } from "react-native";
-import { Form, Item, Label, Picker } from "native-base";
+import { Container, Content, Form, Item, Label, Icon, Button, Picker } from "native-base";
 import Colors from "../constants/Colors";
 import WorkLogCard from "../components/WorkLogCard";
 import { MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import DateTimePicker from "react-native-modal-datetime-picker";
+import { connect } from "react-redux";
 class WorkLogScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isModalOpen: false,
-      isDateTimePickerVisible: false
+      isDateTimePickerVisible: false,
+      appointmentId: "",
+      dataSource: [],
+      date: "",
+      time: "",
+      worklogCard: "",
     };
   }
+  navigateWorkLog = () => {
+    console.log("Inside navigateWorkLog", this.props);
+    this.props.navigation.navigate("ToDo");
+  };
+
+  saveWorklog = () => {
+    //console.log("token in worklog", this.props.token);
+    const url = "http://81.89.193.99:3001/api/craftsmen/worklogs";
+    const bearer = "Bearer " + this.props.token;
+    //console.log("bearer", bearer);
+    const data = {
+      appointmentid: this.state.appointmentId,
+      logs: [{ date: this.state.date, time: this.state.time }],
+    };
+    fetch(url, {
+      method: "POST",
+      headers: { Authorization: bearer, "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log("response from post", responseJson)
+        this.setState({
+          worklogCard: Date.now(),
+        });
+        // const {navigation, position} = this.props
+        // console.log("response from worklog :", responseJson);
+        Alert.alert(
+          "Successfully added the worklog",
+          "To update the worklog, please click the add icon on your worklogs",
+          [{ text: "OK", onPress: () =>  this.closeModal() }],
+          { cancelable: false }
+        )
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   showDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: true });
   };
- 
+
   hideDateTimePicker = () => {
     this.setState({ isDateTimePickerVisible: false });
   };
- 
-  handleDatePicked = date => {
+
+  handleDatePicked = (date) => {
     console.log("A date has been picked: ", date);
+    let formattedDate =
+      date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+    this.setState({
+      date: formattedDate,
+    });
+    console.log("state date", this.state.date);
     this.hideDateTimePicker();
   };
   openModal = () => {
     this.setState({ isModalOpen: true });
+    this.handleAppointments();
   };
-
+  handleAppointments = () => {
+    const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
+    const bearer = "Bearer " + this.props.token;
+    // console.log("bearer", bearer);
+    fetch(url, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    })
+      .then((response) => {
+        console.log("Response 1", response);
+        const status = response.status;
+        if (status === 200) {
+          console.log("Response in 200", response);
+          return response.json();
+        } else if (status === 204) {
+          console.log("Response in 204", response);
+          Alert.alert(
+            "No Worklogs Found",
+            "Please add your work to see the worklogs",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: false }
+          );
+        }
+      })
+      .then((responseJson) => {
+        console.log("response from add work pop up :", responseJson);
+        // const data = responseJson &&
+        //   responseJson.length > 0 &&
+        //   responseJson.map((item) => {
+        //     const title = item.title;
+        //     const appointmentId = item._id;
+        //     // this.state.dataSource.push(title);
+        //      return item.title;
+        //   });
+        //   this.setState({
+        //     dataSource: data
+        //   })
+        this.setState({
+          dataSource: responseJson
+        })
+        console.log("state", this.state.dataSource);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   closeModal() {
     this.setState({ isModalOpen: false });
   }
@@ -47,7 +144,7 @@ class WorkLogScreen extends Component {
           enableOnAndroid={true}
           // enableAutomaticScroll={Platform.OS === "ios"}
         >
-          <WorkLogCard />
+          <WorkLogCard key={this.state.worklogCard} />
           <Modal transparent={true} visible={this.state.isModalOpen}>
             <View
               style={{
@@ -74,36 +171,69 @@ class WorkLogScreen extends Component {
                   onPress={() => this.closeModal()}
                 />
                 <Text style={styles.modalHeader}>Work Log</Text>
-                <View>
-                <Item>
-                    <Label style={{ paddingVertical: 20 }}>Select Task</Label>
+              
+                  <Item>
                     <Picker
-                      Label="Select Task"
-                      // selectedValue={this.state.selectedValue}
-                      // onValueChange={(value) => {
-                      //   this.handleChange(value);
-                      // }}
-                    ></Picker>
+                      style={{ height: 40, width: 400 }}
+                      mode="dropdown"
+                      placeholder="Select Task"
+                      onValueChange={(itemValue, itemIndex) => {
+                        this.setState({
+                          appointmentId: itemValue
+                        });
+                      }}
+                      selectedValue={this.state.dataSource[0]}
+                    >
+                      {this.state.dataSource &&
+                        this.state.dataSource.length > 0 &&
+                        this.state.dataSource.map((item, key) => (
+                          <Picker.Item label={item.title} value={item._id} key={key} />
+                        ))}
+                    </Picker>
                   </Item>
-                </View>
-                <View style = {{marginTop: 20}}>
+                <View style={{ marginTop: 20 }}>
                   <Text>Start Date & Time</Text>
                 </View>
-                <View style = {{marginTop: 30}}>
-                <Text>End Date & Time</Text>
-                </View>
-                <View style = {{marginTop: 15}}>
-                <Button
-                  title="Choose Date and Time"
-                  onPress={this.showDateTimePicker}
-                />
-                <DateTimePicker
-                  isVisible={this.state.isDateTimePickerVisible}
-                  onConfirm={this.handleDatePicked}
-                  onCancel={this.hideDateTimePicker}
-                  mode={'datetime'}
-                  is24Hour={true}
-                />
+                <View style={{ flexDirection: "row", marginTop: 15 }}>
+                  <TextInput
+                    placeholder="YYYY-MM-DD"
+                    maxLength={10}
+                    value={this.state.date}
+                    onChange={(text) => {
+                      this.setState({
+                        date: text,
+                      });
+                    }}
+                  />
+                  <Button
+                    transparent
+                    style={styles.chooseDateBtn}
+                    onPress={() => this.showDateTimePicker()}
+                  >
+                    <Icon
+                      active
+                      name="calendar"
+                      style={{ fontSize: 30, color: "black" }}
+                    />
+                  </Button>
+                  <DateTimePicker
+                    isVisible={this.state.isDateTimePickerVisible}
+                    onConfirm={this.handleDatePicked}
+                    onCancel={this.hideDateTimePicker}
+                  />
+                  <View style={styles.chooseHoursTxtInput}>
+                    <TextInput
+                      placeholder="HH:MM"
+                      maxLength={5}
+                      onChangeText={(text) => {
+                        this.setState({
+                          time: text,
+                        });
+                        console.log("time state", this.state.time);
+                      }}
+                      value={this.state.time}
+                    />
+                  </View>
                 </View>
                 <View
                   style={{
@@ -116,7 +246,7 @@ class WorkLogScreen extends Component {
                   <TouchableOpacity
                     style={styles.requestButton}
                     underlayColor="#fff"
-                    // onPress={this.handleRequestAppointment}
+                    onPress={() => this.saveWorklog()}
                   >
                     <Text style={styles.buttonText}>Log Work</Text>
                   </TouchableOpacity>
@@ -138,7 +268,9 @@ class WorkLogScreen extends Component {
     );
   }
 }
-
+const mapStateToProps = (state) => ({
+  token: state.userReducer.token,
+});
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -190,6 +322,22 @@ const styles = StyleSheet.create({
     top: 5,
     color: Colors.primary,
   },
+  chooseHoursTxtInput: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderColor: "black",
+    borderWidth: 1,
+    borderStyle: "solid",
+    fontSize: 15,
+    borderRadius: 20,
+    left: 50,
+    width: 80,
+    height: 35,
+    marginTop: 10,
+  },
+  chooseDateBtn: {
+    width: 60,
+  },
 });
 
-export default WorkLogScreen;
+export default connect(mapStateToProps, null)(WorkLogScreen);

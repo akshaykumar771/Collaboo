@@ -4,11 +4,18 @@ import {
   StyleSheet,
   ActivityIndicator,
   Platform,
-  Text
+  Text,
+  Button,
+  Modal,
+  TouchableOpacity,
+  ScrollView
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import Colors from "../constants/Colors";
 import PickerCheckBox from "react-native-picker-checkbox";
-
+import SelectMultiple from "react-native-select-multiple";
+import { ThemeConsumer } from "react-native-elements";
 export default class Categories extends Component {
   constructor(props) {
     super(props);
@@ -17,7 +24,11 @@ export default class Categories extends Component {
       isLoading: true,
       check: false,
       dataSource: [],
+      isModalOpen: true,
+      iosCategories:[],
+      iosItems:[]
     };
+    this.arrayholder = [];
   }
   componentDidMount() {
     //First method to be called after components mount
@@ -29,31 +40,39 @@ export default class Categories extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
+        console.log("Response from categories", responseJson)
         this.setState(
           {
             isLoading: false,
             dataSource: responseJson,
           },
-          function () {
-            // In this block you can do something with new state.
-          }
         );
       })
       .catch((error) => {
         console.error(error);
       });
   }
-
+  closeModal() {
+    this.setState({ isModalOpen: false });
+  }
   handleConfirm = (pItems) => {
     const catName = pItems.map((item) => {
-      return item.catname
-    })
-    
-    this.setState({ categories: catName }, ()=> {this.props.showCategories(this.state.categories)});
-    
+      return item.catname;
+    });
 
+    this.setState({ categories: catName }, () => {
+      this.props.showCategories(this.state.categories);
+    });
   };
 
+  onSelectionChange = () => {
+    this.state.dataSource.map((item) => {
+      const catName = item.catname;
+      this.setState({
+        iosCategories: catName
+      })
+    })
+  }
   render() {
     if (this.state.isLoading) {
       return (
@@ -61,21 +80,86 @@ export default class Categories extends Component {
           <ActivityIndicator />
         </View>
       );
+    } else if (Platform.OS === "android") {
+      return (
+        <PickerCheckBox
+          data={this.state.dataSource}
+          headerComponent={
+            <Text style={{ fontSize: 25 }}>Select your Categories</Text>
+          }
+          OnConfirm={(pItems) => this.handleConfirm(pItems)}
+          ConfirmButtonTitle="OK"
+          DescriptionField="catname"
+          KeyField="_id"
+          placeholder="       Selct your specializations"
+          arrowColor="#FFD740"
+          arrowSize={10}
+          placeholderSelectedItems="       $count categories selected"
+        />
+      );
+    } else if (Platform.OS === "ios") {
+      return (
+        <View>
+          <KeyboardAwareScrollView
+            enableOnAndroid={true}
+            // enableAutomaticScroll={Platform.OS === "ios"}
+          >
+          <ScrollView>
+            <Modal transparent={true} visible={this.state.isModalOpen}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#00000080",
+                }}
+              >
+                <View
+                  style={{
+                    width: 300,
+                    height: 400,
+                    backgroundColor: "#fff",
+                    paddingVertical: 40,
+                    paddingHorizontal: 10,
+                  }}
+                >
+                  <MaterialIcons
+                    style={styles.modalCloseIcon}
+                    name="close"
+                    size={24}
+                    onPress={() => this.closeModal()}
+                  />
+                  <Text style={styles.modalHeader}>Categories</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-evenly",
+                      marginVertical: 60,
+                    }}
+                  >
+                    <SelectMultiple
+                      items={this.state.iosItems}
+                      selectedItems={this.state.iosCategories}
+                      onSelectionsChange={() => this.onSelectionChange()} />
+                    
+                    <TouchableOpacity
+                      style={styles.requestButton}
+                      underlayColor="#fff"
+                      // onPress={this.handleRequestAppointment}
+                    >
+                      <Text style={styles.buttonText}>Log Work</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
+            </ScrollView>
+          </KeyboardAwareScrollView> 
+        </View>
+      );
     }
-    return (
-      <PickerCheckBox
-        data={this.state.dataSource}
-        headerComponent={<Text style={{ fontSize: 25 }}>Select your Categories</Text>}
-        OnConfirm={(pItems) => this.handleConfirm(pItems)}
-        ConfirmButtonTitle="OK"
-        DescriptionField="catname"
-        KeyField="_id"
-        placeholder="       Selct your specializations"
-        arrowColor="#FFD740"
-        arrowSize={10}
-        placeholderSelectedItems="       $count categories selected"
-      />
-    );
   }
 }
 
@@ -115,5 +199,19 @@ const styles = StyleSheet.create({
   selfEmployed: {
     marginTop: 20,
     marginLeft: 10,
+  },
+  requestButton: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff",
+  },
+  buttonText: {
+    color: "#fff",
+    textAlign: "center",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
