@@ -10,6 +10,7 @@ import {
   Icon,
   Right,
   Body,
+  Label
 } from "native-base";
 import Colors from "../constants/Colors";
 
@@ -21,15 +22,23 @@ export default class AcceptedAppointmentCard extends Component {
     return (
       <Container>
         <Content>
-          <Card>
+        {this.props.acceptedAppoinments.map((item) => {
+          return(
+            <Card>
             <CardItem>
               <Body>
-                <Text style={styles.cardText}>Title of the Request</Text>
-                <Text style={styles.cardText}>Customer Name</Text>
+                <Label style ={{color: 'grey'}}>Title</Label>
+                <Text style={styles.cardText}>{item.title}</Text>
+                <Label style ={{color: 'grey'}}>Customer Name</Label>
+                <Text style={styles.cardText}>{item.customerid.fullname}</Text>
+                <Label style ={{color: 'grey'}}>Customer Address</Label>
                 <Text style={styles.cardText}>Customer Address</Text>
               </Body>
             </CardItem>
           </Card>
+          )
+        })}
+          
         </Content>
       </Container>
     );

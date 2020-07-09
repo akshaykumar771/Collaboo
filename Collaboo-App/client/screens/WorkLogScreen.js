@@ -6,9 +6,20 @@ import {
   Text,
   TouchableOpacity,
   TextInput,
-  Alert
+  Alert,
+  Platform,
+  Picker,
 } from "react-native";
-import { Container, Content, Form, Item, Label, Icon, Button, Picker } from "native-base";
+import {
+  Container,
+  Content,
+  Form,
+  Item,
+  Label,
+  Icon,
+  Button,
+  
+} from "native-base";
 import Colors from "../constants/Colors";
 import WorkLogCard from "../components/WorkLogCard";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -49,7 +60,7 @@ class WorkLogScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response from post", responseJson)
+        console.log("response from post", responseJson);
         this.setState({
           worklogCard: Date.now(),
         });
@@ -58,9 +69,9 @@ class WorkLogScreen extends Component {
         Alert.alert(
           "Successfully added the worklog",
           "To update the worklog, please click the add icon on your worklogs",
-          [{ text: "OK", onPress: () =>  this.closeModal() }],
+          [{ text: "OK", onPress: () => this.closeModal() }],
           { cancelable: false }
-        )
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -126,8 +137,8 @@ class WorkLogScreen extends Component {
         //     dataSource: data
         //   })
         this.setState({
-          dataSource: responseJson
-        })
+          dataSource: responseJson,
+        });
         console.log("state", this.state.dataSource);
       })
       .catch((error) => {
@@ -171,8 +182,24 @@ class WorkLogScreen extends Component {
                   onPress={() => this.closeModal()}
                 />
                 <Text style={styles.modalHeader}>Work Log</Text>
-              
-                  <Item>
+                  <Picker
+                  style={styles.picker}
+                    mode ='dropdown'
+                    selectedValue={this.state.dataSource[0]}
+                    onValueChange={(itemValue, itemIndex) => {
+                        this.setState({
+                          appointmentId: itemValue
+                        });
+                      }}
+                  >
+                  {this.state.dataSource &&
+                        this.state.dataSource.length > 0 &&
+                        this.state.dataSource.map((item, key) => (
+                          <Picker.Item label={item.title} value={item._id} key={key} />
+                        ))}
+                  </Picker>
+                  
+                {/* <Item>
                     <Picker
                       style={{ height: 40, width: 400 }}
                       mode="dropdown"
@@ -190,11 +217,11 @@ class WorkLogScreen extends Component {
                           <Picker.Item label={item.title} value={item._id} key={key} />
                         ))}
                     </Picker>
-                  </Item>
-                <View style={{ marginTop: 20 }}>
+                  </Item> */}
+                <View style = {styles.modalText}>
                   <Text>Start Date & Time</Text>
                 </View>
-                <View style={{ flexDirection: "row", marginTop: 15 }}>
+                <View style= {styles.dateInput}>
                   <TextInput
                     placeholder="YYYY-MM-DD"
                     maxLength={10}
@@ -223,6 +250,7 @@ class WorkLogScreen extends Component {
                   />
                   <View style={styles.chooseHoursTxtInput}>
                     <TextInput
+                      style={{justifyContent:'center', alignItems:'center'}}
                       placeholder="HH:MM"
                       maxLength={5}
                       onChangeText={(text) => {
@@ -277,6 +305,35 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  modalText:{
+    ...Platform.select({
+      ios: {
+        //marginTop: -55,
+        bottom: 110
+      },
+      android:{
+        top: 15
+      }
+    })
+  },
+  dateInput:{
+    flexDirection: "row",
+    ...Platform.select({
+      ios:{
+        bottom: 70
+      },
+      android:{
+        top: 30
+      }
+    })
+  },
+  picker:{
+    ...Platform.select({
+      ios:{
+        bottom: 60
+      }
+    })
+  },
   textStyle: {
     padding: 10,
   },
@@ -286,13 +343,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   requestButton: {
+    ...Platform.select({
+      ios:{
+        paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    marginTop: 0,
+    borderWidth: 1,
+    borderColor: "#fff",
+    bottom: 85
+      },
+      android:{
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: Colors.primary,
     borderRadius: 10,
-    marginTop: -35,
+    marginTop: 0,
+    top: 40,
     borderWidth: 1,
     borderColor: "#fff",
+      }
+    }),
+    
   },
   workLogButton: {
     position: "absolute",
@@ -338,6 +411,7 @@ const styles = StyleSheet.create({
   chooseDateBtn: {
     width: 60,
   },
+
 });
 
 export default connect(mapStateToProps, null)(WorkLogScreen);

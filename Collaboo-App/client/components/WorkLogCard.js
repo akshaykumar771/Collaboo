@@ -42,8 +42,9 @@ class WorkLogCard extends Component {
       newLogs: [],
       time: null,
       date: null,
-      selectedItem:"",
-      WorkLogCard:""
+      selectedItem: "",
+      WorkLogCard: "",
+      dataRefresh: "",
     }),
       (this.arrayholder = []);
   }
@@ -60,6 +61,7 @@ class WorkLogCard extends Component {
     }
     return true;
   }
+ 
   makeRemoteRequest() {
     //console.log("token in worklog", this.props.token);
     const url = "http://81.89.193.99:3001/api/craftsmen/worklogs";
@@ -82,12 +84,12 @@ class WorkLogCard extends Component {
           );
         }
       })
-      .then(async(responseJson) => {
+      .then(async (responseJson) => {
         console.log("response from worklog :", responseJson);
-        let arrayOfLogs = []
+        let arrayOfLogs = [];
         responseJson &&
           responseJson.length > 0 &&
-         await responseJson.map(async (item) => {
+          (await responseJson.map(async (item) => {
             const title = item.appointmentid.title;
             const startDate = item.starttime;
             const formatedStartDate = moment(startDate).format(
@@ -97,8 +99,8 @@ class WorkLogCard extends Component {
             const logs = await item.logs.map((item) => {
               return {
                 date: item.date,
-                time: item.noOfMins
-              }
+                time: item.noOfMins,
+              };
             });
             const newObj = {
               worklogId: item._id,
@@ -107,16 +109,14 @@ class WorkLogCard extends Component {
               startDate: formatedStartDate,
               totalWorkingHours: totalWorkingHours,
               logs: logs,
-            }
-            arrayOfLogs.push(newObj)
-          
-           
-          });
-          this.setState({
-            newLogs: arrayOfLogs
-          })
-          console.log("new logs state", this.state.newLogs)
-          // return this.state.newLogs
+            };
+            arrayOfLogs.push(newObj);
+          }));
+        this.setState({
+          newLogs: arrayOfLogs,
+        });
+        console.log("new logs state", this.state.newLogs);
+        // return this.state.newLogs
       })
       .catch((error) => {
         console.error(error);
@@ -124,8 +124,8 @@ class WorkLogCard extends Component {
   }
 
   openModal = (item) => {
-    this.setState({ isModalOpen: true, selectedItem : item });
-    console.log("state in open modal", this.state)
+    this.setState({ isModalOpen: true, selectedItem: item, logs: item.logs });
+    console.log("state in open modal", this.state);
   };
 
   closeModal() {
@@ -143,8 +143,8 @@ class WorkLogCard extends Component {
     let formattedDate =
       date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     this.setState({
-      addDate: formattedDate
-    })
+      addDate: formattedDate,
+    });
     console.log("A date has been picked: ", formattedDate);
     this.hideDateTimePicker();
   };
@@ -154,11 +154,15 @@ class WorkLogCard extends Component {
     const url = `http://81.89.193.99:3001/api/craftsmen/worklogs/${this.state.selectedItem.worklogId}`;
     const bearer = "Bearer " + this.props.token;
     //console.log("bearer", bearer);
+    const transformedLogs = this.state.selectedItem.logs.map((item) => ({
+      date: item.date,
+      time: item.time,
+    }));
     const data = {
       appointmentid: this.state.selectedItem.appointmentid,
-      logs: this.state.selectedItem.logs,
+      logs: transformedLogs,
     };
-    console.log("data", data)
+    console.log("data", data);
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -166,11 +170,9 @@ class WorkLogCard extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson)
+        console.log("response after update", responseJson);
         this.closeModal();
-        this.setState({
-          worklogCard: Date.now(),
-        });
+        this.makeRemoteRequest();
       })
       .catch((error) => {
         console.error(error);
@@ -179,31 +181,34 @@ class WorkLogCard extends Component {
 
   handleDateAndTime = (text, time, myIndex) => {
     console.log("Time", time);
-    let obj = { date: "", time: "" };
-    obj.date = text;
-    obj.time = time;
-    console.log("obj", obj);
-    let logs = this.state.logs
-    logs[myIndex] = obj;
-    console.log("Logs", logs);
-    logs.splice();
+    const newLogs = [...this.state.selectedItem.logs];
+    newLogs[myIndex] = { ...newLogs[myIndex], date: text, time };
+    // let obj = { date: "", time: "" };
+    // obj.date = text;
+    // obj.time = time;
+    // console.log("obj", obj);
+    // let logs = this.state.logs;
+    // logs[myIndex] = obj;
+    // console.log("Logs", logs);
+    this.setState({
+      selectedItem: { ...this.state.selectedItem, logs: newLogs },
+    });
   };
 
   addWorkLog = () => {
-    console.log("inside add work log", this.state.addDate)
+    console.log("inside add work log", this.state.addDate);
     let obj = { date: "", time: "" };
     obj.date = this.state.addDate;
     obj.time = this.state.addTime;
     let item = this.state.selectedItem;
     item.logs.push(obj);
-    this.textInput.clear()
-    this.setState({
-      selectedItem: item
-    }, () => this.updateWorkLog())
+    this.textInput.clear();
+    this.updateWorkLog();
   };
   render() {
+    console.log("this.state", this.state);
     return (
-      <View>
+      <View key={this.state.worklogCard}>
         <Container>
           <Content>
             <KeyboardAwareScrollView
@@ -238,14 +243,21 @@ class WorkLogCard extends Component {
                     <Text style={styles.modalHeader}>Work Log</Text>
                     <View>
                       <Item>
-                        <Label style={{ paddingVertical: 10, fontWeight: 'bold', color: 'black' }}>
+                        <Label
+                          style={{
+                            paddingVertical: 10,
+                            fontWeight: "bold",
+                            color: "black",
+                          }}
+                        >
                           {this.state.selectedItem.title}
                         </Label>
                       </Item>
                     </View>
-                    {this.state.selectedItem.logs && this.state.selectedItem.logs.length
+                    {this.state.selectedItem.logs &&
+                    this.state.selectedItem.logs.length
                       ? this.state.selectedItem.logs.map((item, myIndex) => {
-                        console.log("map item", item)
+                          console.log("map item", item);
                           return (
                             <View
                               style={{ flexDirection: "row", marginTop: 15 }}
@@ -257,12 +269,9 @@ class WorkLogCard extends Component {
                                 maxLength={10}
                                 value={item.date}
                                 onChangeText={(text) => {
-                                  this.setState({
-                                    date: text,
-                                  });
                                   this.handleDateAndTime(
                                     text,
-                                    this.state.time,
+                                    item.time,
                                     myIndex
                                   );
                                 }}
@@ -278,7 +287,7 @@ class WorkLogCard extends Component {
                                       time: time,
                                     });
                                     this.handleDateAndTime(
-                                      this.state.date,
+                                      item.date,
                                       time,
                                       myIndex
                                     );
@@ -292,14 +301,16 @@ class WorkLogCard extends Component {
 
                     <View style={{ flexDirection: "row", marginTop: 30 }}>
                       <TextInput
-                      style={styles.dateInput}
-                        ref={input => { this.textInput = input }}
+                        style={styles.dateInput}
+                        ref={(input) => {
+                          this.textInput = input;
+                        }}
                         placeholder="YYYY-MM-DD"
                         maxLength={10}
                         value={this.state.addDate}
                         onChangeText={(text) => {
                           this.setState({
-                            addDate: text
+                            addDate: text,
                           });
                         }}
                       />
@@ -316,15 +327,16 @@ class WorkLogCard extends Component {
                       </Button>
                       <View style={styles.chooseHoursTxtInput}>
                         <TextInput
-                          ref={input => { this.textInput = input }}
+                          ref={(input) => {
+                            this.textInput = input;
+                          }}
                           placeholder="HH MM"
                           maxLength={5}
                           value={this.state.addTime}
                           onChangeText={(time) => {
                             this.setState({
-                            addTime: time
-                          });
-                          
+                              addTime: time,
+                            });
                           }}
                         ></TextInput>
                       </View>
@@ -355,39 +367,45 @@ class WorkLogCard extends Component {
               </Modal>
             </KeyboardAwareScrollView>
             {this.state.newLogs.map((item, index) => {
-              {console.log("item inside card", item)}
-              return(
-              <Card key={index}>
-              <CardItem bordered>
-                <Body>
-                  <Item stackedLabel>
-                    <Label>Title</Label>
-                    <Text style={styles.cardText}>test title</Text>
-                  </Item>
-                  <Item stackedLabel>
-                    <Label>Start Date</Label>
-                    <Text style={styles.cardText}>{item.startDate}</Text>
-                  </Item>
-                  <Item stackedLabel>
-                    <Label>Number of Hours</Label>
-                    <Text style={styles.hoursCardText}>
-                      {item.totalWorkingHours}
-                    </Text>
-                  </Item>
-                  <Right>
-                    <Button
-                      rounded
-                      style={styles.addButton}
-                      onPress={() => this.openModal(item)}
-                    >
-                      <Icon active name="ios-add" style={{ fontSize: 30 }} />
-                    </Button>
-                  </Right>
-                </Body>
-              </CardItem>
-            </Card>
-              )
-          })} 
+              {
+                console.log("item inside card", item);
+              }
+              return (
+                <Card key={index}>
+                  <CardItem bordered>
+                    <Body>
+                      <Item stackedLabel>
+                        <Label>Title</Label>
+                        <Text style={styles.cardText}>test title</Text>
+                      </Item>
+                      <Item stackedLabel>
+                        <Label>Start Date</Label>
+                        <Text style={styles.cardText}>{item.startDate}</Text>
+                      </Item>
+                      <Item stackedLabel>
+                        <Label>Number of Hours</Label>
+                        <Text style={styles.hoursCardText}>
+                          {item.totalWorkingHours}
+                        </Text>
+                      </Item>
+                      <Right>
+                        <Button
+                          rounded
+                          style={styles.addButton}
+                          onPress={() => this.openModal(item)}
+                        >
+                          <Icon
+                            active
+                            name="ios-add"
+                            style={{ fontSize: 30 }}
+                          />
+                        </Button>
+                      </Right>
+                    </Body>
+                  </CardItem>
+                </Card>
+              );
+            })}
           </Content>
         </Container>
       </View>
@@ -467,13 +485,13 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     left: 184,
   },
-  dateInput:{
+  dateInput: {
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "black",
     width: 110,
     borderRadius: 20,
-    textAlign: 'center'
+    textAlign: "center",
   },
   dateBtnTxt: {
     color: "#fff",

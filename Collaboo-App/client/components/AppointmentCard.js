@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import {View, StyleSheet} from 'react-native';
-import { Container, Header, Content, Card, CardItem, Text, Icon, Right, Body } from 'native-base';
+import {View, StyleSheet, Text} from 'react-native';
+import { Container, Header, Content, Card, CardItem, Icon, Right, Body, Label } from 'native-base';
 import Colors from '../constants/Colors';
-export default class AppointmetCard extends Component {
+export default class AppointmentCard extends Component {
     constructor(props){
         super(props);
+        console.log("props in new", this.props.appointments)
         this.state = {
             accepted: false
         }
@@ -13,15 +14,19 @@ export default class AppointmetCard extends Component {
         return (
      <Container>
         <Content>
-          <Card>
+        {this.props.appointments && this.props.appointments.map((item) => {
+            console.log(item.title)
+            return (
+            <Card>
             <CardItem>
               <Body>
+              <Label style={{color: 'grey'}}>Title</Label>
                   <Text style={styles.cardText}>
-                      Title of the Request
+                      {item.title}
                   </Text>
-                  
+                  <Label style={{color: 'grey'}}>Customer Name</Label>
                   <Text style={styles.cardText}>
-                      Customer Name
+                      {item.customerid.fullname}
                   </Text>
               </Body>
               <Right>
@@ -29,7 +34,9 @@ export default class AppointmetCard extends Component {
                 <Icon style={styles.icon} name="ios-close" />
               </Right>
              </CardItem>
-           </Card>
+           </Card>);
+        })}
+          
         </Content>
       </Container>
         )
