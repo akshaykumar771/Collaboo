@@ -91,7 +91,7 @@ class WorkLogCard extends Component {
           responseJson.length > 0 &&
           (await responseJson.map(async (item) => {
             const title = item.appointmentid.title;
-            const startDate = item.starttime;
+            const startDate = item.appointmentid.apntdatime;
             const formatedStartDate = moment(startDate).format(
               "dddd, MMM DD at HH:mm a"
             );
@@ -158,6 +158,7 @@ class WorkLogCard extends Component {
       date: item.date,
       time: item.time,
     }));
+    console.log("transformed logs", transformedLogs)
     const data = {
       appointmentid: this.state.selectedItem.appointmentid,
       logs: transformedLogs,
@@ -175,7 +176,7 @@ class WorkLogCard extends Component {
         this.makeRemoteRequest();
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
       });
   };
 
@@ -201,16 +202,24 @@ class WorkLogCard extends Component {
     obj.date = this.state.addDate;
     obj.time = this.state.addTime;
     let item = this.state.selectedItem;
-    item.logs.push(obj);
-    this.textInput.clear();
-    this.updateWorkLog();
+    if(obj.date && obj.time){
+      item.logs.push(obj);
+      this.setState({
+      selectedItem: item
+    }, () => this.updateWorkLog() )
+    }
+    // this.textInput.clear();
+    else{
+      this.updateWorkLog();
+    }
+    
   };
   render() {
     console.log("this.state", this.state);
     return (
       <View key={this.state.worklogCard}>
         <Container>
-          <Content>
+          <Content style={{padding: 10}}>
             <KeyboardAwareScrollView
               enableOnAndroid={true}
               // enableAutomaticScroll={Platform.OS === "ios"}
@@ -371,8 +380,8 @@ class WorkLogCard extends Component {
                 console.log("item inside card", item);
               }
               return (
-                <Card key={index}>
-                  <CardItem bordered>
+                <Card key={index} style={styles.card}>
+                  <CardItem bordered style = {{backgroundColor:'#f5f5f5'}}>
                     <Body>
                       <Item stackedLabel>
                         <Label>Title</Label>
@@ -513,6 +522,18 @@ const styles = StyleSheet.create({
   },
   chooseDateBtn: {
     width: 60,
+  },
+  card: {
+    top: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    borderRadius: 12,
+    borderColor: "black",
+    padding: 10,
+    backgroundColor: "#f5f5f5"
+  
   },
 });
 

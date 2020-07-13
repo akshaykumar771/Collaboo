@@ -8,7 +8,10 @@ import {
   Button,
   Modal,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  TouchableHighlight,
+  FlatList,
+  CheckBox
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
@@ -25,8 +28,8 @@ export default class Categories extends Component {
       check: false,
       dataSource: [],
       isModalOpen: true,
-      iosCategories:[],
-      iosItems:[]
+      iosCategories: [],
+      iosItems: ["catname", "shitname"],
     };
     this.arrayholder = [];
   }
@@ -40,13 +43,11 @@ export default class Categories extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("Response from categories", responseJson)
-        this.setState(
-          {
-            isLoading: false,
-            dataSource: responseJson,
-          },
-        );
+        console.log("Response from categories", responseJson);
+        this.setState({
+          isLoading: false,
+          dataSource: responseJson,
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -69,10 +70,10 @@ export default class Categories extends Component {
     this.state.dataSource.map((item) => {
       const catName = item.catname;
       this.setState({
-        iosCategories: catName
-      })
-    })
-  }
+        iosCategories: catName,
+      });
+    });
+  };
   render() {
     if (this.state.isLoading) {
       return (
@@ -104,59 +105,58 @@ export default class Categories extends Component {
             enableOnAndroid={true}
             // enableAutomaticScroll={Platform.OS === "ios"}
           >
-          <ScrollView>
-            <Modal transparent={true} visible={this.state.isModalOpen}>
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor: "#00000080",
-                }}
-              >
+            <ScrollView>
+              <Modal transparent={true} visible={this.state.isModalOpen}>
                 <View
                   style={{
-                    width: 300,
-                    height: 400,
-                    backgroundColor: "#fff",
-                    paddingVertical: 40,
-                    paddingHorizontal: 10,
+                    flex: 1,
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "#00000080",
                   }}
                 >
-                  <MaterialIcons
-                    style={styles.modalCloseIcon}
-                    name="close"
-                    size={24}
-                    onPress={() => this.closeModal()}
-                  />
-                  <Text style={styles.modalHeader}>Categories</Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      justifyContent: "space-evenly",
-                      marginVertical: 60,
+                      width: 300,
+                      height: 400,
+                      backgroundColor: "#fff",
+                      paddingVertical: 40,
+                      paddingHorizontal: 10,
                     }}
                   >
-                    <SelectMultiple
-                      items={this.state.iosItems}
-                      selectedItems={this.state.iosCategories}
-                      onSelectionsChange={() => this.onSelectionChange()} />
-                    
-                    <TouchableOpacity
-                      style={styles.requestButton}
-                      underlayColor="#fff"
-                      // onPress={this.handleRequestAppointment}
+                    <MaterialIcons
+                      style={styles.modalCloseIcon}
+                      name="close"
+                      size={24}
+                      onPress={() => this.closeModal()}
+                    />
+                    <Text style={styles.modalHeader}>Categories</Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-evenly",
+                        marginVertical: 60,
+                      }}
                     >
-                      <Text style={styles.buttonText}>Log Work</Text>
-                    </TouchableOpacity>
+                      <FlatList
+                        data={this.state.iosItems}
+                        renderItem={({ item, index }) => (
+                          <CheckBox
+                            center
+                            title={item}
+                            onPress={() => this.handleChange(index)}
+                            // checked={checked[index]}
+                          />
+                        )}
+                      />
+                    </View>
                   </View>
                 </View>
-              </View>
-            </Modal>
+              </Modal>
             </ScrollView>
-          </KeyboardAwareScrollView> 
+          </KeyboardAwareScrollView>
         </View>
       );
     }

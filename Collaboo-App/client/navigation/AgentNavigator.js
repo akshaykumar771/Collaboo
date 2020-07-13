@@ -22,7 +22,7 @@ const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
       Platform.OS === "android" ? Colors.primary : Colors.primary,
-      marginTop: Expo.Constants.statusBarHeight
+      //marginTop: Expo.Constants.statusBarHeight
   },
   headerTitleStyle: {
     fontFamily: "raleway-bold",

@@ -11,7 +11,8 @@ class CraftsmenAppointmentScreen extends Component {
     this.state = {
       isLoading: false,
       appointments: [],
-      id: "12345678"
+      acceptedAppointments: [],
+      rejectedAppointments: []
     };
   }
   componentDidMount() {
@@ -40,11 +41,39 @@ class CraftsmenAppointmentScreen extends Component {
         }
       })
       .then(async (responseJson) => {
-        console.log("response from appointments :", responseJson);
-        this.setState({
-          appointments: responseJson,
+        let newAppointments = [];
+        let acceptedAppointments = [];
+        let rejectedAppointments = []
+        const defaultResponse = await responseJson.map((item) => {
+          if (item.status === "OPEN" &&
+            item.crafconfirmation === "DEFAULT" &&
+            item.custconfirmation === "DEFAULT"
+          ) {
+            newAppointments.push(item);
+            this.setState({
+              appointments: newAppointments,
+            });
+          } else if (
+            item.crafconfirmation === "YES" &&
+            item.custconfirmation === "DEFAULT"
+          ) {
+            acceptedAppointments.push(item);
+            this.setState({
+              acceptedAppointments: acceptedAppointments,
+            });
+          }
+          else if ( item.crafconfirmation === 'NO' && item.custconfirmation === 'DEFAULT'){
+            rejectedAppointments.push(item);
+            this.setState({
+              rejectedAppointments: rejectedAppointments
+            })
+          }
         });
         console.log("appointment state", this.state.appointments);
+        console.log(
+          "accepted appointment state",
+          this.state.acceptedAppointments
+        );
       })
       .catch((error) => {
         console.error(error);
@@ -56,24 +85,15 @@ class CraftsmenAppointmentScreen extends Component {
         <Container>
           <Tabs style={{ backgroundColor: "white" }}>
             <Tab heading="New">
-            {this.state.appointments && this.state.appointments.map((item) => {
-                console.log("item", item.status)
-                if(item.status === 'OPEN')
-                return (
-                <AppointmentCard appointments={this.state.appointments} />
-                );
-            }) }
+              <AppointmentCard appointments={this.state.appointments} />
             </Tab>
             <Tab heading="Accepted">
-            {this.state.appointments && this.state.appointments.map((item) => {
-                if(item.custconfirmation && item.crafconfirmation === 'YES')
-                return(
-                <AcceptedAppointmentCard acceptedAppoinments = {this.state.appointments}/>
-                );
-            })}
+                      <AcceptedAppointmentCard
+                        acceptedAppoinments={this.state.acceptedAppointments}
+                      />
             </Tab>
             <Tab heading="Rejected">
-              <RejectedAppointmentCard />
+              <RejectedAppointmentCard rejectedAppointments = {this.state.rejectedAppointments}/>
             </Tab>
           </Tabs>
         </Container>

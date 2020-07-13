@@ -3,7 +3,7 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  AsyncStorage,
+  AsyncStorage
 } from "react-native";
 import Colors from "../constants/Colors";
 import { useDispatch, connect, useSelector } from "react-redux";

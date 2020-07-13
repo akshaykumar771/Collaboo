@@ -37,9 +37,12 @@ class AgentWorkLogScreen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.makeRemoteRequest();
-    }, 3000);
+    // setTimeout(() => {
+    //   this.makeRemoteRequest();
+    // }, 3000);
+    if(this.props.token){
+      this.makeRemoteRequest()
+    }
   }
   makeRemoteRequest = () => {
     console.log("search craftsmen by agent", this.props.token);

@@ -218,9 +218,9 @@ class WorkLogScreen extends Component {
                         ))}
                     </Picker>
                   </Item> */}
-                <View style = {styles.modalText}>
+                {/* <View style = {styles.modalText}>
                   <Text>Start Date & Time</Text>
-                </View>
+                </View> */}
                 <View style= {styles.dateInput}>
                   <TextInput
                     placeholder="YYYY-MM-DD"

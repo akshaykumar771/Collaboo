@@ -1,3 +1,4 @@
+
 import React, { Component } from "react";
 import { View, StyleSheet } from "react-native";
 import {
@@ -17,20 +18,6 @@ export default class RejectedAppointmentCard extends Component {
     super(props);
   }
   render() {
-    // return (
-    //   <Container>
-    //     <Content>
-    //       <Card>
-    //         <CardItem>
-    //           <Body>
-    //             <Text style={styles.cardText}>Title of the Request</Text>
-    //             <Text style={styles.cardText}>Customer Name</Text>
-    //           </Body>
-    //         </CardItem>
-    //       </Card>
-    //     </Content>
-    //   </Container>
-    // );
     return (
       <Container>
          <Content style={{padding: 10}}>
@@ -45,6 +32,10 @@ export default class RejectedAppointmentCard extends Component {
                        {item.title}
                    </Text>
                    <Label style={{color: 'grey'}}>Customer Name</Label>
+                   <Text style={styles.cardText}>
+                       {item.customerid.fullname}
+                   </Text>
+                   <Label style={{color: 'grey'}}>Craftsmen Name</Label>
                    <Text style={styles.cardText}>
                        {item.customerid.fullname}
                    </Text>
@@ -76,5 +67,6 @@ const styles = StyleSheet.create({
       padding: 10,
       backgroundColor: "#f5f5f5",
       marginBottom: 10
+    
     },
 })

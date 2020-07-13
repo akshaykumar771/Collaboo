@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Form, Item, Icon } from "native-base";
+import { Form, Item, Icon,CheckBox } from "native-base";
 //import CheckBox from 'react-native-check-box'
-import { CheckBox } from "react-native-elements";
+//import { CheckBox } from "react-native-elements";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
 import Company from "../components/CompanyAC";
@@ -80,13 +80,13 @@ export default class RegisterCraftsmen extends Component {
   render() {
     return (
       <Form>
-        <View>
+        
           <CheckBox
             style={styles.selfEmployed}
             checked={this.state.selfEmployed}
             onPress={() => this.onChangeCheck()}
           />
-        </View>
+       
         <View>
           <Text style={styles.checkText}>Self Employed</Text>
         </View>

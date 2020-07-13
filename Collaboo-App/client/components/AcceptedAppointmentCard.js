@@ -21,11 +21,11 @@ export default class AcceptedAppointmentCard extends Component {
   render() {
     return (
       <Container>
-        <Content>
+        <Content style={{padding: 10}}>
         {this.props.acceptedAppoinments.map((item) => {
           return(
-            <Card>
-            <CardItem>
+            <Card style={styles.card}>
+            <CardItem style = {{backgroundColor:'#f5f5f5'}}>
               <Body>
                 <Label style ={{color: 'grey'}}>Title</Label>
                 <Text style={styles.cardText}>{item.title}</Text>
@@ -50,5 +50,18 @@ const styles = StyleSheet.create({
        fontSize: 18, 
        lineHeight: 40,
        textAlign: 'justify'
-    }
+    },
+    card: {
+      top: 10,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.8,
+      shadowRadius: 2,
+      borderRadius: 12,
+      borderColor: "black",
+      padding: 10,
+      backgroundColor: "#f5f5f5",
+      marginBottom: 10
+    
+    },
 })

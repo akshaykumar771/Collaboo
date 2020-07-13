@@ -13,12 +13,12 @@ export default class AppointmentCard extends Component {
     render() {
         return (
      <Container>
-        <Content>
+        <Content style={{padding: 10}}>
         {this.props.appointments && this.props.appointments.map((item) => {
             console.log(item.title)
             return (
-            <Card>
-            <CardItem>
+            <Card style={styles.card}>
+            <CardItem style = {{backgroundColor:'#f5f5f5'}}>
               <Body>
               <Label style={{color: 'grey'}}>Title</Label>
                   <Text style={styles.cardText}>
@@ -30,8 +30,8 @@ export default class AppointmentCard extends Component {
                   </Text>
               </Body>
               <Right>
-                <Icon style={styles.icon} name="ios-checkmark" />
-                <Icon style={styles.icon} name="ios-close" />
+                <Icon style={styles.iconCheck} name="ios-checkmark" />
+                <Icon style={styles.iconCancel} name="ios-close" />
               </Right>
              </CardItem>
            </Card>);
@@ -44,13 +44,30 @@ export default class AppointmentCard extends Component {
 }
 
 const styles = StyleSheet.create({
-    icon:{
+    iconCheck:{
         fontSize: 40,
-        color: Colors.primary
+        color: "green"
+    },
+    iconCancel:{
+        fontSize: 40,
+        color: "red"
     },
     cardText:{
        fontSize: 18, 
        lineHeight: 40,
        textAlign: 'justify'
-    }
+    },
+    card: {
+        top: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        borderRadius: 12,
+        borderColor: "black",
+        padding: 10,
+        backgroundColor: "#f5f5f5",
+        marginBottom: 10
+      
+      },
 })

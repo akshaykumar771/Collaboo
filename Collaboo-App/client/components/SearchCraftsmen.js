@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
@@ -37,17 +38,21 @@ class SearchCraftsmen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.makeRemoteRequest();
-    }, 3000);
+  //   setTimeout(() => {
+  //     this.makeRemoteRequest();
+  //   }, 3000);
+  // }
+  if(this.props.token){
+    this.makeRemoteRequest()
   }
+}
   // componentWillReceiveProps(nextProps) {
   //  if(this.props.token != nextProps.token)
   //   this.makeRemoteRequest();
   // }
   makeRemoteRequest = () => {
     console.log("searchCraftsmen", this.props.token);
-    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
+    const url = "http://81.89.193.99:3001/api/user/search/craftsmen_agent/";
     const bearer = "Bearer " + this.props.token;
     //console.log("bearer", bearer);
     // Platform.OS === "android"
@@ -61,6 +66,7 @@ class SearchCraftsmen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
+        console.log("search craftsmen", responseJson)
         this.setState(
           {
             isLoading: false,
@@ -75,13 +81,48 @@ class SearchCraftsmen extends Component {
         console.error(error);
       });
   };
+
+  requestAppointment = () => {
+    const url = "http://81.89.193.99:3001/api/customer/requestappointment";
+    const bearer = "Bearer " + this.props.token;
+    //console.log("bearer", bearer);
+    const data = {
+      crafAgentId: this.state.id,
+      categoryId: this.state.selectedValue,
+      title:this.state.title,
+      description:this.state.description
+    };
+    fetch(url, {
+      method: "POST",
+      headers: { Authorization: bearer, "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log("response from post", responseJson);
+        // this.setState({
+        //   worklogCard: Date.now(),
+        // });
+        // const {navigation, position} = this.props
+        // console.log("response from worklog :", responseJson);
+        Alert.alert(
+          "Appointment Requested Successfully",
+          "Yoj can check ypur appointments in the history",
+          [{ text: "OK", onPress: () => this.closeModal() }],
+          { cancelable: false }
+        );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }
   search = (text) => {
     console.log(text);
   };
   clear = () => {
     this.search.clear();
   };
-  SearchFilterFunction(text) {
+  SearchFilterFunction =(text) => {
     //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
@@ -121,7 +162,7 @@ class SearchCraftsmen extends Component {
     //console.log("whatttt", this.state)
   };
 
-  closeModal() {
+  closeModal = () => {
     this.setState({ isModalOpen: false });
   }
   showPicker = (category) => {
@@ -130,83 +171,10 @@ class SearchCraftsmen extends Component {
     });
   };
   handleChange = (value) => {
+    console.log("handlechange", value)
     this.setState({ selectedValue: value, categoryValues: value });
   };
-  handleRequestAppointment = () => {
-    const categoryId = this.state.selectedCats.map(
-      (item) => {
-        return item._id;
-      },
-      () => {
-        this.setState({ categoryId });
-        console.log("coming", this.state.categoryId);
-      }
-    );
-
-    const url =
-      // Platform.OS === "android"
-      //   ? "http://10.0.2.2:3000/craftsmen"
-      //   : "http://192.168.0.213:3000/craftsmen";
-      `http://81.89.193.99:3001/api/customer/register?=${this.state}/requestappointment`;
-    const data = {
-      title: this.state.title,
-      description: this.state.description,
-      role: this.state.role,
-      id: this.state.id,
-      service: this.state.categories,
-    };
-    console.log("data", JSON.stringify(data));
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((response) => {
-        //console.log("backend response",JSON.stringify(response))
-        if (response) {
-          Alert.alert("Successful", "Appointment Requested", [
-            {
-              text: "Ok",
-              style: "cancel",
-              onPress: () => this.props.navigation.navigate("Customer"),
-            },
-          ]);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-  ListViewItemSeparator = () => {
-    //Item sparator view
-    return (
-      <View
-        style={{
-          height: 0.3,
-          width: "90%",
-          backgroundColor: "#080808",
-        }}
-      />
-    );
-  };
-  renderFooter = () => {
-    if (!this.state.loading) return null;
-
-    return (
-      <View
-        style={{
-          paddingVertical: 20,
-          borderTopWidth: 1,
-          borderColor: "#CED0CE",
-        }}
-      >
-        <ActivityIndicator animating size="large" />
-      </View>
-    );
-  };
+  
   render() {
     //const value = useContext(UserContext);
     //console.log("props", this.props);
@@ -282,7 +250,7 @@ class SearchCraftsmen extends Component {
                             return (
                               <Picker.Item
                                 label={item.catname}
-                                value={myIndex}
+                                value={item._id}
                                 key={myIndex}
                               />
                             );
@@ -326,7 +294,7 @@ class SearchCraftsmen extends Component {
                   <TouchableOpacity
                     style={styles.requestButton}
                     underlayColor="#fff"
-                    onPress={this.handleRequestAppointment}
+                    onPress={() => this.requestAppointment()}
                   >
                     <Text style={styles.buttonText}>Request Appointment</Text>
                   </TouchableOpacity>
@@ -341,10 +309,11 @@ class SearchCraftsmen extends Component {
             ListFooterComponent={this.renderFooter}
             //Item Separator View
             renderItem={({ item, index }) => (
+             
               // Single Comes here which will be repeatative for the FlatListItems
               //<Text style={styles.textStyle}>{item.name}</Text>
               <ListItem
-                id={index}
+                id={item._id}
                 title={item.fname + item.lname}
                 subtitle={item.email}
                 containerStyle={{ borderBottomWidth: 0 }}
@@ -358,14 +327,6 @@ class SearchCraftsmen extends Component {
           />
         </View>
       </KeyboardAwareScrollView>
-      //ListView to show with textinput used as search bar
-      // <TouchableWithoutFeedback
-      //   onPress={() => {
-      //     Keyboard.dismiss();
-      //   }}
-      // >
-
-      // </TouchableWithoutFeedback>
     );
   }
 }
