@@ -66,7 +66,6 @@ const chatNavigator = createStackNavigator(
 const ToDoNavigator = createStackNavigator(
   {
     ToDo: ToDoScreen,
-    AddToDo: AddToDoScreen,
     Calendar: CalendarScreen,
   },
   {

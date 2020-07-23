@@ -107,6 +107,10 @@ class CraftsmenAppointmentScreen extends Component {
           "accepted appointment state",
           this.state.acceptedAppointments
         );
+        console.log(
+          "rejected appointment state",
+          this.state.rejectedAppointments
+        );
       })
       .catch((error) => {
         console.error(error);

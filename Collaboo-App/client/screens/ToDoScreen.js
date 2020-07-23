@@ -1,10 +1,12 @@
 import React, { Component } from "react";
-import {StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import { Container, Header, Content, Tab, Tabs } from 'native-base';
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import HeaderButton from "../components/HeaderButton"
 import Colors from "../constants/Colors";
-import HeaderButton from "../components/HeaderButton";
 import { connect } from "react-redux";
+import InProcessAppointments from "../components/InProcessAppointments";
+import ClosedAppointments from "../components/ClosedAppointments";
 class ToDoScreen extends Component {
   constructor(props) {
     super(props);
@@ -93,15 +95,11 @@ class ToDoScreen extends Component {
       <View style={styles.screen}>
         <Container>
         <Tabs>
-        <Tab heading="Open Tasks">
-            
-            </Tab>
           <Tab heading="In Process">
-           
+           <InProcessAppointments inProcessAppointments = {this.state.inProcessAppointments}/>
           </Tab>
-         
           <Tab heading="Closed">
-            
+            <ClosedAppointments closedAppointments = {this.state.closedAppointments}/>
           </Tab>
         </Tabs>
       </Container>
@@ -110,11 +108,6 @@ class ToDoScreen extends Component {
   }
 }
 
-renderAddToDo = () => {
-  this.setState({
-    showComponent: true
-  });
-};
 
 const mapStateToProps = (state) => ({
   token: state.userReducer.token,
@@ -124,13 +117,6 @@ ToDoScreen.navigationOptions = navData => {
   return {
     headerRight: (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item
-          title="Add ToDo"
-          iconName="ios-add"
-          onPress={() => {
-            navData.navigation.navigate("AddToDo");
-          }}
-        />
         <Item
           title="Calendar"
           iconName="ios-calendar"
@@ -144,9 +130,7 @@ ToDoScreen.navigationOptions = navData => {
 };
 const styles = StyleSheet.create({
   screen: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
+    flex: 1
   }
 });
 
