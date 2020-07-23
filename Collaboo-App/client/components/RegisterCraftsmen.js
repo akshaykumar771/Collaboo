@@ -39,6 +39,7 @@ export default class RegisterCraftsmen extends Component {
     );
   };
   showCategories = (categories, selfEmployed) => {
+    console.log("register craftsmen cat", categories)
     this.setState(
       {
         categories: categories && categories,

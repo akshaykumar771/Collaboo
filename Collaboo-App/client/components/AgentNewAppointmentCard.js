@@ -29,6 +29,13 @@ class AgentNewAppointmentCard extends Component {
     setTimeout(() => {
       this.makeRemoteRequest();
     }, 4000);
+    // let newArr = [];
+    // for (let i = 0; i < this.props.appointments.length; i++) {
+    //   newArr.push("Select Craftsmen");
+    // }
+    // this.setState({
+    //   selectedCraftsmen: newArr,
+    // });
   }
 
   makeRemoteRequest = () => {
@@ -59,11 +66,36 @@ class AgentNewAppointmentCard extends Component {
   };
   selectedValue = (itemValue, index) => {
     console.log("item", itemValue, index);
-    const selectedItem = [];
+    let selectedItem = this.state.selectedCraftsmen;
     selectedItem[index] = itemValue;
+    // console.log("this.state", selectedItem)
     this.setState({
       selectedCraftsmen: selectedItem,
     });
+    console.log("this.state", this.state.selectedCraftsmen)
+  };
+  assignTask = (item,index) => {
+    console.log("button item", item.appointmentid);
+    const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${item._id}`;
+    const bearer = "Bearer " + this.props.token;
+    const data = {
+      craftsmenid: this.state.selectedCraftsmen[index]
+    };
+    console.log("url", url)
+    console.log("data agent", data)
+    fetch(url, {
+      method: "PUT",
+      headers: { Authorization: bearer, "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log("response after update", responseJson);
+        this.props.makeRemoteRequest();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   render() {
     //console.log("props", this.state.selectedCraftsmen.length);
@@ -83,15 +115,22 @@ class AgentNewAppointmentCard extends Component {
                       <Text style={styles.cardText}>
                         {item.customerid.fullname}
                       </Text>
-                      <Picker
+                      {item.craftsmenid !=undefined ?
+                      (
+                        (<View>
+                        <Text style={{color:'orange'}}>Waiting for craftsmen confirmation</Text>
+                      </View>)
+                      ) : (
+                        <Picker
                         style={styles.picker}
                         mode="dropdown"
                         placeholder="Select Craftsmen"
-                        selectedValue={this.state.craftsmen}
+                        selectedValue={this.state.selectedCraftsmen[index]}
                         onValueChange={(itemValue) => {
                           this.setState({
                             craftsmen: itemValue,
                           });
+                          this.selectedValue(itemValue, index);
                         }}
                       >
                         <Picker.Item label="Select Craftsmen" />
@@ -100,22 +139,24 @@ class AgentNewAppointmentCard extends Component {
                           this.state.dataSource.map((item, key) => (
                             <Picker.Item
                               label={item.fullname}
-                              value={item.fullname}
+                              value={item._id}
                               key={item._id}
                             />
                           ))}
-                        {/* <Picker.Item label={this.state.dataSource[0]} value={this.state.dataSource}  /> */}
                       </Picker>
-
-                      {/* })} */}
+                      ) }
+                      
                     </Body>
                     <Right>
                       <Button
                         rounded
                         style={styles.addButton}
-                        onPress={() => console.log("Button pressed")}
+                        onPress={() => {
+                         this.assignTask(item,index)
+                        }}
                       >
-                        <Icon style={styles.iconCheck} name="ios-checkmark" />
+                      
+                        <Icon style={styles.iconCheck} name="ios-checkmark"/>
                       </Button>
                     </Right>
                   </CardItem>
@@ -129,6 +170,7 @@ class AgentNewAppointmentCard extends Component {
 }
 const mapStateToProps = (state) => ({
   token: state.userReducer.token,
+  role: state.userReducer.userRole,
 });
 const styles = StyleSheet.create({
   picker: {

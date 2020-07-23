@@ -107,7 +107,7 @@ class SearchCraftsmen extends Component {
         // console.log("response from worklog :", responseJson);
         Alert.alert(
           "Appointment Requested Successfully",
-          "Yoj can check ypur appointments in the history",
+          "You can check ypur appointments in the history",
           [{ text: "OK", onPress: () => this.closeModal() }],
           { cancelable: false }
         );

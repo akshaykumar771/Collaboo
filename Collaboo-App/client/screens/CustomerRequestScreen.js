@@ -35,15 +35,11 @@ CustomerRequestScreen.navigationOptions = navData => {
             navData.navigation.navigate("ViewAppointments");
           }}
         />
-      </HeaderButtons>
-    ),
-    headerLeft: (
-      <HeaderButtons HeaderButtonComponent={MaterialCommunityIconsHeader}>
-        <Item
-          title="Menu"
-          iconName="menu"
+         <Item
+          title="View Invitation"
+          iconName="calendar-multiple"
           onPress={() => {
-            navData.navigation.toggleDrawer();
+            navData.navigation.navigate("Invitation");
           }}
         />
       </HeaderButtons>

@@ -10,6 +10,7 @@ import {
   Icon,
   Right,
   Body,
+  Label
 } from "native-base";
 
 export default class RejectedAppointmentCard extends Component {

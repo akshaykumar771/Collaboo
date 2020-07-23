@@ -7,6 +7,7 @@ import AddCustomerDetailScreen from "../screens/AddCustomerDetailScreen";
 import CustomerRequestScreen from "../screens/CustomerRequestScreen";
 import InventoryScreen from "../screens/InventoryScreen";
 import ViewAppointmentsScreen from "../screens/ViewAppointmentsScreen";
+import ViewInvitationScreen from "../screens/ViewInvitationScreen";
 import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
@@ -29,12 +30,13 @@ const defaultNavOptions = {
 const CustomerRequestNavigator = createStackNavigator(
   {
     Requests: CustomerRequestScreen,
-    ViewAppointments: ViewAppointmentsScreen
+    ViewAppointments: ViewAppointmentsScreen,
+    Invitation: ViewInvitationScreen
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />;
+        return <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />
       },
     },
     defaultNavigationOptions: defaultNavOptions,

@@ -198,29 +198,6 @@ class WorkLogScreen extends Component {
                           <Picker.Item label={item.title} value={item._id} key={key} />
                         ))}
                   </Picker>
-                  
-                {/* <Item>
-                    <Picker
-                      style={{ height: 40, width: 400 }}
-                      mode="dropdown"
-                      placeholder="Select Task"
-                      onValueChange={(itemValue, itemIndex) => {
-                        this.setState({
-                          appointmentId: itemValue
-                        });
-                      }}
-                      selectedValue={this.state.dataSource[0]}
-                    >
-                      {this.state.dataSource &&
-                        this.state.dataSource.length > 0 &&
-                        this.state.dataSource.map((item, key) => (
-                          <Picker.Item label={item.title} value={item._id} key={key} />
-                        ))}
-                    </Picker>
-                  </Item> */}
-                {/* <View style = {styles.modalText}>
-                  <Text>Start Date & Time</Text>
-                </View> */}
                 <View style= {styles.dateInput}>
                   <TextInput
                     placeholder="YYYY-MM-DD"

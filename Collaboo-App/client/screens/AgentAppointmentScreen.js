@@ -7,7 +7,6 @@ import { connect } from "react-redux";
 class AgentAppointmentScreen extends Component {
   constructor(props) {
     super(props);
-    console.log("token", props.token);
     this.state = {
       isLoading: false,
       appointments: [],
@@ -25,6 +24,7 @@ class AgentAppointmentScreen extends Component {
         }, 3000);
   }
   makeRemoteRequest = () => {
+    console.log("agent request")
     const url = "http://81.89.193.99:3001/api/agent/appointments";
     const bearer = "Bearer " + this.props.token;
     // console.log("bearer", bearer);
@@ -69,6 +69,9 @@ class AgentAppointmentScreen extends Component {
             });
             console.log("rejected agent appt", this.state.rejectedAppointments)
           }
+          else if (item.craftsmenid){
+            this.setState({})
+          }
         });
         console.log("appointment state", this.state.appointments);
         console.log(
@@ -86,7 +89,7 @@ class AgentAppointmentScreen extends Component {
         <Container>
           <Tabs style={{ backgroundColor: "white" }}>
             <Tab heading="New">
-              <AgentNewAppointmentCard appointments={this.state.appointments} />
+              <AgentNewAppointmentCard appointments={this.state.appointments} makeRemoteRequest={this.makeRemoteRequest} />
             </Tab>
             <Tab heading="Rejected">
               <AgentRejectedAppointment

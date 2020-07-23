@@ -13,6 +13,7 @@ import { Platform } from "react-native";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import CraftsmenAppointmentScreen from "../screens/CraftsmenAppointmentScreen";
 import ChatConversationScreen from "../screens/ChatConversationScreen";
+import CraftsmenCRScreen from "../screens/CraftsmenCRScreen";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -30,6 +31,7 @@ const defaultNavOptions = {
 const AppointmentsNavigator = createStackNavigator(
   {
     Appointments: CraftsmenAppointmentScreen,
+    ChangeRequests: CraftsmenCRScreen
   },
   {
     navigationOptions: {

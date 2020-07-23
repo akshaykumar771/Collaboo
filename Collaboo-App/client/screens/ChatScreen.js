@@ -51,7 +51,12 @@ class ChatScreen extends Component {
       console.log("from chat screen :", this.state.users);
     });
     this.state.socket.on("error", (error) => {
-      console.log("from get all chats", error);
+      Alert.alert(
+        "No Chats Found",
+        "Please add a contact from appointments to begin the conversation",
+        [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        { cancelable: false }
+      );
     });
   }
 
@@ -134,7 +139,7 @@ class ChatScreen extends Component {
               placeholder="Type Here..."
               value={this.state.search}
             />
-            <FlatList
+            {this.state.users === []? (console.log("fullname")) : (<FlatList
               data={this.state.users}
               ItemSeparatorComponent={this.ListViewItemSeparator}
               ListFooterComponent={this.renderFooter}
@@ -157,7 +162,8 @@ class ChatScreen extends Component {
               enableEmptySections={true}
               style={{ marginTop: 10 }}
               keyExtractor={(item, index) => index.toString()}
-            />
+            />)}
+            
           </View>
         </TouchableWithoutFeedback>
       </View>

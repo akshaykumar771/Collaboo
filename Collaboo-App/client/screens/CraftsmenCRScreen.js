@@ -11,22 +11,92 @@ import {
   Body,
   Label
 } from "native-base";
-import { connect } from "react-redux";
-import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import DateTimePicker from "react-native-modal-datetime-picker";
- class AppointmentCard extends Component {
+import Colors from "../constants/Colors";
+import { connect } from "react-redux";
+class CraftsmenCRScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoading: false,
+      appointments: [],
       isModalOpen: false,
       isDateTimePickerVisible: false,
-      crafconfirmation:"NO",
       appointmentid: ""
     };
   }
-  
+  componentDidMount() {
+    if (this.props.token) {
+      this.makeRemoteRequest();
+    }
+    // setTimeout(() => {
+    //   this.makeRemoteRequest();
+    // }, 3000);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    //console.log(nextProps.token, this.props.token);
+    if (nextProps.token != this.props.token) {
+      this.makeRemoteRequest();
+    }
+    return true;
+  }
+  makeRemoteRequest = () => {
+    console.log("test");
+    const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
+    const bearer = "Bearer " + this.props.token;
+    // console.log("bearer", bearer);
+    fetch(url, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    })
+      .then((response) => {
+        const status = response.status;
+        if (status === 200) {
+          return response.json();
+        } else if (status === 204) {
+          console.log(response);
+          Alert.alert(
+            "Sorry",
+            "No Appointments Found",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: true }
+          );
+        }
+      })
+      .then(async (responseJson) => {
+        let changeRequestAppointments = [];
+        const defaultResponse =
+          (await responseJson) &&
+          responseJson.map((item) => {
+            if (
+              item.status === "OPEN" &&
+              item.crafconfirmation === "YES" &&
+              item.custconfirmation === "REQUEST_DATE_CHANGE"
+            ) {
+            changeRequestAppointments.push(item);
+              console.log("arr", changeRequestAppointments)
+              this.setState({
+                appointments: changeRequestAppointments,
+              });
+              console.log("new appointments", this.state.appointments)
+            } 
+            //  else {
+            //   this.setState({
+            //     appointments: [],
+            //     acceptedAppoinments: [],
+            //     rejectedAppointments: [],
+            //   });
+            // }
+          });
+        console.log("response craftsmencrscreen", responseJson);
+        console.log("appointment state", this.state.appointments);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   openModal =  (item) => {
     this.setState({ isModalOpen: true, crafconfirmation: "YES", appointmentid: item._id });
     console.log("state in open modal", this.state);
@@ -74,7 +144,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
       .then((responseJson) => {
         console.log("response after update", responseJson);
         this.closeModal();
-        this.props.makeRemoteRequest();
+        this.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
@@ -110,18 +180,12 @@ import DateTimePicker from "react-native-modal-datetime-picker";
       });
   }
   render() {
-      if(this.props.appointments.length <= 0){
-          return (  
-            <View>
-                <Text>No appointmens found! Come back later</Text>
-            </View>
-          );
-      }
     return (
-      <Container>
+      <View style={styles.screen}>
+       <Container>
         <Content style={{ padding: 10 }}>
-          {this.props.appointments.length > 0 ? (
-            this.props.appointments && this.props.appointments.map((item) => {
+          {this.state.appointments.length > 0 ? (
+            this.state.appointments && this.state.appointments.map((item) => {
               console.log(item.title);
               return (
                 <Card style={styles.card}>
@@ -135,8 +199,24 @@ import DateTimePicker from "react-native-modal-datetime-picker";
                       </Text>
                     </Body>
                     <Right>
-                      <Icon style={styles.iconCheck} name="ios-checkmark" onPress={() => this.openModal(item)}/>
-                      <Button title="Cancel" onPress={() => this.cancelAppointment(item)} />
+                    <View>
+                      <TouchableOpacity
+                    style={styles.acceptBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.openModal(item)}
+                  >
+                    <Text style={{color: 'white'}}>Accept</Text>
+                  </TouchableOpacity>
+                  </View>
+                  <View>
+                      <TouchableOpacity
+                    style={styles.rejectBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.cancelAppointment(item)}
+                  >
+                    <Text style={{color:'white'}}>Reject</Text>
+                  </TouchableOpacity>
+                  </View>
                       {/* <Icon style={styles.iconCancel} name="ios-close"  /> */}
                     </Right>
                   </CardItem>
@@ -210,14 +290,19 @@ import DateTimePicker from "react-native-modal-datetime-picker";
           </Modal>
         </Content>
       </Container>
+      </View>
     );
   }
 }
+
 const mapStateToProps = (state) => ({
-    token: state.userReducer.token,
-    role: state.userReducer.userRole,
-  });
+  token: state.userReducer.token,
+  role: state.userReducer.userRole
+});
 const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+  },
   iconCheck: {
     fontSize: 40,
     color: "green",
@@ -357,5 +442,63 @@ const styles = StyleSheet.create({
       }
     }),
   },
+  acceptBtn:{
+    ...Platform.select({
+        ios:{
+          paddingTop: 10,
+      paddingBottom: 10,
+      backgroundColor: Colors.primary,
+      borderRadius: 10,
+      marginTop: 0,
+      borderWidth: 1,
+      borderColor: "#fff",
+      bottom: 85
+        },
+        android:{
+      paddingTop: 10,
+      paddingBottom: 10,
+      backgroundColor: Colors.primary,
+      borderRadius: 10,
+      top: 10,
+      right: 0,
+      borderWidth: 1,
+      borderColor: "#fff",
+      justifyContent:'center',
+      alignItems:'center',
+      width: 80
+  },
+
+}) 
+  },
+  rejectBtn:{
+    ...Platform.select({
+        ios:{
+          paddingTop: 10,
+      paddingBottom: 10,
+      backgroundColor: Colors.primary,
+      borderRadius: 10,
+      marginTop: 0,
+      borderWidth: 1,
+      borderColor: "#fff",
+      bottom: 85
+        },
+        android:{
+            paddingTop: 10,
+            paddingBottom: 10,
+            backgroundColor: Colors.primary,
+            borderRadius: 10,
+            top: 20,
+            right: 0,
+            borderWidth: 1,
+            borderColor: "#fff",
+            justifyContent:'center',
+            alignItems:'center',
+            width: 80
+  },
+
+}) 
+  }
 });
-export default connect(mapStateToProps, null)(AppointmentCard)
+
+
+export default connect(mapStateToProps, null)(CraftsmenCRScreen);
