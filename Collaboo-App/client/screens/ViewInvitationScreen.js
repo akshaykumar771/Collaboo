@@ -33,7 +33,7 @@ class ViewInvitationScreen extends Component {
     }
   }
   shouldComponentUpdate(nextProps) {
-    //console.log(nextProps.token, this.props.token);
+    console.log(nextProps.token, this.props.token);
     if (nextProps.token != this.props.token) {
       this.makeRemoteRequest();
     }
@@ -53,7 +53,8 @@ class ViewInvitationScreen extends Component {
           return response.json();
         } else if (status === 204) {
           Alert.alert(
-            "No Appointments Found",
+            "Sorry",
+            "No appointments found",
             [{ text: "OK", onPress: () => console.log("OK Pressed") }],
             { cancelable: false }
           );
@@ -105,10 +106,9 @@ class ViewInvitationScreen extends Component {
         Alert.alert(
           "Success",
           "Contact craftsmen via chat to know more details",
-          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          [{ text: "OK", onPress: () => console.log("OK pressed") }],
           { cancelable: true }
         );
-        this.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
@@ -134,7 +134,13 @@ class ViewInvitationScreen extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         console.log("response after update", responseJson);
-        this.makeRemoteRequest();
+        Alert.alert(
+          "Appointment Rejected",
+          "Contact other craftsmen according to your requirement",
+          [{ text: "OK", onPress: () => console.log("OK pressed") }],
+          { cancelable: true }
+        );
+        //this.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
@@ -160,7 +166,13 @@ class ViewInvitationScreen extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         console.log("response after update", responseJson);
-        this.makeRemoteRequest();
+        Alert.alert(
+          "Success",
+          "Please communicate with the craftsmen via chat for the suitable time"[
+            { text: "OK", onPress: () => console.log("OK pressed") }
+          ],
+          { cancelable: false }
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -175,6 +187,10 @@ class ViewInvitationScreen extends Component {
               {
                 console.log("date", this.state.addDate);
               }
+              const startDate = item.appointmentid.apntdatime;
+              const formatedStartDate = moment(startDate).format(
+                "dddd,MMM DD at HH:mma"
+              );
               return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
@@ -199,7 +215,7 @@ class ViewInvitationScreen extends Component {
                       <Label style={{ color: "grey" }}>Status</Label>
                       <Text style={styles.cardText}>{item.status}</Text>
                       <Label style={{ color: "grey" }}>Date and Time</Label>
-                      <Text style={styles.cardText}>{item.apntdatime}</Text>
+                      <Text style={styles.cardText}>{formatedStartDate}</Text>
                     </Body>
                     <Right>
                       <View>

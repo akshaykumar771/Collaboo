@@ -152,14 +152,14 @@ class SearchCraftsmen extends Component {
   }
 
   openModal = (item) => {
-    //console.log("yyyyy", item.compid.categories)
+    console.log("yyyyy", item.compid.categories)
     this.setState({
       isModalOpen: true,
       selectedCats: item.compid.categories,
       id: item._id,
       role: item.role,
     });
-    //console.log("whatttt", this.state)
+    console.log("whatttt", this.state)
   };
 
   closeModal = () => {

@@ -8,15 +8,56 @@ import {
   Alert
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
- 
-export default class Calc extends Component {
+import { connect } from "react-redux";
+import moment from "moment"; 
+class Calc extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      items:{}
+      items:{},
+      response:[]
     };
     this.onDayPress = this.onDayPress.bind(this);
   }
+  componentDidMount(){
+    if(this.props.token){
+      this.makeRemoteRequest()
+    }
+  }
+  makeRemoteRequest = () => {
+    console.log("test");
+    const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
+    const bearer = "Bearer " + this.props.token;
+    // console.log("bearer", bearer);
+    fetch(url, {
+      method: "GET",
+      headers: { Authorization: bearer },
+    })
+      .then((response) => {
+        const status = response.status;
+        if (status === 200) {
+          return response.json();
+        } else if (status === 204) {
+          console.log(response);
+          Alert.alert(
+            "Sorry",
+            "No Appointments Found",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: true }
+          );
+        }
+      })
+      .then(async (responseJson) => {
+        const res = responseJson;
+        console.log("cal res", responseJson)
+        this.setState({
+          response: res
+        })
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   onDayPress(day) {
     this.setState({
       selected: day.dateString
@@ -38,30 +79,49 @@ export default class Calc extends Component {
     );
   }
   loadItems(day) {
+    console.log("inside loaditems")
     setTimeout(() => {
-      for (let i = -15; i < 85; i++) {
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-        const strTime = this.timeToString(time);
-        if (!this.state.items[strTime]) {
-          this.state.items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 3 + 1);
-          for (let j = 0; j < numItems; j++) {
-            this.state.items[strTime].push({
-              name: 'Item for ' + strTime + ' #' + j,
-              height: Math.max(50, Math.floor(Math.random() * 150))
-            });
+      this.state.response && this.state.response.map((item) => {
+        const startDate = item.appointmentid.apntdatime;
+        const formatedStartDate = moment(startDate).format(
+          "YYYY-MM-D"
+        );
+        console.log("day", day)
+        const timestamp = moment(startDate).format("x")
+        console.log("timestamp", timestamp)
+        if(formatedStartDate !== day.dateString)
+        for (let i = -15; i < 85; i++) {
+          console.log("inside for loop")
+          const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+          //const time = timestamp;
+          console.log("time", time)
+           const strTime = this.timeToString(time);
+        //console.log("strtime", strTime)
+          if (!this.state.items[strTime]) {
+            this.state.items[strTime] = [];
+            const numItems = Math.floor(Math.random() * 3 + 1);
+            for (let j = 0; j < numItems; j++) {
+              this.state.items[strTime].push({
+                 name: item.title,
+                //name: this.state.response,
+                height: Math.max(50, Math.floor(Math.random() * 150))
+              });
+            }
           }
         }
-      }
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
-      this.setState({
-        items: newItems
-      });
+        const newItems = {};
+        Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+        this.setState({
+          items: newItems
+        });
+        console.log("date", formatedStartDate)
+      })
+      
     }, 1000);
   }
   timeToString(time) {
     const date = new Date(time);
+    console.log("timto", date.toISOString().split('T')[0])
     return date.toISOString().split('T')[0];
   }
   render() {
@@ -75,29 +135,17 @@ export default class Calc extends Component {
       <Agenda
         items={this.state.items}
         loadItemsForMonth={this.loadItems.bind(this)}
-        selected={'2017-05-16'}
+        selected={'2020-05-16'}
         renderItem={this.renderItem.bind(this)}
-        
-        // markingType={'period'}
-        // markedDates={{
-        //    '2017-05-08': {textColor: '#43515c'},
-        //    '2017-05-09': {textColor: '#43515c'},
-        //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-        //    '2017-05-21': {startingDay: true, color: 'blue'},
-        //    '2017-05-22': {endingDay: true, color: 'gray'},
-        //    '2017-05-24': {startingDay: true, color: 'gray'},
-        //    '2017-05-25': {color: 'gray'},
-        //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-        // monthFormat={'yyyy'}
-        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-        //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
-        // hideExtraDays={false}
       />
       </View>
     );
   }
 }
- 
+const mapStateToProps = (state) => ({
+  token: state.userReducer.token,
+  role: state.userReducer.userRole,
+});
 const styles = StyleSheet.create({
   container: {
     flex: 1
@@ -116,3 +164,4 @@ const styles = StyleSheet.create({
     paddingTop: 30
   }
 });
+export default connect(mapStateToProps, null) (Calc)

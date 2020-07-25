@@ -217,13 +217,13 @@ class WorkLogCard extends Component {
   render() {
     console.log("this.state", this.state);
     return (
-      <View key={this.state.worklogCard}>
-        <Container>
+      <View key={this.state.worklogCard} style={{flex: 1}}>
+        <Container style={{bottom:'5%'}}>
           <Content style={{padding: 10}}>
-            <KeyboardAwareScrollView
+            {/* <KeyboardAwareScrollView
               enableOnAndroid={true}
               // enableAutomaticScroll={Platform.OS === "ios"}
-            >
+            > */}
               <Modal transparent={true} visible={this.state.isModalOpen}>
                 <View
                   style={{
@@ -374,7 +374,7 @@ class WorkLogCard extends Component {
                   </View>
                 </View>
               </Modal>
-            </KeyboardAwareScrollView>
+            {/* </KeyboardAwareScrollView> */}
             {this.state.newLogs.map((item, index) => {
               {
                 console.log("item inside card", item);
@@ -385,7 +385,7 @@ class WorkLogCard extends Component {
                     <Body>
                       <Item stackedLabel>
                         <Label>Title</Label>
-                        <Text style={styles.cardText}>test title</Text>
+                        <Text style={styles.cardText}>{item.title}</Text>
                       </Item>
                       <Item stackedLabel>
                         <Label>Start Date</Label>
@@ -438,6 +438,7 @@ const styles = StyleSheet.create({
   addButton: {
     marginLeft: 280,
     backgroundColor: Colors.primary,
+    width: 50
   },
   textStyle: {
     padding: 10,
@@ -531,8 +532,9 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     borderRadius: 12,
     borderColor: "black",
-    padding: 10,
-    backgroundColor: "#f5f5f5"
+    padding: 20,
+    backgroundColor: "#f5f5f5",
+    marginBottom: 10,
   
   },
 });

@@ -38,7 +38,7 @@ export default class RejectedAppointmentCard extends Component {
                    </Text>
                    <Label style={{color: 'grey'}}>Craftsmen Name</Label>
                    <Text style={styles.cardText}>
-                       {item.customerid.fullname}
+                       {item.craftsmenid.fullname}
                    </Text>
                </Body>
               </CardItem>

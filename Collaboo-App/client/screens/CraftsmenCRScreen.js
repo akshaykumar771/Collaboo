@@ -36,7 +36,7 @@ class CraftsmenCRScreen extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    //console.log(nextProps.token, this.props.token);
+    console.log(nextProps.token, this.props.token);
     if (nextProps.token != this.props.token) {
       this.makeRemoteRequest();
     }
@@ -59,9 +59,9 @@ class CraftsmenCRScreen extends Component {
           console.log(response);
           Alert.alert(
             "Sorry",
-            "No Appointments Found",
+            "No appointments found",
             [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-            { cancelable: true }
+            { cancelable: false }
           );
         }
       })
@@ -144,7 +144,13 @@ class CraftsmenCRScreen extends Component {
       .then((responseJson) => {
         console.log("response after update", responseJson);
         this.closeModal();
-        this.makeRemoteRequest();
+        Alert.alert(
+          "Success",
+          "Please wait until the customer accepts the appointment",
+          [{ text: "OK", onPress: () => this.makeRemoteRequest() }],
+          { cancelable: true }
+        );
+        
       })
       .catch((error) => {
         console.log(error);
@@ -172,7 +178,7 @@ class CraftsmenCRScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        this.props.makeRemoteRequest();
+        this.makeRemoteRequest();
         console.log("response after update", responseJson);
       })
       .catch((error) => {

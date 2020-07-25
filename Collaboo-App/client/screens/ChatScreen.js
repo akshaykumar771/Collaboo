@@ -41,6 +41,15 @@ class ChatScreen extends Component {
     this.state.socket.emit("action", action);
     this.state.socket.on("action", (action) => {
       console.log("from getAllChats: ", action)
+      if(action.data.status == 204){
+        Alert.alert(
+          "No Chats Found",
+          "Please add a contact from appointments to begin the conversation",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+      }
+   else{
       const allChats = action.type === "chats" ? action.data : "";
       console.log("Get all chats: ", allChats);
       this.setState({
@@ -48,8 +57,10 @@ class ChatScreen extends Component {
         users: allChats.data,
         arrayHolder: allChats.data,
       });
+    }
       console.log("from chat screen :", this.state.users);
     });
+
     this.state.socket.on("error", (error) => {
       Alert.alert(
         "No Chats Found",
@@ -72,8 +83,8 @@ class ChatScreen extends Component {
     const newData = this.arrayHolder.filter(function (item) {
       //applying filter for the inserted text in search bar
       console.log("itemdata", item.toUser);
-      const fNameData = item.toUser.fullname
-        ? item.toUser.fullname.toUpperCase()
+      const fNameData = item.toUser.fname
+        ? item.toUser.fname.toUpperCase()
         : "".toUpperCase();
       const textData = text.toUpperCase();
       const itemData = fNameData;
@@ -147,7 +158,7 @@ class ChatScreen extends Component {
               renderItem={({ item }) => (
                 // Single Comes here which will be repeatative for the FlatListItems
                 <ListItem
-                  title={item.toUser.fullname}
+                  title={item.toUser.fname + item.toUser.lname}
                   subtitle={item.toUser.phno}
                   containerStyle={{ borderBottomWidth: 0 }}
                   rightIcon={{ name: "message" }}

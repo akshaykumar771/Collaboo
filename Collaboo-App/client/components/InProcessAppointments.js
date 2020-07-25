@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Button } from "react-native";
+import { View, StyleSheet, Button, Alert } from "react-native";
 import {
   Container,
   Header,
@@ -16,23 +16,59 @@ import {
 } from "native-base";
 import Colors from "../constants/Colors";
 import moment from "moment";
-export default class InProcessAppointments extends Component {
+import { connect } from "react-redux";
+ class InProcessAppointments extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      appointmentid:""
+    }
+  }
+
+  closeTask = async (item) => {
+    console.log("closed items", item)
+    await this.setState({
+      appointmentid: item._id
+    })
+    console.log("close state", this.state.appointmentid)
+    const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
+    console.log("url", url)
+    const bearer = "Bearer " + this.props.token;
+    console.log("bearer", bearer)
+    const data = {
+        status: 'COMPLETED',
+        
+    };
+    console.log("data", data)
+    fetch(url, {
+      method: "PUT",
+      headers: { Authorization: bearer, "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log("response after update", responseJson);
+        Alert.alert(
+          "Warning",
+          "Please make sure you have logged your work",
+          [{ text: "OK", onPress: () => console.log("OK") }],
+          { cancelable: true }
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
   render() {
     return (
       <Container>
         <Content style={{ padding: 10 }}>
-          {this.props.inProcessAppointments &&
+          {this.props.inProcessAppointments && 
             this.props.inProcessAppointments.map((item) => {
-              {
-                console.log("props inprocess", item);
-              }
-              const formatedStartDate = moment(item.apntdatime).format(
+              const formatedStartDate =  moment(item.apntdatime).format(
                 "dddd, MMM DD at HH:mm a"
               );
-              return (
+              return(
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Left>
@@ -43,7 +79,7 @@ export default class InProcessAppointments extends Component {
                     </Left>
                     <Right>
                         <Body style={{left: 40}}>
-                        <Button title="Close"/>
+                        <Button title="Close" onPress={() => this.closeTask(item)}/>
                         </Body>
                     </Right>
                   </CardItem>
@@ -57,19 +93,20 @@ export default class InProcessAppointments extends Component {
                       <Icon active name="md-calendar" />
                       <Text style={{color: 'orange'}}>{formatedStartDate}</Text>
                     </Left>
-                    <Right>
-                    <Text style={{color: 'orange'}}>{item.service.catname}</Text>
-                    </Right>
                   </CardItem>
                 </Card>
               );
             })}
+            
         </Content>
       </Container>
     );
   }
 }
-
+const mapStateToProps = (state) => ({
+  token: state.userReducer.token,
+  role: state.userReducer.userRole,
+});
 const styles = StyleSheet.create({
   cardText: {
     fontSize: 18,
@@ -89,3 +126,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+export default connect(mapStateToProps, null)(InProcessAppointments)

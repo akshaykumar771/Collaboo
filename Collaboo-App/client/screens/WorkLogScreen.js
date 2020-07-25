@@ -37,6 +37,7 @@ class WorkLogScreen extends Component {
       date: "",
       time: "",
       worklogCard: "",
+      selected:""
     };
   }
   navigateWorkLog = () => {
@@ -50,7 +51,7 @@ class WorkLogScreen extends Component {
     const bearer = "Bearer " + this.props.token;
     //console.log("bearer", bearer);
     const data = {
-      appointmentid: this.state.appointmentId,
+      appointmentid: this.state.selected,
       logs: [{ date: this.state.date, time: this.state.time }],
     };
     fetch(url, {
@@ -65,7 +66,7 @@ class WorkLogScreen extends Component {
           worklogCard: Date.now(),
         });
         // const {navigation, position} = this.props
-        // console.log("response from worklog :", responseJson);
+         //console.log("response from worklog :", responseJson);
         Alert.alert(
           "Successfully added the worklog",
           "To update the worklog, please click the add icon on your worklogs",
@@ -139,7 +140,7 @@ class WorkLogScreen extends Component {
         this.setState({
           dataSource: responseJson,
         });
-        console.log("state", this.state.dataSource);
+        console.log("data source state", this.state.dataSource);
       })
       .catch((error) => {
         console.error(error);
@@ -150,11 +151,11 @@ class WorkLogScreen extends Component {
   }
   render() {
     return (
-      <View>
-        <KeyboardAwareScrollView
+      <View style={{flex: 1}}>
+        {/* <KeyboardAwareScrollView
           enableOnAndroid={true}
           // enableAutomaticScroll={Platform.OS === "ios"}
-        >
+        > */}
           <WorkLogCard key={this.state.worklogCard} />
           <Modal transparent={true} visible={this.state.isModalOpen}>
             <View
@@ -185,17 +186,18 @@ class WorkLogScreen extends Component {
                   <Picker
                   style={styles.picker}
                     mode ='dropdown'
-                    selectedValue={this.state.dataSource[0]}
+                    selectedValue={this.state.selected}
                     onValueChange={(itemValue, itemIndex) => {
                         this.setState({
-                          appointmentId: itemValue
+                          selected: itemValue
                         });
-                      }}
+                      }} 
                   >
+                  {console.log("item value", this.state.selected)}
                   {this.state.dataSource &&
                         this.state.dataSource.length > 0 &&
-                        this.state.dataSource.map((item, key) => (
-                          <Picker.Item label={item.title} value={item._id} key={key} />
+                        this.state.dataSource.map((item, index) => (
+                          <Picker.Item label={item.title} value={item._id} key={index} />
                         ))}
                   </Picker>
                 <View style= {styles.dateInput}>
@@ -259,7 +261,7 @@ class WorkLogScreen extends Component {
               </View>
             </View>
           </Modal>
-        </KeyboardAwareScrollView>
+        {/* </KeyboardAwareScrollView> */}
         <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
           <TouchableOpacity
             style={styles.workLogButton}

@@ -29,13 +29,13 @@ class AgentNewAppointmentCard extends Component {
     setTimeout(() => {
       this.makeRemoteRequest();
     }, 4000);
-    // let newArr = [];
-    // for (let i = 0; i < this.props.appointments.length; i++) {
-    //   newArr.push("Select Craftsmen");
-    // }
-    // this.setState({
-    //   selectedCraftsmen: newArr,
-    // });
+  }
+  shouldComponentUpdate(nextProps) {
+    console.log(nextProps.token, this.props.token);
+    if (nextProps.token == this.props.token) {
+      this.makeRemoteRequest();
+    }
+    return true;
   }
 
   makeRemoteRequest = () => {
@@ -48,11 +48,7 @@ class AgentNewAppointmentCard extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        //let craftsmenName = []
-        // responseJson && responseJson.map((item) => {
-        //   const fullName = item.fullname
-        //   craftsmenName.push(fullName)
-        // })
+    
         this.setState({
           isLoading: false,
           dataSource: responseJson,

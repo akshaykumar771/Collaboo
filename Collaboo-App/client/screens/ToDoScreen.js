@@ -61,14 +61,14 @@ class ToDoScreen extends Component {
               });
               console.log("new appointments", this.state.appointments)
             } else if (
-              item.status === "INPROCESS"
+              item.status === "INPROCESS" || item.status === 'REOPENED'
             ) {
               inProcessAppointments.push(item);
               this.setState({
                 inProcessAppointments: inProcessAppointments,
               });
             } else if (
-              item.status === "CLOSED"
+              item.status === "COMPLETED"
             ) {
               closedAppointments.push(item);
               this.setState({
@@ -84,7 +84,7 @@ class ToDoScreen extends Component {
             // }
           });
         console.log("response todoScreen", responseJson);
-        console.log("appointment state", this.state.appointments);
+        console.log("appointment state", this.state.closedAppointments);
       })
       .catch((error) => {
         console.error(error);

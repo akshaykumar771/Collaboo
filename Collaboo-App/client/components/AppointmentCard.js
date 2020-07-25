@@ -120,8 +120,8 @@ import DateTimePicker from "react-native-modal-datetime-picker";
     return (
       <Container>
         <Content style={{ padding: 10 }}>
-          {this.props.appointments.length > 0 ? (
-            this.props.appointments && this.props.appointments.map((item) => {
+          {this.props.appointments && this.props.appointments.length > 0 &&
+             this.props.appointments.map((item) => {
               console.log(item.title);
               return (
                 <Card style={styles.card}>
@@ -135,14 +135,29 @@ import DateTimePicker from "react-native-modal-datetime-picker";
                       </Text>
                     </Body>
                     <Right>
-                      <Icon style={styles.iconCheck} name="ios-checkmark" onPress={() => this.openModal(item)}/>
-                      <Button title="Cancel" onPress={() => this.cancelAppointment(item)} />
-                      {/* <Icon style={styles.iconCancel} name="ios-close"  /> */}
+                    <View style={{bottom: 30}}>
+                    <TouchableOpacity
+                    style={styles.acceptBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.openModal(item)}
+                  >
+                    <Text style={styles.chooseDateBtnTxt}>Accept</Text>
+                  </TouchableOpacity>
+                  </View>
+                  <View style={{bottom: 20}}>
+                  <TouchableOpacity
+                    style={styles.rejectBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.cancelAppointment(item)}
+                  >
+                    <Text style={styles.chooseDateBtnTxt}>Reject</Text>
+                  </TouchableOpacity>
+                  </View>
                     </Right>
                   </CardItem>
                 </Card>
               );
-            })) : [] }
+            })}
           <Modal transparent={true} visible={this.state.isModalOpen}>
             <View
               style={{
@@ -290,7 +305,57 @@ const styles = StyleSheet.create({
     marginTop: 0,
     top: 40,
     borderWidth: 1,
+    borderColor: "black",
+      }
+    }),
+  },
+  acceptBtn:{
+    ...Platform.select({
+      ios:{
+        paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: "black",
+    borderRadius: 10,
+    marginTop: 0,
+    borderWidth: 1,
     borderColor: "#fff",
+    bottom: 85
+      },
+      android:{
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    marginTop: 0,
+    top: 40,
+    borderWidth: 1,
+    borderColor: "black",
+    width: 80
+      }
+    }),
+  },
+  rejectBtn:{
+    ...Platform.select({
+      ios:{
+        paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: "black",
+    borderRadius: 10,
+    marginTop: 0,
+    borderWidth: 1,
+    borderColor: "#fff",
+    bottom: 85
+      },
+      android:{
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    marginTop: 0,
+    top: 40,
+    borderWidth: 1,
+    borderColor: "black",
+    width: 80
       }
     }),
   },
