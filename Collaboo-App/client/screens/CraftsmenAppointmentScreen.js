@@ -70,28 +70,20 @@ class CraftsmenAppointmentScreen extends Component {
             ) {
               newAppointments.push(item);
               console.log("arr", newAppointments)
-              this.setState({
-                appointments: newAppointments,
-              });
-              console.log("new appointments", this.state.appointments)
             } else if (
               item.status === "OPEN" &&
               item.crafconfirmation === "YES" &&
               item.custconfirmation === "DEFAULT"
             ) {
               acceptedAppointments.push(item);
-              this.setState({
-                acceptedAppointments: acceptedAppointments,
-              });
+             
             } else if (
               item.status === "CANCELLED" &&
               item.crafconfirmation === "NO" || item.crafconfirmation === "YES" &&
               item.custconfirmation === "DEFAULT" || item.custconfirmation === 'NO'
             ) {
               rejectedAppointments.push(item);
-              this.setState({
-                rejectedAppointments: rejectedAppointments,
-              });
+              
             }
             //  else {
             //   this.setState({
@@ -100,6 +92,11 @@ class CraftsmenAppointmentScreen extends Component {
             //     rejectedAppointments: [],
             //   });
             // }
+          });
+          this.setState({
+            appointments: newAppointments,
+            acceptedAppointments: acceptedAppointments,
+            rejectedAppointments: rejectedAppointments,
           });
         console.log("response crfatsmenapptscreen", responseJson);
         console.log("appointment state", this.state.appointments);

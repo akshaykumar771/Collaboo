@@ -7,6 +7,7 @@ import {
   TextInput,
   Alert,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import {
   Container,
@@ -22,12 +23,14 @@ import {
   Button,
   Input,
 } from "native-base";
+
 import { MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import moment from "moment";
 import Colors from "../constants/Colors";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+const window = Dimensions.get("window");
 class WorkLogCard extends Component {
   constructor(props) {
     super(props);
@@ -61,7 +64,7 @@ class WorkLogCard extends Component {
     }
     return true;
   }
- 
+
   makeRemoteRequest() {
     //console.log("token in worklog", this.props.token);
     const url = "http://81.89.193.99:3001/api/craftsmen/worklogs";
@@ -158,7 +161,7 @@ class WorkLogCard extends Component {
       date: item.date,
       time: item.time,
     }));
-    console.log("transformed logs", transformedLogs)
+    console.log("transformed logs", transformedLogs);
     const data = {
       appointmentid: this.state.selectedItem.appointmentid,
       logs: transformedLogs,
@@ -202,178 +205,183 @@ class WorkLogCard extends Component {
     obj.date = this.state.addDate;
     obj.time = this.state.addTime;
     let item = this.state.selectedItem;
-    if(obj.date && obj.time){
+    if (obj.date && obj.time) {
       item.logs.push(obj);
-      this.setState({
-      selectedItem: item
-    }, () => this.updateWorkLog() )
+      this.setState(
+        {
+          selectedItem: item,
+        },
+        () => this.updateWorkLog()
+      );
     }
     // this.textInput.clear();
-    else{
+    else {
       this.updateWorkLog();
     }
-    
   };
   render() {
     console.log("this.state", this.state);
     return (
-      <View key={this.state.worklogCard} style={{flex: 1}}>
-        <Container style={{bottom:'5%'}}>
-          <Content style={{padding: 10}}>
+      <View key={this.state.worklogCard} style={{ flex: 1 }}>
+        <Container style={{ bottom: "5%" }}>
+          <Content style={{ padding: 10 }}>
             {/* <KeyboardAwareScrollView
               enableOnAndroid={true}
               // enableAutomaticScroll={Platform.OS === "ios"}
             > */}
-              <Modal transparent={true} visible={this.state.isModalOpen}>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    backgroundColor: "#00000080",
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 400,
-                      height: 700,
-                      backgroundColor: "#fff",
-                      paddingVertical: 40,
-                      paddingHorizontal: 10,
-                    }}
-                  >
-                    <MaterialIcons
-                      style={styles.modalCloseIcon}
-                      name="close"
-                      size={24}
-                      onPress={() => this.closeModal()}
-                    />
-                    <Text style={styles.modalHeader}>Work Log</Text>
-                    <View>
-                      <Item>
-                        <Label
-                          style={{
-                            paddingVertical: 10,
-                            fontWeight: "bold",
-                            color: "black",
-                          }}
-                        >
-                          {this.state.selectedItem.title}
-                        </Label>
-                      </Item>
-                    </View>
-                    {this.state.selectedItem.logs &&
-                    this.state.selectedItem.logs.length
-                      ? this.state.selectedItem.logs.map((item, myIndex) => {
-                          console.log("map item", item);
-                          return (
-                            <View
-                              style={{ flexDirection: "row", marginTop: 15 }}
-                              key={myIndex}
-                            >
+            <Modal transparent={true} visible={this.state.isModalOpen}>
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#00000080",
+                }}
+              >
+                <View style={styles.modalContainer}>
+                  <MaterialIcons
+                    style={styles.modalCloseIcon}
+                    name="close"
+                    size={24}
+                    onPress={() => this.closeModal()}
+                  />
+                  <Text style={styles.modalHeader}>Work Log</Text>
+                  <View>
+                    <Item>
+                      <Label
+                        style={{
+                          paddingVertical: 10,
+                          fontWeight: "bold",
+                          color: "black",
+                          fontSize: 24,
+                        }}
+                      >
+                        {this.state.selectedItem.title}
+                      </Label>
+                    </Item>
+                  </View>
+                  <View style={{ flexDirection: "row", top: 20 }}>
+                    <Label style={{ color: Colors.primary, fontSize: 16 }}>
+                      Date (YYYY.MM.DD)
+                    </Label>
+                    <Label
+                      style={{ left: 80, color: Colors.primary, fontSize: 16 }}
+                    >
+                      No. of hours (HH:MM)
+                    </Label>
+                  </View>
+                  {this.state.selectedItem.logs &&
+                  this.state.selectedItem.logs.length
+                    ? this.state.selectedItem.logs.map((item, myIndex) => {
+                        console.log("map item", item);
+                        return (
+                          <View
+                            style={{ flexDirection: "row", top: 40 }}
+                            key={myIndex}
+                          >
+                            <TextInput
+                              style={styles.dateInput}
+                              placeholder="DD.MM.YYYY"
+                              maxLength={10}
+                              value={item.date}
+                              onChangeText={(text) => {
+                                this.handleDateAndTime(
+                                  text,
+                                  item.time,
+                                  myIndex
+                                );
+                              }}
+                            />
+                            <View style={styles.textInput}>
                               <TextInput
-                                style={styles.dateInput}
-                                placeholder="DD.MM.YYYY"
-                                maxLength={10}
-                                value={item.date}
-                                onChangeText={(text) => {
+                                placeholder="HH MM"
+                                maxLength={6}
+                                value={item.time}
+                                onChangeText={(time) => {
+                                  //console.log("change", time)
+                                  this.setState({
+                                    time: time,
+                                  });
                                   this.handleDateAndTime(
-                                    text,
-                                    item.time,
+                                    item.date,
+                                    time,
                                     myIndex
                                   );
                                 }}
                               />
-                              <View style={styles.textInput}>
-                                <TextInput
-                                  placeholder="HH MM"
-                                  maxLength={6}
-                                  value={item.time}
-                                  onChangeText={(time) => {
-                                    //console.log("change", time)
-                                    this.setState({
-                                      time: time,
-                                    });
-                                    this.handleDateAndTime(
-                                      item.date,
-                                      time,
-                                      myIndex
-                                    );
-                                  }}
-                                />
-                              </View>
                             </View>
-                          );
-                        })
-                      : null}
+                          </View>
+                        );
+                      })
+                    : null}
 
-                    <View style={{ flexDirection: "row", marginTop: 30 }}>
+                  <View style={{ flexDirection: "row", marginTop: 70 }}>
+                    <TextInput
+                      style={styles.dateInput}
+                      ref={(input) => {
+                        this.textInput = input;
+                      }}
+                      placeholder="YYYY-MM-DD"
+                      maxLength={10}
+                      value={this.state.addDate}
+                      onChangeText={(text) => {
+                        this.setState({
+                          addDate: text,
+                        });
+                      }}
+                    />
+                    <Button
+                      transparent
+                      style={styles.chooseDateBtn}
+                      onPress={() => this.showDateTimePicker()}
+                    >
+                      <Icon
+                        active
+                        name="calendar"
+                        style={{ fontSize: 30, color: "black" }}
+                      />
+                    </Button>
+                    <View style={styles.chooseHoursTxtInput}>
                       <TextInput
-                        style={styles.dateInput}
                         ref={(input) => {
                           this.textInput = input;
                         }}
-                        placeholder="YYYY-MM-DD"
-                        maxLength={10}
-                        value={this.state.addDate}
-                        onChangeText={(text) => {
+                        placeholder="HH MM"
+                        maxLength={5}
+                        value={this.state.addTime}
+                        onChangeText={(time) => {
                           this.setState({
-                            addDate: text,
+                            addTime: time,
                           });
                         }}
-                      />
-                      <Button
-                        transparent
-                        style={styles.chooseDateBtn}
-                        onPress={() => this.showDateTimePicker()}
-                      >
-                        <Icon
-                          active
-                          name="calendar"
-                          style={{ fontSize: 30, color: "black" }}
-                        />
-                      </Button>
-                      <View style={styles.chooseHoursTxtInput}>
-                        <TextInput
-                          ref={(input) => {
-                            this.textInput = input;
-                          }}
-                          placeholder="HH MM"
-                          maxLength={5}
-                          value={this.state.addTime}
-                          onChangeText={(time) => {
-                            this.setState({
-                              addTime: time,
-                            });
-                          }}
-                        ></TextInput>
-                      </View>
-                      <DateTimePicker
-                        isVisible={this.state.isDateTimePickerVisible}
-                        onConfirm={this.handleDatePicked}
-                        onCancel={this.hideDateTimePicker}
-                      />
+                      ></TextInput>
                     </View>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                        marginVertical: 60,
-                      }}
+                    <DateTimePicker
+                      isVisible={this.state.isDateTimePickerVisible}
+                      onConfirm={this.handleDatePicked}
+                      onCancel={this.hideDateTimePicker}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-evenly",
+                      marginVertical: 60,
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={styles.requestButton}
+                      underlayColor="#fff"
+                      onPress={() => this.addWorkLog()}
                     >
-                      <TouchableOpacity
-                        style={styles.requestButton}
-                        underlayColor="#fff"
-                        onPress={() => this.addWorkLog()}
-                      >
-                        <Text style={styles.buttonText}>Log Work</Text>
-                      </TouchableOpacity>
-                    </View>
+                      <Text style={styles.buttonText}>Log Work</Text>
+                    </TouchableOpacity>
                   </View>
                 </View>
-              </Modal>
+              </View>
+            </Modal>
             {/* </KeyboardAwareScrollView> */}
             {this.state.newLogs.map((item, index) => {
               {
@@ -381,7 +389,7 @@ class WorkLogCard extends Component {
               }
               return (
                 <Card key={index} style={styles.card}>
-                  <CardItem bordered style = {{backgroundColor:'#f5f5f5'}}>
+                  <CardItem bordered style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
                       <Item stackedLabel>
                         <Label>Title</Label>
@@ -430,6 +438,26 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     textAlign: "justify",
   },
+  modalContainer: {
+   
+    ...Platform.select({
+      ios: {
+        width: 400,
+    height: 700,
+    backgroundColor: "#fff",
+    paddingVertical: 40,
+    paddingHorizontal: 30,
+ 
+      },
+      android: {
+         width: 400,
+    height: 700,
+    backgroundColor: "#fff",
+    paddingVertical: 40,
+    paddingHorizontal: 10,
+      },
+    }),
+  },
   hoursCardText: {
     fontSize: 20,
     textAlign: "auto",
@@ -438,7 +466,7 @@ const styles = StyleSheet.create({
   addButton: {
     marginLeft: 280,
     backgroundColor: Colors.primary,
-    width: 50
+    width: 50,
   },
   textStyle: {
     padding: 10,
@@ -474,33 +502,56 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   modalHeader: {
-    fontSize: 20,
-    textAlign: "center",
-    marginBottom: 30,
+    ...Platform.select({
+      ios: {
+        fontSize: 20,
+        textAlign: "center",
+        marginBottom: 30,
+        top: 20,
+        color: Colors.primary,
+      },
+      android: {
+        fontSize: 20,
+        textAlign: "center",
+        marginBottom: 30,
+        color: Colors.primary,
+      },
+    }),
   },
   modalCloseIcon: {
-    position: "absolute",
-    right: 5,
-    top: 5,
-    color: Colors.primary,
+    //
+    ...Platform.select({
+      ios: {
+        position: "absolute",
+        right: 15,
+        top: 55,
+        color: Colors.primary,
+      },
+      android: {
+        position: "absolute",
+        right: 5,
+        top: 5,
+        color: Colors.primary,
+      },
+    }),
   },
   textInput: {
-    justifyContent: "space-between",
+    justifyContent: "center",
     alignItems: "center",
-    borderColor: "black",
+    borderColor: Colors.primary,
     width: 80,
     borderWidth: 1,
     borderStyle: "solid",
     fontSize: 15,
-    borderRadius: 25,
-    left: 184,
+    borderRadius: 10,
+    left: 180,
   },
   dateInput: {
     borderWidth: 1,
     borderStyle: "solid",
-    borderColor: "black",
+    borderColor: Colors.primary,
     width: 110,
-    borderRadius: 20,
+    borderRadius: 10,
     textAlign: "center",
   },
   dateBtnTxt: {
@@ -511,12 +562,12 @@ const styles = StyleSheet.create({
   chooseHoursTxtInput: {
     justifyContent: "space-between",
     alignItems: "center",
-    borderColor: "black",
+    borderColor: Colors.primary,
     borderWidth: 1,
     borderStyle: "solid",
     fontSize: 15,
-    borderRadius: 20,
-    left: 127,
+    borderRadius: 10,
+    left: 120,
     width: 80,
     height: 35,
     marginTop: 10,
@@ -535,7 +586,6 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#f5f5f5",
     marginBottom: 10,
-  
   },
 });
 

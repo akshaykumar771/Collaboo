@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, AsyncStorage, KeyboardAvoidingView } from "react-native";
+import { View, Text, AsyncStorage, KeyboardAvoidingView, Alert } from "react-native";
 import { GiftedChat, Bubble } from "react-native-gifted-chat";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
@@ -37,9 +37,19 @@ class ChatConversationScreen extends React.Component {
     //const toUserId = this.props.navigation.getParam("userId");
     //console.log("toUserID in recieve", this.state.toUserID)
     // return await socket.on("action", (action) => {
-      //console.log("recieve sockets", action);
+      console.log("recieve sockets", action);
       switch (action.type) {
         case "messages": {
+          if(action.data.status == 204){
+            console.log("action 204")
+            Alert.alert(
+              "No Chats Found",
+              "Please start a conversation to make your life easier",
+              [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+              { cancelable: false }
+            );
+          }
+          else{
           const gcmMessages = action.data.data.messages.map((chatMessage) => {
             let gcm = {
               _id: chatMessage._id,
@@ -55,8 +65,10 @@ class ChatConversationScreen extends React.Component {
             messages: gcmMessages.reverse(),
           });
           console.log("from messages state:", this.state.messages)
+        }
           break;
         }
+      
         case "messageSent": {
           console.log("from message sent: ", action.data)
           if (action.data != undefined)

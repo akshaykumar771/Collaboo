@@ -25,6 +25,7 @@ const StartUpScreen = (props) => {
       const socket = await io.connect("http://81.89.193.99:3001/chat", {
         query: { token: token },
       });
+      console.log("socker sconnection", socket)
       //console.log("startupscreen", transformedData);
       if (!token || !userId || !userRole) {
         props.navigation.navigate("Auth");

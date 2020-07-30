@@ -39,7 +39,7 @@ class ACWorkLogScreen extends Component {
   }
   makeRemoteRequest() {
     console.log("token in worklog", this.props.token);
-    console.log("state craftsmen id:", this.state.craftsmenId);
+    //console.log("state craftsmen id:", this.state.craftsmenId);
     const url = `http://81.89.193.99:3001/api/agent/craftsmen/${this.state.craftsmenId}/worklogs`;
     console.log("url", url);
     const bearer = "Bearer " + this.props.token;

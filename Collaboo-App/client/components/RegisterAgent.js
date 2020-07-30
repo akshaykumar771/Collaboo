@@ -25,7 +25,7 @@ export default class RegisterAgent extends Component {
       city: "",
     };
   }
-
+  
   showCategories = (categories) => {
     this.setState(
       {
@@ -92,11 +92,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
   },
   category: {
-    padding: 5,
+   
+    ...Platform.select({
+      ios:{
+        padding: 15,
+        borderBottomColor: "black",
+        borderBottomWidth: 0.25,
+        marginTop: 10
+      },
+      android:{
+        padding: 5,
     borderBottomColor: "black",
     borderBottomWidth: 0.25,
     marginTop: 10
+      }
+    }),
   },
+  
   categoryIcon: {
     position: "absolute",
     top: 15,

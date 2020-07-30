@@ -81,14 +81,12 @@ export default class RegisterCraftsmen extends Component {
   render() {
     return (
       <Form>
-        
           <CheckBox
             style={styles.selfEmployed}
             checked={this.state.selfEmployed}
             onPress={() => this.onChangeCheck()}
           />
-       
-        <View>
+        <View style = {{top: 20, left: 35}}>
           <Text style={styles.checkText}>Self Employed</Text>
         </View>
         {this.state.selfEmployed === true ? (
@@ -126,10 +124,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
   },
   category: {
-    padding: 5,
-    borderBottomColor: "black",
-    borderBottomWidth: 0.25
+    ...Platform.select({
+      ios:{
+        top: 10,
+        padding: 30,
+        borderBottomColor: "black",
+        borderBottomWidth: 0.25
+      },
+      android:{
+        top: 10,
+        padding: 10,
+        borderBottomColor: "black",
+        borderBottomWidth: 0.25
+      }
+    }),
   },
+  
+ 
   categoryIcon: {
     position: "absolute",
     top: 15,

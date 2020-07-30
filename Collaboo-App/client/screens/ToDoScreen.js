@@ -64,16 +64,12 @@ class ToDoScreen extends Component {
               item.status === "INPROCESS" || item.status === 'REOPENED'
             ) {
               inProcessAppointments.push(item);
-              this.setState({
-                inProcessAppointments: inProcessAppointments,
-              });
+              
             } else if (
               item.status === "COMPLETED"
             ) {
               closedAppointments.push(item);
-              this.setState({
-                closedAppointments: closedAppointments,
-              });
+             
             }
             //  else {
             //   this.setState({
@@ -82,6 +78,10 @@ class ToDoScreen extends Component {
             //     rejectedAppointments: [],
             //   });
             // }
+          });
+          this.setState({
+            inProcessAppointments: inProcessAppointments,
+            closedAppointments: closedAppointments,
           });
         console.log("response todoScreen", responseJson);
         console.log("appointment state", this.state.closedAppointments);

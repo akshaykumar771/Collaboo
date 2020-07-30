@@ -64,7 +64,8 @@ import { connect } from "react-redux";
       <Container>
         <Content style={{ padding: 10 }}>
           {this.props.inProcessAppointments && 
-            this.props.inProcessAppointments.map((item) => {
+            this.props.inProcessAppointments.map((item, index) => {
+              console.log("inprocessappointments", item)
               const formatedStartDate =  moment(item.apntdatime).format(
                 "dddd, MMM DD at HH:mm a"
               );

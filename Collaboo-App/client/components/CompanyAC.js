@@ -106,13 +106,33 @@ const styles = StyleSheet.create({
     flex: 1,
      padding: 10,
      marginTop: 0,
-     marginBottom:0
+     paddingTop: 10,
+   
   },
   autocompleteContainer: {
-    backgroundColor: '#ffffff',
+    // backgroundColor: '#ffffff',
+    // borderWidth: 0,
+    // marginTop: 10,
+    // marginLeft: 10,
+    // marginRight: 10
+    ...Platform.select({
+      ios:{
+        backgroundColor: '#ffffff',
     borderWidth: 0,
-    marginTop: 10
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10
+      },
+      android:{
+        backgroundColor: '#ffffff',
+    borderWidth: 0,
+    marginTop: 10,
+    marginLeft: 10,
+    marginRight: 10
+      }
+    }),
   },
+  
   descriptionContainer: {
     flex: 1,
     justifyContent: 'center',

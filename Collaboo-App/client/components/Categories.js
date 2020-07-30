@@ -89,7 +89,9 @@ export default class Categories extends Component {
     //this.handleConfirm(pItems)
   };
   handleIosConfirm = () => {
+    console.log("checkkkkk")
     this.props.showCategories(this.state.iosCategories);
+    this.closeModal()
   }
   render() {
     if (this.state.isLoading) {
@@ -154,55 +156,29 @@ export default class Categories extends Component {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "space-evenly",
-                        marginVertical: 60,
+                        marginVertical: 40,
+                        
                       }}
                     >
                       {/* {console.log("state", this.state.dataSource)} */}
                       <CheckboxFormX
-                  
+                      
                   dataSource={this.state.dataSource}
                   itemShowKey="catname"
                   itemCheckedKey="RNchecked"
-                  iconSize={16}
+                  iconSize={30}
                   formHorizontal={false}
                   labelHorizontal={true}
                   onChecked={(pItems) => this._onSelect(pItems)}
               />
               <Button title="Confirm" onPress={() => this.handleIosConfirm()} />
-                      {/* <FlatList
-                        data={this.state.dataSource}
-                        renderItem={({ item, index }) => (
-                          <Container>
-                           <Content>
-                          <CheckBox
-                            center
-                            title={item.catname}
-                            onPress={() => this.handleChange(index)}
-                            checked={this.state.checked[index]}
-                          />
-                          </Content>
-                          </Container>
-                        )} /> */}
-                      {/* {this.state.dataSource &&
-                        this.state.dataSource.map((item) => {
-                          return (
-                           <Container>
-                           <Content>
-                            <ListItem style={{flexDirection: 'column'}}>
-                              <CheckBox checked={true} />
-                              <Body>
-                                <Text>{this.state.iosItems}</Text>
-                              </Body>
-                            </ListItem>
-                            </Content>
-                            </Container>
-                            
-                          );
-                        })} */}
                     </View>
                   </View>
                 </View>
               </Modal>
+              <View>
+              <Text>         Categories selected</Text>
+              </View>
             </ScrollView>
           </KeyboardAwareScrollView>
         </View>

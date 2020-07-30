@@ -316,10 +316,10 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: "black",
     borderRadius: 10,
-    marginTop: 0,
+    marginTop: 50,
     borderWidth: 1,
     borderColor: "#fff",
-    bottom: 85
+    width: 80
       },
       android:{
     paddingTop: 10,
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderWidth: 1,
     borderColor: "#fff",
-    bottom: 85
+    width: 80
       },
       android:{
     paddingTop: 10,

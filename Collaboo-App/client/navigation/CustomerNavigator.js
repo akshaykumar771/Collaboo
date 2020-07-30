@@ -8,6 +8,8 @@ import CustomerRequestScreen from "../screens/CustomerRequestScreen";
 import InventoryScreen from "../screens/InventoryScreen";
 import ViewAppointmentsScreen from "../screens/ViewAppointmentsScreen";
 import ViewInvitationScreen from "../screens/ViewInvitationScreen";
+import UserProfileScreen from "../screens/UserProfileScreen";
+import EditProfileScreen from "../screens/EditProfileScreen";
 import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
@@ -81,22 +83,22 @@ const chatNavigator = createStackNavigator(
   //     tabBarVisible,
   //   };
   // };
-const CustomerDetailNavigator = createStackNavigator(
-  {
-    CustomerDetails: CustomerDetailScreen,
-    AddCustomerDetails: AddCustomerDetailScreen,
-  },
-  {
-    navigationOptions: {
-      tabBarIcon: (tabInfo) => {
-        return (
-          <Ionicons name="ios-people" size={25} color={tabInfo.tintColor} />
-        );
-      },
+  const UserProfileNavigator = createStackNavigator(
+    {
+      Profile: UserProfileScreen,
+      EditProfile: EditProfileScreen
     },
-    defaultNavigationOptions: defaultNavOptions,
-  }
-);
+    {
+      navigationOptions: {
+        tabBarIcon: (tabInfo) => {
+          return (
+            <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+          );
+        },
+      },
+      defaultNavigationOptions: defaultNavOptions,
+    }
+  );
 const InventoryNavigator = createStackNavigator(
   {
     Inventory: InventoryScreen,
@@ -119,8 +121,8 @@ const CustomerNavigator =
         {
           Requests: CustomerRequestNavigator,
           Chat: chatNavigator,
-          CustomerDetail: CustomerDetailNavigator,
-          Inventory: InventoryNavigator
+          Inventory: InventoryNavigator,
+          Profile: UserProfileNavigator,
         },
         {
           activeTintColor: "white",
@@ -134,8 +136,8 @@ const CustomerNavigator =
         {
           Requests: CustomerRequestNavigator,
           Chat: chatNavigator,
-          CustomerDetail: CustomerDetailNavigator,
-          Inventory: InventoryNavigator
+          Inventory: InventoryNavigator,
+          Profile: UserProfileNavigator,
         },
         {
           tabBarOptions: {
