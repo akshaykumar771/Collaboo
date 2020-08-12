@@ -15,13 +15,20 @@ class AgentAppointmentScreen extends Component {
     };
   }
   componentDidMount() {
-    // if (this.props.token) {
-    //   //console.log(props.token)
-    //   this.makeRemoteRequest();
-    // }
-    setTimeout(() => {
-          this.makeRemoteRequest();
-        }, 3000);
+    if (this.props.token) {
+      //console.log(props.token)
+      this.makeRemoteRequest();
+    }
+    // setTimeout(() => {
+    //       this.makeRemoteRequest();
+    //     }, 3000);
+  }
+  shouldComponentUpdate(nextProps) {
+    //console.log(nextProps.token, this.props.token);
+    if (nextProps.token != this.props.token) {
+      this.makeRemoteRequest();
+    }
+    return true;
   }
   makeRemoteRequest = () => {
     console.log("agent request")
@@ -55,29 +62,26 @@ class AgentAppointmentScreen extends Component {
             item.custconfirmation === "DEFAULT"
           ) {
             newAppointments.push(item);
-            this.setState({
-              appointments: newAppointments,
-            });
           } else if (
             item.status === "CANCELLED" &&
             item.crafconfirmation === "NO" &&
             item.custconfirmation === "DEFAULT"
           ) {
             rejectedAppointments.push(item);
-            this.setState({
-              rejectedAppointments: rejectedAppointments,
-            });
-            console.log("rejected agent appt", this.state.rejectedAppointments)
           }
           else if (item.craftsmenid){
             this.setState({})
           }
         });
-        console.log("appointment state", this.state.appointments);
-        console.log(
-          "accepted appointment state",
-          this.state.acceptedAppointments
-        );
+        this.setState({
+          appointments: newAppointments,
+          rejectedAppointments: rejectedAppointments,
+        })
+        //console.log("appointment state", this.state.appointments);
+        // console.log(
+        //   "accepted appointment state",
+        //   this.state.acceptedAppointments
+        // );
       })
       .catch((error) => {
         console.error(error);

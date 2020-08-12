@@ -3,6 +3,7 @@ import { View, StyleSheet, Button, Alert } from "react-native";
 import { Container, Header, Content, Card, CardItem,Label, Thumbnail, Text, Icon, Left, Body, Right } from 'native-base';
 import Colors from "../constants/Colors";
 import moment from "moment";
+import 'moment-timezone';
 import { connect } from "react-redux";
 class ClosedAppointments extends Component {
   constructor(props) {
@@ -55,7 +56,9 @@ class ClosedAppointments extends Component {
             const formatedStartDate = moment(item.apntdatime).format(
                 "dddd, MMM DD at HH:mm a"
               );
-             
+              const startDate = moment(formatedStartDate)
+              startDate.tz('Europe/Berlin').format('ha z')
+              console.log("startdate", startDate)
             return(
             <Card style={styles.card}>
             <CardItem style = {{backgroundColor:'#f5f5f5'}}>

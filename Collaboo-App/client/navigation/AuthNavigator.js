@@ -23,7 +23,8 @@ const AuthNavigatior = createStackNavigator(
   {
     initialRouteName: 'Login',
    defaultNavigationOptions: defaultNavOptions,
-      
+    
+  
   }
 )
 

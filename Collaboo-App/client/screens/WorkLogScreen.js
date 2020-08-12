@@ -126,17 +126,6 @@ class WorkLogScreen extends Component {
       })
       .then((responseJson) => {
         console.log("response from add work pop up :", responseJson);
-        // const data = responseJson &&
-        //   responseJson.length > 0 &&
-        //   responseJson.map((item) => {
-        //     const title = item.title;
-        //     const appointmentId = item._id;
-        //     // this.state.dataSource.push(title);
-        //      return item.title;
-        //   });
-        //   this.setState({
-        //     dataSource: data
-        //   })
         this.setState({
           dataSource: responseJson,
         });

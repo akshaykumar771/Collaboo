@@ -3,17 +3,27 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
-  AsyncStorage
+  AsyncStorage,
 } from "react-native";
 import Colors from "../constants/Colors";
 import { useDispatch, connect, useSelector } from "react-redux";
 import * as authActions from "../actions/action";
 import userReducer from "../reducers/userReducer";
+import * as Permissions from "expo-permissions";
+import { Notifications } from "expo";
 import io from "socket.io-client";
+import { registerForPushNotificationsAsync } from "../services/push_notifications";
 
 const StartUpScreen = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then((token) => {return token})
+      .then((pushToken) => {
+        tryLogin();
+      })
+      .catch((e) => console.log("error push", e));
+    //console.log("testnoti", testNotification);
     const tryLogin = async () => {
       const userData = await AsyncStorage.getItem("token");
       if (!userData) {
@@ -22,11 +32,13 @@ const StartUpScreen = (props) => {
       }
       const transformedData = JSON.parse(userData);
       const { token, userId, userRole } = transformedData;
+      console.log("transformedData", transformedData);
       const socket = await io.connect("http://81.89.193.99:3001/chat", {
         query: { token: token },
       });
-      console.log("socker sconnection", socket)
-      //console.log("startupscreen", transformedData);
+
+      //console.log("socker sconnection", socket);
+      console.log("startupscreen", transformedData);
       if (!token || !userId || !userRole) {
         props.navigation.navigate("Auth");
         return;
@@ -41,7 +53,7 @@ const StartUpScreen = (props) => {
       dispatch(authActions.authenticate(token, userId, userRole));
       dispatch(authActions.socket(socket));
     };
-    tryLogin();
+    
   }, []);
 
   return (
@@ -51,9 +63,6 @@ const StartUpScreen = (props) => {
   );
 };
 
-// const mapStateToProps = (state) => ({
-//     token: state.userReducer.token
-//   });
 
 const styles = StyleSheet.create({
   screen: {

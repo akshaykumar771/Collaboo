@@ -28,6 +28,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import moment from "moment";
 import Colors from "../constants/Colors";
+import 'moment-timezone';
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 const window = Dimensions.get("window");
@@ -96,8 +97,9 @@ class WorkLogCard extends Component {
             const title = item.appointmentid.title;
             const startDate = item.appointmentid.apntdatime;
             const formatedStartDate = moment(startDate).format(
-              "dddd, MMM DD at HH:mm a"
-            );
+              "dddd, MMM DD"
+            )
+            
             const totalWorkingHours = item.totalWorkingTime;
             const logs = await item.logs.map((item) => {
               return {
@@ -387,6 +389,7 @@ class WorkLogCard extends Component {
               {
                 console.log("item inside card", item);
               }
+              
               return (
                 <Card key={index} style={styles.card}>
                   <CardItem bordered style={{ backgroundColor: "#f5f5f5" }}>

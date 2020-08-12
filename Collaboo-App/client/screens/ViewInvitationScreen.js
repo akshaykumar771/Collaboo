@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Button, Alert } from "react-native";
+import { View, StyleSheet, Button, Alert, TouchableOpacity } from "react-native";
 import {
   Container,
   Header,
@@ -219,23 +219,44 @@ class ViewInvitationScreen extends Component {
                     </Body>
                     <Right>
                       <View>
-                        <Button
+                        {/* <Button
                           title="Accept"
                           onPress={() => this.acceptAppointment(item)}
-                        />
+                        /> */}
+                        <TouchableOpacity
+                    style={styles.closeBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.acceptAppointment(item)}
+                  >
+                    <Text style={styles.closeBtnTxt}>Accept</Text>
+                  </TouchableOpacity>
                       </View>
                       <View style={{ top: 20 }}>
-                        <Button
+                        {/* <Button
                           title="Reject"
                           onPress={() => this.rejectAppointment(item)}
-                        />
+                        /> */}
+                        <TouchableOpacity
+                    style={styles.closeBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.rejectAppointment(item)}
+                  >
+                    <Text style={styles.closeBtnTxt}>Reject</Text>
+                  </TouchableOpacity>
                       </View>
                       <View style={{ top: 40 }}>
-                        <Button
+                        {/* <Button
                           title="Re-Schedule"
                           style={{ marginTop: 140 }}
                           onPress={() => this.rescheduleAppointment(item)}
-                        />
+                        /> */}
+                        <TouchableOpacity
+                    style={styles.closeBtn}
+                    underlayColor="#fff"
+                    onPress={() => this.rescheduleAppointment(item)}
+                  >
+                    <Text style={styles.closeBtnTxt}>ReSchedule</Text>
+                  </TouchableOpacity>
                       </View>
                     </Right>
                   </CardItem>
@@ -272,7 +293,7 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     textAlign: "justify",
     // color: Colors.primary,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   card: {
     top: 10,
@@ -285,6 +306,41 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "#f5f5f5",
     marginBottom: 10,
+  },
+  closeBtn:{
+    ...Platform.select({
+      ios:{
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "black",
+        width: 110,
+        height: 50
+      },
+      android:{
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    marginTop: 0,
+    top: 0,
+    borderWidth: 1,
+    borderColor: "black",
+    width: 110,
+    height: 50
+      }
+    }),
+  },
+  closeBtnTxt:{
+    color: "white",
+    textAlign: "center",
+    justifyContent:"center",
+    alignItems: "center",
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
 

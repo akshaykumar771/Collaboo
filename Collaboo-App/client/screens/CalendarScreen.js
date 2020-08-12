@@ -94,9 +94,8 @@ class Calc extends Component {
               <Text style={{ color: "green", fontSize: 16, fontWeight: '700' }}>COMPLETED</Text>
             ) : item.status === "INPROCESS" ? (
               <Text style={{ color: "blue", fontSize: 16, fontWeight: '700' }}>IN PROCESS</Text>
-            ) : item.status === "CANCELLED" ? (
-              <Text style={{ color: "red", fontSize: 16, fontWeight: '700' }}>CANCELLED</Text>
-            ) : item.status === "REOPENED" ? (
+            ) 
+             : item.status === "REOPENED" ? (
               <Text style={{ color: "#63264a", fontSize: 16, fontWeight: '700' }}>RE-OPENED</Text>
             ) : (
               []

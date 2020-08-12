@@ -14,32 +14,32 @@ import {
   Body,
   Right,
 } from "native-base";
+import 'moment-timezone';
 import Colors from "../constants/Colors";
 import moment from "moment";
 import { connect } from "react-redux";
- class InProcessAppointments extends Component {
+class InProcessAppointments extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      appointmentid:""
-    }
+      appointmentid: "",
+    };
   }
 
   closeTask = async (item) => {
-    console.log("closed items", item)
+    console.log("closed items", item);
     await this.setState({
-      appointmentid: item._id
-    })
-    console.log("close state", this.state.appointmentid)
+      appointmentid: item._id,
+    });
+    console.log("close state", this.state.appointmentid);
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
-    console.log("url", url)
+    console.log("url", url);
     const bearer = "Bearer " + this.props.token;
-    console.log("bearer", bearer)
+    console.log("bearer", bearer);
     const data = {
-        status: 'COMPLETED',
-        
+      status: "COMPLETED",
     };
-    console.log("data", data)
+    console.log("data", data);
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -58,18 +58,31 @@ import { connect } from "react-redux";
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
   render() {
     return (
       <Container>
         <Content style={{ padding: 10 }}>
-          {this.props.inProcessAppointments && 
+          {this.props.inProcessAppointments &&
             this.props.inProcessAppointments.map((item, index) => {
-              console.log("inprocessappointments", item)
-              const formatedStartDate =  moment(item.apntdatime).format(
+              console.log("inprocessappointments", item);
+              const formatedStartDate = moment(item.apntdatime).format(
                 "dddd, MMM DD at HH:mm a"
               );
-              return(
+              const startDate = moment(formatedStartDate)
+              startDate.tz('Europe/Berlin').format('ha z')
+              console.log("inporces startdate", startDate)
+              {/* const today = moment().tz("Europe/Berlin");
+              console.log("today", today);
+              const currentTimeZoneOffsetInHours = today.utcOffset();
+              console.log("current",currentTimeZoneOffsetInHours) */}
+              {/* const convertedToLocalTime = formatTimeByOffset(
+                backEndTimeStamp,
+                currentTimeZoneOffsetInHours
+              );
+               */}
+             
+              return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Left>
@@ -79,9 +92,12 @@ import { connect } from "react-redux";
                       </Body>
                     </Left>
                     <Right>
-                        <Body style={{left: 40}}>
-                        <Button title="Close" onPress={() => this.closeTask(item)}/>
-                        </Body>
+                      <Body style={{ left: 40 }}>
+                        <Button
+                          title="Close"
+                          onPress={() => this.closeTask(item)}
+                        />
+                      </Body>
                     </Right>
                   </CardItem>
                   <CardItem cardBody style={{ backgroundColor: "#f5f5f5" }}>
@@ -89,16 +105,17 @@ import { connect } from "react-redux";
                       {item.description}
                     </Text>
                   </CardItem>
-                  <CardItem style={{ backgroundColor: "#f5f5f5"}}>
+                  <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Left>
                       <Icon active name="md-calendar" />
-                      <Text style={{color: 'orange'}}>{formatedStartDate}</Text>
+                      <Text style={{ color: "orange" }}>
+                        {formatedStartDate}
+                      </Text>
                     </Left>
                   </CardItem>
                 </Card>
               );
             })}
-            
         </Content>
       </Container>
     );
@@ -127,4 +144,4 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 });
-export default connect(mapStateToProps, null)(InProcessAppointments)
+export default connect(mapStateToProps, null)(InProcessAppointments);

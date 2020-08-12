@@ -23,7 +23,8 @@ import DateTimePicker from "react-native-modal-datetime-picker";
       isModalOpen: false,
       isDateTimePickerVisible: false,
       crafconfirmation:"NO",
-      appointmentid: ""
+      appointmentid: "",
+      date: ""
     };
   }
   
@@ -112,8 +113,8 @@ import DateTimePicker from "react-native-modal-datetime-picker";
   render() {
       if(this.props.appointments.length <= 0){
           return (  
-            <View>
-                <Text>No appointmens found! Come back later</Text>
+            <View style = {{justifyContent:'center', alignItems:'center'}}>
+                <Text style = {{color: 'red'}}>No appointmens found! Come back later</Text>
             </View>
           );
       }
@@ -187,6 +188,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
                 <View>
                 <Text style={{color: 'green'}}>**please choose a date and time to make an appointment with the customer**</Text>
                 </View>
+                
                 <View style={styles.dateInput}>
                  
                    <TouchableOpacity
@@ -295,7 +297,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     borderWidth: 1,
     borderColor: "#fff",
-    bottom: 85
+    top: 50
       },
       android:{
     paddingTop: 10,
@@ -360,7 +362,7 @@ const styles = StyleSheet.create({
     }),
   },
   buttonText: {
-    color: "black",
+    color: "white",
     textAlign: "center",
     paddingLeft: 10,
     paddingRight: 10,
@@ -402,10 +404,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: Colors.primary,
     borderRadius: 10,
-    marginTop: 0,
+    top: 130,
+    justifyContent:'center',
+    alignItems:'center',
+    left: 60,
     borderWidth: 1,
     borderColor: "#fff",
-    bottom: 85
       },
       android:{
     paddingTop: 10,

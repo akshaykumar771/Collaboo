@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     lineHeight: 40,
     textAlign: "justify",
     // color: Colors.primary,
-    fontWeight: "900",
+    fontWeight: "500",
   },
   card: {
     top: 10,

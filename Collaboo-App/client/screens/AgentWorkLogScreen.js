@@ -78,7 +78,7 @@ class AgentWorkLogScreen extends Component {
     //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
-      console.log("itemdata", item);
+      //console.log("itemdata", item);
       const fNameData = item.fname
         ? item.fname.toUpperCase()
         : "".toUpperCase();

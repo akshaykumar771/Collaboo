@@ -11,10 +11,11 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
-  Alert
+  Alert,
+  Picker
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
-import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
+import { Form, Input, Item, Label, Textarea, Icon } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -51,7 +52,7 @@ class SearchCraftsmen extends Component {
   //   this.makeRemoteRequest();
   // }
   makeRemoteRequest = () => {
-    console.log("searchCraftsmen", this.props.token);
+    //console.log("searchCraftsmen", this.props.token);
     const url = "http://81.89.193.99:3001/api/user/search/craftsmen_agent/";
     const bearer = "Bearer " + this.props.token;
     //console.log("bearer", bearer);
@@ -92,12 +93,24 @@ class SearchCraftsmen extends Component {
       title:this.state.title,
       description:this.state.description
     };
+    console.log("request appointment", data)
     fetch(url, {
       method: "POST",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
-      .then((response) => response.json())
+    .then((response) => {
+      const status = response.status;
+      if (status === 200) {
+        return response.json();
+      } else if (status === 404) {
+        Alert.alert(
+          "Something went wrong",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+      }
+    })
       .then((responseJson) => {
         console.log("response from post", responseJson);
         // this.setState({
@@ -107,7 +120,7 @@ class SearchCraftsmen extends Component {
         // console.log("response from worklog :", responseJson);
         Alert.alert(
           "Appointment Requested Successfully",
-          "You can check ypur appointments in the history",
+          "You can check your appointments in the history",
           [{ text: "OK", onPress: () => this.closeModal() }],
           { cancelable: false }
         );
@@ -152,14 +165,26 @@ class SearchCraftsmen extends Component {
   }
 
   openModal = (item) => {
-    console.log("yyyyy", item.compid.categories)
-    this.setState({
-      isModalOpen: true,
-      selectedCats: item.compid.categories,
+    console.log("categories", item)
+    
+    if(item.selfemployed === true){
+      this.setState({
+        isModalOpen: true,
       id: item._id,
       role: item.role,
-    });
-    console.log("whatttt", this.state)
+        selectedCats: item.catid
+      })
+    }
+    else{
+      this.setState({
+        isModalOpen: true,
+        selectedCats: item.compid.categories,
+        id: item._id,
+        role: item.role,
+      });
+    }
+   
+    console.log("request modal", this.state)
   };
 
   closeModal = () => {
@@ -237,14 +262,16 @@ class SearchCraftsmen extends Component {
                 />
                 <Text style={styles.modalHeader}>Give your Request</Text>
                 <Form>
-                  <Item>
-                    <Icon active name="ios-people" />
+                  {/* <Item>
+                    <Icon active name="ios-people" /> */}
                     <Picker
+                      style = {styles.picker}
                       selectedValue={this.state.selectedValue}
                       onValueChange={(value) => {
                         this.handleChange(value);
                       }}
                     >
+                    <Picker.Item label="Select category" />
                       {this.state.selectedCats && this.state.selectedCats.length
                         ? this.state.selectedCats.map((item, myIndex) => {
                             return (
@@ -257,21 +284,21 @@ class SearchCraftsmen extends Component {
                           })
                         : null}
                     </Picker>
-                  </Item>
+                  {/* </Item> */}
                   {/* {console.log("ok",this.state)} */}
-                  <Item stackedLabel>
-                    <Label style={{ paddingVertical: 20 }}>Title</Label>
+                  <Item stackedLabel style={styles.title}>
+                    <Label style={{paddingVertical: 10}}>Title</Label>
                     <Input
                       placeholder="Write your problem here"
                       value={this.state.title}
                       onChangeText={(title) => this.setState({ title })}
                     />
                   </Item>
-                  <Item stackedLabel style={{ paddingVertical: 20 }}>
-                    <Label style={{ paddingVertical: 10 }}>Description</Label>
+                  <Item stackedLabel style={styles.description}>
+                    <Label style={{paddingVertical: 10}}>Description</Label>
                     <Textarea
                       value={this.state.description}
-                      rowSpan={7}
+                      rowSpan={5}
                       bordered
                       placeholder="Enter your description"
                       width="100%"
@@ -341,6 +368,37 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: Platform.OS == "ios" ? 10 : 0,
   },
+  title:{
+    ...Platform.select({
+      ios:{
+        bottom: 100
+      },
+      android:{
+        top: 10
+      }
+    })
+  },
+  description:{
+    ...Platform.select({
+      ios:{
+        bottom: 80
+      },
+      android:{
+        top: 20
+      }
+    })
+  },
+  picker:{
+    ...Platform.select({
+      ios:{
+        bottom: 100
+      },
+      android:{
+        top: 10,
+        left: 10
+      }
+    })
+  },
   textStyle: {
     padding: 10,
   },
@@ -350,17 +408,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   requestButton: {
+  ...Platform.select({
+    ios:{
     marginRight: 40,
     marginLeft: 40,
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: Colors.primary,
     borderRadius: 10,
-    marginTop: -35,
+    bottom: 100,
     position: "relative",
     borderWidth: 1,
     borderColor: "#fff",
-  },
+    },
+    android:{
+      marginRight: 40,
+      marginLeft: 40,
+      paddingTop: 10,
+      paddingBottom: 10,
+      backgroundColor: Colors.primary,
+      borderRadius: 10,
+      top: 20,
+      position: "relative",
+      borderWidth: 1,
+      borderColor: "#fff",
+    }
+  }),
+},
   buttonText: {
     color: "#fff",
     textAlign: "center",

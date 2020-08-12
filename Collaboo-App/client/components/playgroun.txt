@@ -365,6 +365,13 @@ ChatScreen.navigationOptions = {
     });
   };
 
+////
+ {/* {this.state.inventory.forEach((item) => { */}
+            {/* // 'data:'+item.fileid.contentType + ';base64,'  + item.buffer */}
+            {/* {console.log("image value", 'data:'+item.fileid.contentType + ';base64,'  + item.buffer)} */}
+{/* })} */}
+            ////
+
   showDatepicker = () => {
     console.log("Date picker")
     this.showMode("date");

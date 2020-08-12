@@ -49,7 +49,7 @@ class ACWorkLogScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response from worklog :", responseJson);
+        //console.log("response from worklog :", responseJson);
         const response = responseJson;
         this.setState({
           response: response,
@@ -66,7 +66,7 @@ class ACWorkLogScreen extends Component {
         //     endDate: formatedEndDate
         //   })
         // })
-        console.log("state", this.state);
+        //console.log("state", this.state);
       })
       .catch((error) => {
         console.error(error);
@@ -79,9 +79,10 @@ class ACWorkLogScreen extends Component {
         <ScrollView style={{ flex: 1 }}>
           <Content style={{ padding: 10 }}>
             {this.state.response.map((item, index) => {
-              {
-                console.log("agent craftsmen card", item);
-              }
+              const startDate = item.appointmentid.apntdatime;
+              const formatedStartDate = moment(startDate).format(
+                "dddd,MMM DD at HH:mma"
+              );
               return (
                 <Card key={index} style={styles.card}>
                   <CardItem bordered style={{ backgroundColor: "#f5f5f5" }}>
@@ -93,10 +94,11 @@ class ACWorkLogScreen extends Component {
                           {item.appointmentid.title}
                         </Text>
                       </Item>
+                      
                       <Item stackedLabel>
                         <Label>Start Date</Label>
                         <Text style={styles.cardText}>
-                          {item.appointmentid.apntdatime}
+                          {formatedStartDate}
                         </Text>
                       </Item>
                       <Item stackedLabel>

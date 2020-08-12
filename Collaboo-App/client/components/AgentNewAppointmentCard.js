@@ -26,20 +26,23 @@ class AgentNewAppointmentCard extends Component {
     };
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.makeRemoteRequest();
-    }, 4000);
-  }
-  shouldComponentUpdate(nextProps) {
-    console.log(nextProps.token, this.props.token);
-    if (nextProps.token == this.props.token) {
-      this.makeRemoteRequest();
+    // setTimeout(() => {
+    //   this.makeRemoteRequest();
+    // }, 4000);
+    if(this.props.token){
+      this.makeRemoteRequest()
     }
-    return true;
   }
+  // shouldComponentUpdate(nextProps) {
+  //   //console.log(nextProps.token, this.props.token);
+  //   if (nextProps.token == this.props.token) {
+  //     this.makeRemoteRequest();
+  //   }
+  //   return true;
+  // }
 
   makeRemoteRequest = () => {
-    console.log("makeremoterequest");
+    //console.log("makeremoterequest");
     const url = "http://81.89.193.99:3001/api/company/search/craftsmen";
     const bearer = "Bearer " + this.props.token;
     fetch(url, {
@@ -53,7 +56,7 @@ class AgentNewAppointmentCard extends Component {
           isLoading: false,
           dataSource: responseJson,
         });
-        console.log("checkkk craftsmen name", this.state.dataSource);
+        //console.log("checkkk craftsmen name", this.state.dataSource);
       })
 
       .catch((error) => {
@@ -100,7 +103,7 @@ class AgentNewAppointmentCard extends Component {
         <Content style={{ padding: 10 }}>
           {this.props.appointments &&
             this.props.appointments.map((item, index) => {
-              console.log("appointments", item);
+             // console.log("appointments", item);
               return (
                 <Card style={styles.card} key={index}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
@@ -174,9 +177,18 @@ const styles = StyleSheet.create({
     width: 190,
   },
   addButton: {
-    backgroundColor: "#f5f5f5",
-    borderColor: "black",
-  },
+  ...Platform.select({
+    ios:{
+      backgroundColor: "#f5f5f5",
+      borderColor: "black",
+      height: 100
+    },
+    android:{
+      backgroundColor: "#f5f5f5",
+      borderColor: "black",
+    }
+  }),
+},
   iconCheck: {
     fontSize: 60,
     color: "green",
