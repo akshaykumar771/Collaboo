@@ -18,12 +18,16 @@ class CraftsmenAppointmentScreen extends Component {
     };
   }
   componentDidMount() {
-    if (this.props.token) {
-      this.makeRemoteRequest();
-    }
-    // setTimeout(() => {
+    // if (this.props.token) {
     //   this.makeRemoteRequest();
-    // }, 3000);
+    // }
+    this.interval = setInterval(() => {
+      this.makeRemoteRequest();
+    }, 2000)
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.interval)
   }
 
   shouldComponentUpdate(nextProps) {
@@ -34,7 +38,7 @@ class CraftsmenAppointmentScreen extends Component {
     return true;
   }
   makeRemoteRequest = () => {
-    console.log("test");
+    //console.log("test");
     const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
     const bearer = "Bearer " + this.props.token;
     // console.log("bearer", bearer);
@@ -47,7 +51,7 @@ class CraftsmenAppointmentScreen extends Component {
         if (status === 200) {
           return response.json();
         } else if (status === 204) {
-          console.log(response);
+          //console.log(response);
           Alert.alert(
             "Sorry",
             "No Appointments Found",
@@ -69,7 +73,7 @@ class CraftsmenAppointmentScreen extends Component {
               item.custconfirmation === "DEFAULT"
             ) {
               newAppointments.push(item);
-              console.log("arr", newAppointments)
+              //console.log("arr", newAppointments)
             } else if (
               item.status === "OPEN" &&
               item.crafconfirmation === "YES" &&
@@ -98,16 +102,16 @@ class CraftsmenAppointmentScreen extends Component {
             acceptedAppointments: acceptedAppointments,
             rejectedAppointments: rejectedAppointments,
           });
-        console.log("response crfatsmenapptscreen", responseJson);
-        console.log("appointment state", this.state.appointments);
-        console.log(
-          "accepted appointment state",
-          this.state.acceptedAppointments
-        );
-        console.log(
-          "rejected appointment state",
-          this.state.rejectedAppointments
-        );
+        //console.log("response crfatsmenapptscreen", responseJson);
+        //console.log("appointment state", this.state.appointments);
+        // console.log(
+        //   "accepted appointment state",
+        //   this.state.acceptedAppointments
+        // );
+        // console.log(
+        //   "rejected appointment state",
+        //   this.state.rejectedAppointments
+        // );
       })
       .catch((error) => {
         console.error(error);

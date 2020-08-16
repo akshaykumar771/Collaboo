@@ -76,7 +76,7 @@ class CraftsmenCRScreen extends Component {
               item.custconfirmation === "REQUEST_DATE_CHANGE"
             ) {
             changeRequestAppointments.push(item);
-              console.log("arr", changeRequestAppointments)
+              //console.log("arr", changeRequestAppointments)
               this.setState({
                 appointments: changeRequestAppointments,
               });

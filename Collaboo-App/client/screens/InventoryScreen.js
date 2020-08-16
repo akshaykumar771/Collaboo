@@ -51,7 +51,7 @@ class InventoryScreen extends React.Component {
         if (status === 200) {
           return response.json();
         }
-        // } else if (status === 204) {
+        //  else if (status === 204) {
         //   Alert.alert(
         //     "No Images Found",
         //     [{ text: "OK", onPress: () => console.log("OK Pressed") }],
@@ -65,28 +65,29 @@ class InventoryScreen extends React.Component {
           responseJson.map((item) => {
             return new Promise((resolve, reject) => {
               let inventoryid = item._id;
+              this.fetchInventory(resolve, reject,item)
               //console.log("inventoryid", inventoryid);
-              fetch(
-                `http://81.89.193.99:3001/api/inventory/file/${inventoryid}`,
-                {
-                  method: "GET",
-                  headers: { Authorization: bearer },
-                }
-              )
-                .then((response) => {
-                  return response.json();
-                })
-                .then((response) => {
-                  let inventory = {
-                    buffer: response.bufferBase64,
-                    ...item,
-                  };
-                  //console.log("inventory res", response)
-                  resolve(inventory);
-                })
-                .catch((err) => {
-                  reject(err);
-                });
+              // fetch(
+              //   `http://81.89.193.99:3001/api/inventory/file/${inventoryid}`,
+              //   {
+              //     method: "GET",
+              //     headers: { Authorization: bearer },
+              //   }
+              // )
+              //   .then((response) => {
+              //     return response.json();
+              //   })
+              //   .then((response) => {
+              //     let inventory = {
+              //       buffer: response.bufferBase64,
+              //       ...item,
+              //     };
+              //     console.log("inventory res", inventory)
+              //     resolve(inventory);
+              //   })
+              //   .catch((err) => {
+              //     reject(err);
+              //   });
             });
           })
         )
@@ -104,8 +105,33 @@ class InventoryScreen extends React.Component {
         console.error(error);
       });
   };
-
-  _pickImage = async () => {
+  fetchInventory = (resolve, reject, item) => {
+    const bearer = "Bearer " + this.props.token;
+    //console.log("inventory id", inventoryid)
+    fetch(
+      `http://81.89.193.99:3001/api/inventory/file/${item._id}`,
+      {
+        method: "GET",
+        headers: { Authorization: bearer },
+      }
+    )
+      .then((response) => {
+        return response.json();
+      })
+      .then((response) => {
+        let inventory = {
+          buffer: response.bufferBase64,
+          ...item,
+        };
+        //console.log("inventory res", inventory)
+        resolve(inventory);
+      })
+      .catch((err) => {
+        reject(err);
+      });
+    
+  }
+   _pickImage = async () => {
     if (Constants.platform.ios) {
       const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
       if (status !== "granted") {
@@ -143,9 +169,24 @@ class InventoryScreen extends React.Component {
           "Content-Type": "multipart/form-data",
         },
       })
-        //.then((response) => response.json())
+        .then((response) => response.json())
         .then(async (response) => {
-          await this.fetchImagesFromServer()
+        new Promise((resolve, reject) => {
+            this.fetchInventory(resolve, reject, response)
+         })
+         .then((res) => {
+           console.log("res", res)
+          //  this.setState({
+          //    ...this.state.inventory,
+          //     inventory: res
+          //  })
+          this.state.inventory.push(res);
+          this.setState({
+            inventory: this.state.inventory.reverse()
+          })
+           console.log("state", this.state.inventory)
+         })
+         .catch((e) => {console.log(e)})
         })
         .catch((E) => {
           console.log(E);
@@ -170,10 +211,10 @@ class InventoryScreen extends React.Component {
         </View>
         <View style = {{flex:1}}>
         <ScrollView>
-        <View style={{flexDirection: 'row',justifyContent:'space-around', alignItems:'center', flexWrap:"wrap", paddingTop: 30,}}>
+        <View style={{flexDirection: 'row',justifyContent:'space-around', alignItems:'center', flexWrap:"wrap", paddingTop: 30, paddingHorizontal:15}}>
         {this.state.inventory.map((item) => {
           return (
-            
+            <View>
               <Image
                 source={{
                   uri:
@@ -182,16 +223,22 @@ class InventoryScreen extends React.Component {
                     ";base64," +
                     item.buffer,
                 }}
-                resizeMode = "contain"
-                style={{
-                  width: 140,
-                  height:100,
+                
+                
+                resizeMode = "cover"
+                style = {{width:170,
+                  height: 220,
                   marginTop:10,
-                  borderColor:'red',
-                  borderRadius: 20
-                }}
+                  borderColor: Colors.primary,
+                  borderWidth: 1,
+                  overflow: "hidden",
+                  borderBottomRightRadius: 10,
+                  borderTopLeftRadius: 10,
+                  borderBottomLeftRadius:10,
+                  borderTopRightRadius:10
+                  }}
               />
-            
+           </View>
           );
         })}
         </View>

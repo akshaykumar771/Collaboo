@@ -84,9 +84,9 @@ class ViewAppointmentsScreen extends Component {
         <Content style={{ padding: 10 }}>
           {this.state.customerAppointments &&
             this.state.customerAppointments.map((item) => {
-              {
+              {/* {
                 console.log("inside render", item);
-              }
+              } */}
               return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>

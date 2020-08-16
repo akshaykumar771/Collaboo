@@ -4,7 +4,7 @@ YellowBox.ignoreWarnings([
   "Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?",
 ]);
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, AsyncStorage,Vibration, Platform } from "react-native";
+import { StyleSheet, AsyncStorage, Vibration, Platform } from "react-native";
 import * as Font from "expo-font";
 import { AppLoading } from "expo";
 import AppNavigation from "./navigation/AppNavigator";
@@ -12,7 +12,7 @@ import { Provider } from "react-redux";
 import { setNavigator } from "./navigationRef";
 import { store } from "./Store";
 // import * as Permissions from 'expo-permissions';
- import { Notifications } from 'expo';
+import { Notifications } from "expo";
 // import Constants from 'expo-constants'
 // import registerForPushNotificationsAsync from "./services/push_notifications"
 
@@ -60,21 +60,22 @@ const fetchFont = () => {
 export default function App(props) {
   const [fontLoaded, setFontLoaded] = useState(false);
   useEffect(() => {
-    Notifications.addListener(notification => {
+    Notifications.addListener((notification) => {
       console.log("notification", notification);
-      //const text = notification.data.text
-     
       Vibration.vibrate();
-      const {data: {message}, origin} = notification
-      
-       if(origin === 'received')
-       Alert.alert('New Push Notification', message, [{text: 'OK'}])
-    })
+      const {
+        data: { message },
+        origin,
+      } = notification;
+      // if(origin === "selected"){
+      //   if(message === "New appointment requested!")
+      //   navigation.navigate("Appointments",{message})
+      // }
+      if (origin === "received")
+        Alert.alert("New Push Notification", message, [{ text: "OK" }]);
+    });
+  }, []);
 
-   
-      //console.log("testing notification", expoPushToken)
-  }, [])
-  
   if (!fontLoaded) {
     return (
       <AppLoading
@@ -122,7 +123,7 @@ const styles = StyleSheet.create({
 // class App extends Component {
 //       constructor(props) {
 //         super(props);
-       
+
 //         this.state = {
 //           fontLoaded: false,
 //         };
@@ -138,16 +139,16 @@ const styles = StyleSheet.create({
 //      this.setState({ loading: true })
 //      await registerForNotifications()
 //    }
-//       render() {    
+//       render() {
 //         // const [fontLoaded, setFontLoaded] = useState(false);
 //         if (this.state.fontLoaded) {
-          
+
 //             return (
 //               <View style={{ flex: 1, paddingTop: 20 }}>
 //                 <ActivityIndicator />
 //               </View>
 //             );
-          
+
 //         }
 //         return (
 //           <Provider store={store}>
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
 //         );
 //       }
 //     }
-    
+
 //     const styles = StyleSheet.create({
 //       container: {
 //         flex: 1,
@@ -169,5 +170,5 @@ const styles = StyleSheet.create({
 //         justifyContent: "center",
 //       },
 //     });
-    
+
 //     export default App;

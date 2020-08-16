@@ -31,12 +31,12 @@ class UserProfileScreen extends Component {
       body: JSON.stringify({pushToken}),
     })
       .then((resp) => resp.json())
-      .then((response) => {
+      .then(async (response) => {
         //console.log("data logout", data);
        
           console.log("logout", response);
           //localStorage.setItem("token", data.token)
-          AsyncStorage.removeItem('token')
+          await AsyncStorage.removeItem('token')
           this.props.navigation.navigate("Auth");
           
           

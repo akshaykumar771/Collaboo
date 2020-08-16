@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import { Container, Header, Content, Tab, Tabs, Label } from "native-base";
 import AgentNewAppointmentCard from "../components/AgentNewAppointmentCard";
 import AgentRejectedAppointment from "../components/AgentRejectedAppointment";
@@ -9,19 +9,23 @@ class AgentAppointmentScreen extends Component {
     super(props);
     this.state = {
       isLoading: false,
+      test:"",
       appointments: [],
       acceptedAppointments: [],
       rejectedAppointments: [],
     };
   }
   componentDidMount() {
-    if (this.props.token) {
-      //console.log(props.token)
+    // if (this.props.token) {
+    
+    //   this.makeRemoteRequest();
+    // }
+    this.interval = setInterval(() => {
       this.makeRemoteRequest();
-    }
-    // setTimeout(() => {
-    //       this.makeRemoteRequest();
-    //     }, 3000);
+    }, 2000)
+  }
+  componentWillUnmount(){
+    clearInterval(this.interval)
   }
   shouldComponentUpdate(nextProps) {
     //console.log(nextProps.token, this.props.token);
@@ -30,17 +34,18 @@ class AgentAppointmentScreen extends Component {
     }
     return true;
   }
-  makeRemoteRequest = () => {
-    console.log("agent request")
+  makeRemoteRequest = async () => {
+    //console.log("agent request")
     const url = "http://81.89.193.99:3001/api/agent/appointments";
     const bearer = "Bearer " + this.props.token;
     // console.log("bearer", bearer);
-    fetch(url, {
+    await fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
     })
       .then((response) => {
         const status = response.status;
+        //console.log("status", status)
         if (status === 200) {
           return response.json();
         } else if (status === 204) {
@@ -52,7 +57,7 @@ class AgentAppointmentScreen extends Component {
         }
       })
       .then(async (responseJson) => {
-        console.log("AGENT RESPONSE", responseJson);
+        //console.log("AGENT RESPONSE", responseJson);
         let newAppointments = [];
         let rejectedAppointments = [];
         const defaultResponse = await responseJson.map((item) => {

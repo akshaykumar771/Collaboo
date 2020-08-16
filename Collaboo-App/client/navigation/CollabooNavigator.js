@@ -115,7 +115,7 @@ const CollabooNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
-          Appointments: AppointmentsNavigator,
+          CRAppointments: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
@@ -131,7 +131,7 @@ const CollabooNavigator =
       )
     : createBottomTabNavigator(
         {
-          Appointments: AppointmentsNavigator,
+          CRAppointments: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,

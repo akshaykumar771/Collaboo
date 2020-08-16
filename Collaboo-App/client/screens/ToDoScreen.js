@@ -55,11 +55,11 @@ class ToDoScreen extends Component {
               item.status === "OPEN"
             ) {
               newAppointments.push(item);
-              console.log("arr", newAppointments)
+              //console.log("arr", newAppointments)
               this.setState({
                 appointments: newAppointments,
               });
-              console.log("new appointments", this.state.appointments)
+              //console.log("new appointments", this.state.appointments)
             } else if (
               item.status === "INPROCESS" || item.status === 'REOPENED'
             ) {

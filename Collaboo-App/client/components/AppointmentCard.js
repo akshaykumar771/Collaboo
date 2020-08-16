@@ -30,7 +30,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
   
   openModal =  (item) => {
     this.setState({ isModalOpen: true, crafconfirmation: "YES", appointmentid: item._id });
-    console.log("state in open modal", this.state);
+    //console.log("state in open modal", this.state);
    
   };
 

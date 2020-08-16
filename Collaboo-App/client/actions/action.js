@@ -95,10 +95,10 @@ export const userLoginFetch = user => {
         //     [{ text: "OK", onPress: () => console.log("OK Pressed") }],
         //     { cancelable: false }
         //   );
+        dispatch({type: 'LOGIN_USER', payload: data})
       }
       else{
         console.log("whattt", data)
-          //localStorage.setItem("token", data.token)
           dispatch({type: 'LOGIN_USER', payload: data});
           saveDataToStorage(data.token, data.user._id, data.user.role)
           if(data.user){

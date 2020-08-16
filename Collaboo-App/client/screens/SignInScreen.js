@@ -6,8 +6,10 @@ import {
   Text,
   TouchableHighlight,
   Image,
-  AsyncStorage
+  AsyncStorage,
+  KeyboardAvoidingView,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import FormButton from "../components/FormButton";
 import {
   Container,
@@ -20,7 +22,7 @@ import {
 } from "native-base";
 import { userLoginFetch } from "../actions/action";
 import { connect } from "react-redux";
-import Colors from "../constants/Colors"
+import Colors from "../constants/Colors";
 class Login extends Component {
   static navigationOptions = {
     headerShown: false,
@@ -32,7 +34,7 @@ class Login extends Component {
       email: "",
       password: "",
       loginData: "",
-      pushToken:""
+      pushToken: "",
     };
   }
 
@@ -58,11 +60,11 @@ class Login extends Component {
   //   }
   // };
   handleSubmit = async () => {
-    const pushToken = await AsyncStorage.getItem("pushtoken")
+    const pushToken = await AsyncStorage.getItem("pushtoken");
     this.setState({
-      pushToken: pushToken
-    })
-    console.log("sign in pushtoken", this.state.pushToken)
+      pushToken: pushToken,
+    });
+    console.log("sign in pushtoken", this.state.pushToken);
     this.props.userLoginFetch(this.state);
   };
   goToSignup = () => {
@@ -70,18 +72,28 @@ class Login extends Component {
   };
 
   render() {
-    
     return (
-      <Container style = {{backgroundColor: Colors.primary}}>
-      <View style={{alignItems:"center", justifyContent:"center", top: 70}}>
-        <Image source={require('../constants/src_assets_icon.png')} style={{width:252, height:198}}/>
-      </View>
-        <Content style={{ paddingVertical: 15, top: 180, paddingHorizontal: 20 }}>
+     
+        
+      <Container style={{backgroundColor: Colors.primary }}>
+       <View
+          style={{ alignItems: "center", justifyContent: "center", top:80}}
+      >
+          <Image
+            source={require("../constants/src_assets_icon.png")}
+            style={{ width: 200, height: 150 }}
+          />
+          </View>
+        <Content
+          style={{ paddingVertical: 15, paddingHorizontal: 20, top: 150 }}
+        >
           <Form>
-            <Item regular style={{backgroundColor: 'white', borderRadius: 10}}>
+            <Item
+              regular
+              style={{ backgroundColor: "white", borderRadius: 10 }}
+            >
               <Icon active name="ios-mail" />
               <Input
-                
                 placeholder="Email"
                 onChangeText={(text) => {
                   this.setState({ email: text });
@@ -92,10 +104,15 @@ class Login extends Component {
                 autoCapitalize="none"
               />
             </Item>
+
             <Text style={{ color: "red", marginLeft: 10 }}>
               {this.state.emailVal}
             </Text>
-            <Item regular style={{backgroundColor: 'white', borderRadius: 10}}>
+
+            <Item
+              regular
+              style={{ backgroundColor: "white", borderRadius: 10 }}
+            >
               <Icon active name="ios-lock" />
               <Input
                 placeholder="Enter Password"
@@ -114,7 +131,6 @@ class Login extends Component {
 
           <View style={styles.buttonContainer}>
             <FormButton
-            
               buttonType="outline"
               onPress={this.handleSubmit}
               title="LOGIN"
@@ -128,11 +144,27 @@ class Login extends Component {
             <Text
               style={{ color: "#f68ba7", fontSize: 16, textAlign: "center" }}
             >
-              Don't have an account? Sign up 
+              Don't have an account? Sign up
             </Text>
           </TouchableHighlight>
+          <View style={{ flex: 1, flexDirection: "row", top: 20, padding: 15 }}>
+            <Text
+              style={{
+                flex: 1,
+                flexWrap: "wrap",
+                fontSize: 18,
+                lineHeight:30,
+                textAlign: "center",
+                color: "orange",
+                fontStyle: "italic",
+              }}
+            >
+              "Craftsmanship happens to be a skill without any imagination."
+            </Text>
+          </View>
         </Content>
       </Container>
+     
     );
   }
 }
@@ -144,10 +176,10 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     margin: 25,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     height: 40,
-    top: 15
+    top: 15,
   },
 });
 const mapDispatchToProps = (dispatch) => ({

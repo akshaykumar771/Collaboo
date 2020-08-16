@@ -39,14 +39,17 @@ class SearchCraftsmen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-  //   setTimeout(() => {
-  //     this.makeRemoteRequest();
-  //   }, 3000);
-  // }
-  if(this.props.token){
-    this.makeRemoteRequest()
+    if (this.props.token) {
+      this.makeRemoteRequest();
+    }
+    // this.interval = setInterval(() => {
+    //   this.makeRemoteRequest();
+    // }, 2000)
   }
-}
+
+  // componentWillUnmount(){
+  //   clearInterval(this.interval)
+  // }
   // componentWillReceiveProps(nextProps) {
   //  if(this.props.token != nextProps.token)
   //   this.makeRemoteRequest();
@@ -67,7 +70,7 @@ class SearchCraftsmen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("search craftsmen", responseJson)
+        //console.log("search craftsmen", responseJson)
         this.setState(
           {
             isLoading: false,
@@ -93,7 +96,7 @@ class SearchCraftsmen extends Component {
       title:this.state.title,
       description:this.state.description
     };
-    console.log("request appointment", data)
+    //console.log("request appointment", data)
     fetch(url, {
       method: "POST",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -112,7 +115,7 @@ class SearchCraftsmen extends Component {
       }
     })
       .then((responseJson) => {
-        console.log("response from post", responseJson);
+        //console.log("response from post", responseJson);
         // this.setState({
         //   worklogCard: Date.now(),
         // });
@@ -139,7 +142,7 @@ class SearchCraftsmen extends Component {
     //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
-      console.log("itemdata", item);
+      //console.log("itemdata", item);
       const fNameData = item.fname
         ? item.fname.toUpperCase()
         : "".toUpperCase();
@@ -165,7 +168,7 @@ class SearchCraftsmen extends Component {
   }
 
   openModal = (item) => {
-    console.log("categories", item)
+    //console.log("categories", item)
     
     if(item.selfemployed === true){
       this.setState({
@@ -184,7 +187,7 @@ class SearchCraftsmen extends Component {
       });
     }
    
-    console.log("request modal", this.state)
+    //console.log("request modal", this.state)
   };
 
   closeModal = () => {
