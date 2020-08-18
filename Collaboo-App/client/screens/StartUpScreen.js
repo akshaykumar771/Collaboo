@@ -19,15 +19,16 @@ import { registerForPushNotificationsAsync } from "../services/push_notification
 const StartUpScreen = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    // registerForPushNotificationsAsync()
-    //   .then((token) => {
-    //     console.log("startup pushtoken", token)
-    //     return token;
-    //   })
-    //   .then((pushToken) => {
-    //     tryLogin();
-    //   })
-    //   .catch((e) => console.log("error push", e));
+    console.log("inside startup", props)
+    registerForPushNotificationsAsync()
+      .then((token) => {
+        console.log("startup pushtoken", token)
+        return token;
+      })
+      .then((pushToken) => {
+        tryLogin();
+      })
+      .catch((e) => console.log("error push", e));
     //console.log("testnoti", testNotification);
     // const tryNotifications = async () => {
     //   Notifications.addListener((notification) => {

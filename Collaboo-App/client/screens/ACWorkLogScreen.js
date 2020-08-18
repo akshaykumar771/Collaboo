@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Button, View, ScrollView } from "react-native";
+import { StyleSheet, Button, View, ScrollView, Alert } from "react-native";
 import {
   Container,
   Content,
@@ -47,7 +47,22 @@ class ACWorkLogScreen extends Component {
       method: "GET",
       headers: { Authorization: bearer },
     })
-      .then((response) => response.json())
+    .then((response) => {
+      const status = response.status;
+      console.log("agent worklog status", status);
+      if (status === 200) {
+        return response.json();
+      } else if (status === 204) {
+        console.log("agent 204");
+        Alert.alert(
+          "Sorry",
+          "No Worklogs Found",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+        return;
+      }
+    })
       .then((responseJson) => {
         //console.log("response from worklog :", responseJson);
         const response = responseJson;

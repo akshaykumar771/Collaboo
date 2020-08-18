@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
@@ -52,7 +53,22 @@ class AgentWorkLogScreen extends Component {
       method: "GET",
       headers: { Authorization: bearer },
     })
-      .then((response) => response.json())
+    .then((response) => {
+      const status = response.status;
+      console.log("agent worklog status", status);
+      if (status === 200) {
+        return response.json();
+      } else if (status === 204) {
+        console.log("agent 204");
+        Alert.alert(
+          "Sorry",
+          "No Worklogs Found",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+        return;
+      }
+    })
       .then((responseJson) => {
         this.setState(
           {

@@ -17,6 +17,7 @@ import RegisterAgent from "../components/RegisterAgent";
 import { userPostFetch } from "../actions/action";
 import { connect } from "react-redux";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
+import { registerForPushNotificationsAsync } from "../services/push_notifications";
 class SignUpScreen extends Component {
   constructor(props) {
     super(props);
@@ -130,10 +131,21 @@ class SignUpScreen extends Component {
       this.setState({ passwordVal: "" });
     }
   };
-  handleSubmit = () => {
+  handleSubmit = async () => {
     console.log("state" + JSON.stringify(this.state));
     //this.makeRemoteRequest();
-    this.props.userPostFetch(this.state);
+   await registerForPushNotificationsAsync()
+      .then((token) => {
+        console.log("signup pushtoken", token)
+        this.setState({
+          pushToken: token
+        })
+        return token;
+      })
+      .then(async (pushToken) => {
+        await this.props.userPostFetch(this.state);
+      })
+    
   };
 
   render() {

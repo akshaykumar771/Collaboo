@@ -32,7 +32,21 @@ const defaultNavOptions = {
   },
   headerTintColor: Platform.OS === "android" ? "white" : "white",
 };
-
+const AppointmentNavigator = createStackNavigator(
+  {
+    Appointments: AgentAppointmentScreen
+  },
+  {
+    navigationOptions: {
+      tabBarIcon: (tabInfo) => {
+        return (
+          <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />
+        );
+      },
+    },
+    defaultNavigationOptions: defaultNavOptions,
+  }
+)
 const chatNavigator = createStackNavigator(
   {
     Chats: ChatScreen,
@@ -53,38 +67,8 @@ const chatNavigator = createStackNavigator(
     defaultNavigationOptions: defaultNavOptions,
   }
 );
-const ToDoNavigator = createStackNavigator(
-  {
-    ToDo: ToDoScreen,
-    AddToDo: AddToDoScreen,
-    Calendar: CalendarScreen,
-  },
-  {
-    navigationOptions: {
-      tabBarIcon: (tabInfo) => {
-        return (
-          <Ionicons name="ios-today" size={25} color={tabInfo.tintColor} />
-        );
-      },
-    },
-    defaultNavigationOptions: defaultNavOptions,
-  }
-);
-const AppointmentNavigator = createStackNavigator(
-  {
-    Appointments: AgentAppointmentScreen
-  },
-  {
-    navigationOptions: {
-      tabBarIcon: (tabInfo) => {
-        return (
-          <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />
-        );
-      },
-    },
-    defaultNavigationOptions: defaultNavOptions,
-  }
-)
+
+
 const WorkLogNavigator = createStackNavigator(
   {
     WorkLog: AgentWorkLogScreen,

@@ -15,6 +15,7 @@ export default class CustomerRequestScreen extends Component {
   render() {
     return( 
     <View style = {{flex: 1}}>
+    
     <SearchCraftsmen />
     </View>
     );

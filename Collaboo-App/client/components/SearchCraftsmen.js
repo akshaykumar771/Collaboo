@@ -14,6 +14,7 @@ import {
   Alert,
   Picker
 } from "react-native";
+import { NavigationEvents } from "react-navigation";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import { Form, Input, Item, Label, Textarea, Icon } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
@@ -220,6 +221,7 @@ class SearchCraftsmen extends Component {
         enableAutomaticScroll={Platform.OS === "ios"}
       >
         <View style={styles.viewStyle}>
+        <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
           <SearchBar
             lightTheme={true}
             platform="default"

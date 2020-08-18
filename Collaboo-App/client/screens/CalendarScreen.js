@@ -89,11 +89,11 @@ class Calc extends Component {
           </View>
           <View style={{ top: 20 }}>
             {item.status === "OPEN" ? (
-              <Text style={{ color: "orange", fontSize: 16, fontWeight: '700' }}>OPEN</Text>
+              <Text style={{ color: "green", fontSize: 16, fontWeight: '700' }}>OPEN</Text>
             ) : item.status === "COMPLETED" ? (
-              <Text style={{ color: "green", fontSize: 16, fontWeight: '700' }}>COMPLETED</Text>
+              <Text style={{ color: "red", fontSize: 16, fontWeight: '700' }}>COMPLETED</Text>
             ) : item.status === "INPROCESS" ? (
-              <Text style={{ color: "blue", fontSize: 16, fontWeight: '700' }}>IN PROCESS</Text>
+              <Text style={{ color: "orange", fontSize: 16, fontWeight: '700' }}>IN PROCESS</Text>
             ) 
              : item.status === "REOPENED" ? (
               <Text style={{ color: "#63264a", fontSize: 16, fontWeight: '700' }}>RE-OPENED</Text>

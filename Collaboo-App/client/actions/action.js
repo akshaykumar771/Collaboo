@@ -4,8 +4,7 @@ import registerForPushNotificationsAsync from "../services/push_notifications"
 
 export const userPostFetch = user =>{
  
-  user.pushToken = AsyncStorage.getItem('pushtoken')
-  console.log('user', user);
+  console.log('user', JSON.stringify(user));
     return dispatch => {
         return fetch("http://81.89.193.99:3001/api/user/register", {
             method: "POST",
@@ -17,13 +16,13 @@ export const userPostFetch = user =>{
           })
             //.then(response => response.json())
             .then((response) => {
-              console.log(response)
+              console.log(JSON.stringify(response))
               const status = response.status;
               console.log("status", status)
-              if (status === 200) {
+              if (status === 201) {
                 return response.json();
               } else{
-                console.log(response)
+                console.log(JSON.stringify(response))
                 Alert.alert(
                   JSON.stringify(response)
                   [{ text: "OK", onPress: () => console.log("OK Pressed") }],
@@ -34,7 +33,7 @@ export const userPostFetch = user =>{
             .then(data => {
             
                 //localStorage.setItem("token", data.token)
-                console.log("whattt", data)
+                console.log("whattt", JSON.stringify(data))
                 //dispatch(loginUser(data))
                 dispatch({type: 'LOGIN_USER', payload: data})
                 saveDataToStorage(data.token, data.user._id, data.user.role)
@@ -77,7 +76,7 @@ export const userLoginFetch = user => {
     })
     //.then(resp => resp.json())
     .then((response) => {
-      console.log(response)
+      console.log(JSON.stringify(response))
       const status = response.status;
       console.log("status", status)
       if (status === 200) {
@@ -98,7 +97,7 @@ export const userLoginFetch = user => {
         dispatch({type: 'LOGIN_USER', payload: data})
       }
       else{
-        console.log("whattt", data)
+        console.log("whattt", JSON.stringify(data))
           dispatch({type: 'LOGIN_USER', payload: data});
           saveDataToStorage(data.token, data.user._id, data.user.role)
           if(data.user){

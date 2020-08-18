@@ -190,7 +190,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
                 </View>
                 
                 <View style={styles.dateInput}>
-                 
+                
                    <TouchableOpacity
                     style={styles.chooseDateBtn}
                     underlayColor="#fff"
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     }),
   },
   buttonText: {
-    color: "white",
+    color: Colors.primary,
     textAlign: "center",
     paddingLeft: 10,
     paddingRight: 10,

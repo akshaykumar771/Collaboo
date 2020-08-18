@@ -40,10 +40,7 @@ class WorkLogScreen extends Component {
       selected:""
     };
   }
-  navigateWorkLog = () => {
-    console.log("Inside navigateWorkLog", this.props);
-    this.props.navigation.navigate("ToDo");
-  };
+ 
 
   saveWorklog = () => {
     //console.log("token in worklog", this.props.token);
@@ -61,7 +58,7 @@ class WorkLogScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response from post", responseJson);
+        console.log("response from post", JSON.stringify(responseJson));
         this.setState({
           worklogCard: Date.now(),
         });

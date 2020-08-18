@@ -1,7 +1,7 @@
 import { AsyncStorage, Platform } from "react-native";
 import * as Permissions from "expo-permissions";
 import { Notifications } from "expo";
-
+import Constants from 'expo-constants';
 export const registerForPushNotificationsAsync = async () => {
   console.log("inside push notifications");
   //return new Promise((resolve, reject) => {
@@ -11,19 +11,39 @@ export const registerForPushNotificationsAsync = async () => {
   //     return resolve(previousToken);
   // }
   if (previousToken) {
+      console.log("previous token", previousToken)
     return previousToken;
-  } else {
-    let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-    console.log("inside else", status);
-    if (status !== "granted") {
-      return;
-    }
-
-    let token = await Notifications.getExpoPushTokenAsync();
-    console.log("pushtoken", token);
-    AsyncStorage.setItem("pushtoken", token);
-    return token;
   }
+//   } else {
+    // let { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+    // console.log("inside else", status);
+    // if (status !== "granted") {
+    //   return;
+    // }
+    if (Constants.isDevice) {
+            const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+            let finalStatus = existingStatus;
+            if (existingStatus !== 'granted') {
+              const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+              finalStatus = status;
+            }
+            if (finalStatus !== 'granted') {
+              alert('Failed to get push token for push notification!');
+              return;
+            }
+            token = await Notifications.getExpoPushTokenAsync();
+            console.log(token);
+            AsyncStorage.setItem("pushtoken", token);
+            return token
+            //this.setState({ expoPushToken: token });
+          } else {
+            alert('Must use physical device for Push Notifications');
+          }
+
+    // let token = await Notifications.getExpoPushTokenAsync();
+    // console.log("pushtoken", token);
+    // AsyncStorage.setItem("pushtoken", token);
+    // return token;
 };
 //})
 

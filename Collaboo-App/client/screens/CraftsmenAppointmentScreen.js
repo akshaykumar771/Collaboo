@@ -7,6 +7,7 @@ import RejectedAppointmentCard from "../components/RejectedAppointmentCard";
 import { HeaderButton,HeaderButtons, Item } from "react-navigation-header-buttons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { connect } from "react-redux";
+import { NavigationEvents } from "react-navigation";
 class CraftsmenAppointmentScreen extends Component {
   constructor(props) {
     super(props);
@@ -18,17 +19,19 @@ class CraftsmenAppointmentScreen extends Component {
     };
   }
   componentDidMount() {
-    // if (this.props.token) {
-    //   this.makeRemoteRequest();
-    // }
-    this.interval = setInterval(() => {
+    if (this.props.token) {
       this.makeRemoteRequest();
-    }, 2000)
+    }
+    // this.interval = setInterval(() => {
+    //   if(this.props.token){
+    //   this.makeRemoteRequest();
+    //   }
+    // }, 2000)
   }
 
-  componentWillUnmount(){
-    clearInterval(this.interval)
-  }
+  // componentWillUnmount(){
+  //   clearInterval(this.interval)
+  // }
 
   shouldComponentUpdate(nextProps) {
     //console.log(nextProps.token, this.props.token);
@@ -61,6 +64,7 @@ class CraftsmenAppointmentScreen extends Component {
         }
       })
       .then(async (responseJson) => {
+        console.log("CRAFTSMEN RESPONSE", responseJson);
         let newAppointments = [];
         let acceptedAppointments = [];
         let rejectedAppointments = [];
@@ -120,6 +124,7 @@ class CraftsmenAppointmentScreen extends Component {
   render() {
     return (
       <View style={styles.screen}>
+      <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
         <Container>
           <Tabs style={{ backgroundColor: "white" }}>
             <Tab heading="New">

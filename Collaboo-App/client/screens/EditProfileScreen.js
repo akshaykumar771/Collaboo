@@ -158,17 +158,6 @@ class EditProfileScreen extends Component {
                 }}
               />
             </Item>
-            <Item stackedLabel>
-              <Label>Password</Label>
-              <Input
-                secureTextEntry={true}
-                placeholder="Password"
-                value={this.state.pwd}
-                onChangeText={(text) => {
-                  this.setState({ password: text });
-                }}
-              />
-            </Item>
             {this.state.response.role === "CUSTOMER" ||
             this.state.response.selfemployed === true ? (
               <View>

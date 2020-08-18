@@ -49,14 +49,29 @@ class AgentNewAppointmentCard extends Component {
       method: "GET",
       headers: { Authorization: bearer },
     })
-      .then((response) => response.json())
+    .then((response) => {
+      const status = response.status;
+      console.log("agent status", status);
+      if (status === 200) {
+        return response.json();
+      } else if (status === 204) {
+        console.log("agent 204");
+        // Alert.alert(
+        //   "Sorry",
+        //   "No Appointments Found",
+        //   [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+        //   { cancelable: false }
+        // );
+        // return;
+      }
+    })
       .then((responseJson) => {
     
         this.setState({
           isLoading: false,
           dataSource: responseJson,
         });
-        //console.log("checkkk craftsmen name", this.state.dataSource);
+        console.log("checkkk craftsmen name", this.state.dataSource);
       })
 
       .catch((error) => {

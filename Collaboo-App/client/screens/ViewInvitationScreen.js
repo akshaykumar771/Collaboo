@@ -109,6 +109,7 @@ class ViewInvitationScreen extends Component {
           [{ text: "OK", onPress: () => console.log("OK pressed") }],
           { cancelable: true }
         );
+        this.makeRemoteRequest()
       })
       .catch((error) => {
         console.log(error);
@@ -140,7 +141,7 @@ class ViewInvitationScreen extends Component {
           [{ text: "OK", onPress: () => console.log("OK pressed") }],
           { cancelable: true }
         );
-        //this.makeRemoteRequest();
+        this.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);

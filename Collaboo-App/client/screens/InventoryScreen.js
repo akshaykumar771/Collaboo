@@ -45,20 +45,22 @@ class InventoryScreen extends React.Component {
       method: "GET",
       headers: { Authorization: bearer },
     })
-      .then((response) => {
-        //console.log("1st res", response);
-        const status = response.status;
-        if (status === 200) {
-          return response.json();
-        }
-        //  else if (status === 204) {
-        //   Alert.alert(
-        //     "No Images Found",
-        //     [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-        //     { cancelable: false }
-        //   );
-        // }
-      })
+    .then((response) => {
+      const status = response.status;
+      console.log("agent status", status);
+      if (status === 200) {
+        return response.json();
+      } else if (status === 204) {
+        console.log("agent 204");
+        Alert.alert(
+          "Sorry",
+          "No Images Found",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
+        return;
+      }
+    })
       .then((responseJson) => {
         //console.log("INVENTORY RESPONSE", responseJson);
         Promise.all(

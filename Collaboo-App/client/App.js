@@ -68,12 +68,16 @@ export default function App(props) {
         origin,
       } = notification;
       // if(origin === "selected"){
-      //   if(message === "New appointment requested!")
-      //   navigation.navigate("Appointments",{message})
-      // }
+      //   console.log(data)
+        // if(message === "New appointment requested!")
+        // navigation.navigate("Appointments",{message})
+      //}
       if (origin === "received")
         Alert.alert("New Push Notification", message, [{ text: "OK" }]);
+    
+      
     });
+      
   }, []);
 
   if (!fontLoaded) {

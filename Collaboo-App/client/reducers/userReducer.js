@@ -14,7 +14,7 @@ export const userReducer = (state = initState, action) => {
             // if(action.payload.token){
             //     AsyncStorage.setItem('token', action.payload.token)
             // }
-            console.log("actionnnn", action.payload)
+            //console.log("actionnnn", action.payload)
             if(action.payload.error){
               return {...state, error: action.payload.error}
             }
@@ -22,7 +22,7 @@ export const userReducer = (state = initState, action) => {
           return {...state, currentUser: action.payload.user, token: action.payload.token}
             }
           case 'AUTHENTICATE':
-            console.log("Reducer::: ", action);
+            //console.log("Reducer::: ", action);
               return {
                 token: action.token,
                 userId: action.userId,

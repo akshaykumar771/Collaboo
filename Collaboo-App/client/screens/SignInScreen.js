@@ -73,8 +73,6 @@ class Login extends Component {
 
   render() {
     return (
-     
-        
       <Container style={{backgroundColor: Colors.primary }}>
        <View
           style={{ alignItems: "center", justifyContent: "center", top:80}}

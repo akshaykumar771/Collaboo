@@ -7,6 +7,7 @@ import Colors from "../constants/Colors";
 import { connect } from "react-redux";
 import InProcessAppointments from "../components/InProcessAppointments";
 import ClosedAppointments from "../components/ClosedAppointments";
+import { NavigationEvents } from "react-navigation";
 class ToDoScreen extends Component {
   constructor(props) {
     super(props);
@@ -51,16 +52,7 @@ class ToDoScreen extends Component {
         const defaultResponse =
           (await responseJson) &&
           responseJson.map((item) => {
-            if (
-              item.status === "OPEN"
-            ) {
-              newAppointments.push(item);
-              //console.log("arr", newAppointments)
-              this.setState({
-                appointments: newAppointments,
-              });
-              //console.log("new appointments", this.state.appointments)
-            } else if (
+         if (
               item.status === "INPROCESS" || item.status === 'REOPENED'
             ) {
               inProcessAppointments.push(item);
@@ -84,7 +76,7 @@ class ToDoScreen extends Component {
             closedAppointments: closedAppointments,
           });
         console.log("response todoScreen", responseJson);
-        console.log("appointment state", this.state.closedAppointments);
+        console.log("appointment state", this.state.inProcessAppointments);
       })
       .catch((error) => {
         console.error(error);
@@ -93,6 +85,7 @@ class ToDoScreen extends Component {
   render() {
     return (
       <View style={styles.screen}>
+      <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
         <Container>
         <Tabs>
           <Tab heading="In Process">
