@@ -18,6 +18,7 @@ import AgentAppointmentScreen from "../screens/AgentAppointmentScreen";
 import UserProfileScreen from "../screens/UserProfileScreen";
 import AgentWorkLogScreen from "../screens/AgentWorkLogScreen";
 import ACWorkLogScreen from "../screens/ACWorkLogScreen";
+import { FontAwesome5 } from '@expo/vector-icons'; 
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -40,7 +41,7 @@ const AppointmentNavigator = createStackNavigator(
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-          <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />
+          <Ionicons name="md-calendar" size={25} color={tabInfo.tintColor} />
         );
       },
     },
@@ -77,7 +78,7 @@ const WorkLogNavigator = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />;
+        return <Ionicons name="ios-log-in" size={25} color={tabInfo.tintColor} />;
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -91,7 +92,7 @@ const UserProfileNavigator = createStackNavigator(
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-          <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+          <FontAwesome name="user-circle-o" size={25} color={tabInfo.tintColor} />
         );
       },
     },

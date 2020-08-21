@@ -15,6 +15,8 @@ import CraftsmenAppointmentScreen from "../screens/CraftsmenAppointmentScreen";
 import ChatConversationScreen from "../screens/ChatConversationScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import CraftsmenCRScreen from "../screens/CraftsmenCRScreen";
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons';
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -37,7 +39,7 @@ const AppointmentsNavigator = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />;
+        return <Ionicons name="md-calendar" size={25} color={tabInfo.tintColor} />
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -73,7 +75,8 @@ const ToDoNavigator = createStackNavigator(
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-          <Ionicons name="ios-today" size={25} color={tabInfo.tintColor} />
+          // <Ionicons name="ios-today" size={25} color={tabInfo.tintColor} />
+          <FontAwesome5 name="list-alt" size={25} color={tabInfo.tintColor} />
         );
       },
     },
@@ -87,7 +90,7 @@ const WorkLogNavigator = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />;
+        return <Ionicons name="ios-log-in" size={25} color={tabInfo.tintColor} />;
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -103,7 +106,8 @@ const UserProfileNavigator = createStackNavigator(
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-          <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+         <FontAwesome name="user-circle-o" size={25} color={tabInfo.tintColor} />
+          
         );
       },
     },
@@ -115,7 +119,7 @@ const CollabooNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
-          CRAppointments: AppointmentsNavigator,
+          Appointments: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
@@ -131,7 +135,7 @@ const CollabooNavigator =
       )
     : createBottomTabNavigator(
         {
-          CRAppointments: AppointmentsNavigator,
+          Appointments: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,

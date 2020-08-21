@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 import InProcessAppointments from "../components/InProcessAppointments";
 import ClosedAppointments from "../components/ClosedAppointments";
 import { NavigationEvents } from "react-navigation";
+import { FontAwesome5 } from '@expo/vector-icons'; 
 class ToDoScreen extends Component {
   constructor(props) {
     super(props);

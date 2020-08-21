@@ -254,7 +254,6 @@ class WorkLogCard extends Component {
                       <Label
                         style={{
                           paddingVertical: 10,
-                          fontWeight: "bold",
                           color: "black",
                           fontSize: 24,
                         }}
@@ -264,13 +263,13 @@ class WorkLogCard extends Component {
                     </Item>
                   </View>
                   <View style={{ flexDirection: "row", top: 20 }}>
-                    <Label style={{ color: Colors.primary, fontSize: 16 }}>
+                    <Label style={{ color: Colors.primary, fontSize: 16, left:10 }}>
                       Date (YYYY.MM.DD)
                     </Label>
                     <Label
-                      style={{ left: 80, color: Colors.primary, fontSize: 16 }}
+                      style={{ left: 100, color: Colors.primary, fontSize: 16,}}
                     >
-                      No. of hours (HH:MM)
+                      No.hours(HH:MM)
                     </Label>
                   </View>
                   {this.state.selectedItem.logs &&
@@ -349,7 +348,7 @@ class WorkLogCard extends Component {
                         ref={(input) => {
                           this.textInput = input;
                         }}
-                        placeholder="HH MM"
+                        placeholder="HH:MM"
                         maxLength={5}
                         value={this.state.addTime}
                         onChangeText={(time) => {
@@ -480,11 +479,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   requestButton: {
+    top: 50,
     paddingTop: 10,
     paddingBottom: 10,
     backgroundColor: Colors.primary,
     borderRadius: 10,
     borderWidth: 1,
+    width: 180,
+    height: 50,
+    borderRadius: 15,
     borderColor: "#fff",
   },
   workLogButton: {
@@ -503,6 +506,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingLeft: 10,
     paddingRight: 10,
+    justifyContent:"center",
+    alignItems:"center"
   },
   modalHeader: {
     ...Platform.select({
@@ -546,7 +551,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     fontSize: 15,
-    borderRadius: 10,
     left: 180,
   },
   dateInput: {
@@ -554,8 +558,8 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderColor: Colors.primary,
     width: 110,
-    borderRadius: 10,
     textAlign: "center",
+    left: 10
   },
   dateBtnTxt: {
     color: "#fff",
@@ -569,7 +573,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     fontSize: 15,
-    borderRadius: 10,
     left: 120,
     width: 80,
     height: 35,

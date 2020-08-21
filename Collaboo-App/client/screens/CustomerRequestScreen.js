@@ -3,19 +3,18 @@ import { View, Text, Button, StyleSheet, Modal, TouchableOpacity, TextInput } fr
 import SearchCraftsmen from "../components/SearchCraftsmen";
 import { HeaderButton,HeaderButtons, Item } from "react-navigation-header-buttons";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { NavigationEvents } from "react-navigation";
 export default class CustomerRequestScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
     };
   }
-  toggleDrawer = () =>{
-
-  }
+ 
   render() {
     return( 
     <View style = {{flex: 1}}>
-    
+     <NavigationEvents onDidFocus={() => console.log("customer screen")} />
     <SearchCraftsmen />
     </View>
     );

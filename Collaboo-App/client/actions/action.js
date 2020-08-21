@@ -22,16 +22,22 @@ export const userPostFetch = user =>{
               if (status === 201) {
                 return response.json();
               } else{
-                console.log(JSON.stringify(response))
-                Alert.alert(
-                  JSON.stringify(response)
-                  [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-                  { cancelable: false }
-                );
+                return response.json()
               }
             })
             .then(data => {
-            
+              if(data.error){
+                console.log("signup ", data)
+                //  Alert.alert(
+                //     JSON.stringify(data.error)
+                //     [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+                //     { cancelable: false }
+                //   );
+                dispatch({type: 'SIGNUP_USER_ERROR', payload: data})
+              }
+              else{
+
+              
                 //localStorage.setItem("token", data.token)
                 console.log("whattt", JSON.stringify(data))
                 //dispatch(loginUser(data))
@@ -46,7 +52,9 @@ export const userPostFetch = user =>{
                 // else if(data.user.role === 'AGENT'){
                 //   navigate('Agent')
                 // }
+              }
             })
+
             .catch((e) => {console.log("error", e)})
     }
 }
@@ -94,7 +102,7 @@ export const userLoginFetch = user => {
         //     [{ text: "OK", onPress: () => console.log("OK Pressed") }],
         //     { cancelable: false }
         //   );
-        dispatch({type: 'LOGIN_USER', payload: data})
+        dispatch({type: 'LOGIN_USER_ERROR', payload: data})
       }
       else{
         console.log("whattt", JSON.stringify(data))

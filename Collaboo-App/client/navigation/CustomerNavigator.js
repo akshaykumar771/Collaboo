@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Platform } from "react-native";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import ChatConversationScreen from "../screens/ChatConversationScreen";
+import { FontAwesome } from '@expo/vector-icons'; 
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
@@ -38,7 +39,7 @@ const CustomerRequestNavigator = createStackNavigator(
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="md-timer" size={25} color={tabInfo.tintColor} />
+        return <Ionicons name="md-calendar" size={25} color={tabInfo.tintColor} />
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -92,7 +93,8 @@ const chatNavigator = createStackNavigator(
       navigationOptions: {
         tabBarIcon: (tabInfo) => {
           return (
-            <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+            // <Ionicons name="md-person" size={25} color={tabInfo.tintColor} />
+            <FontAwesome name="user-circle-o" size={25} color={tabInfo.tintColor} />
           );
         },
       },

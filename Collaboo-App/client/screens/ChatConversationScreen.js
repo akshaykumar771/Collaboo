@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   Alert,
   StyleSheet,
+  Image,
 } from "react-native";
 import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { Button, Icon } from "native-base";
@@ -16,7 +17,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview"
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import * as Permissions from "expo-permissions";
-
+import { Buffer } from "buffer";
 
 class ChatConversationScreen extends React.Component {
   static navigationOptions = ({ navigation }) => ({
@@ -70,6 +71,19 @@ class ChatConversationScreen extends React.Component {
                 _id: chatMessage.senderid,
               },
             };
+            if (chatMessage.msgtype === "TEXT") {
+              gcm.text = chatMessage.msgtext;
+            } else if (chatMessage.msgtype === "FILE") {
+              //console.log("gcm file", chatMessage.fileid);
+              let base64 = new Buffer(chatMessage.fileid.data).toString(
+                "base64"
+              );
+              //console.log("base64", base64)
+
+              gcm.image =
+                "data:" + chatMessage.fileid.contentType + ";base64," + base64;
+              console.log("gcm msg img", gcm.image);
+            }
             return gcm;
           });
           this.setState({
@@ -81,32 +95,49 @@ class ChatConversationScreen extends React.Component {
       }
 
       case "messageSent": {
-        //console.log("from message sent: ", action.data)
-        if (action.data != undefined)
+        console.log("from message sent: ", action.data);
+        if (action.data != undefined) {
           // this._storeMessages(messages);
           //console.log("data in msg sent: ", action.data)
-          this._storeMessages([
-            {
-              _id: action.data._id,
-              createdAt: action.data.createdAt,
-              text: action.data.message,
-              user: { _id: action.data.from },
-            },
-          ]);
+          let msg = {
+            _id: action.data._id,
+            createdAt: action.data.createdAt,
+            user: { _id: action.data.from },
+          };
+          if (action.data.msgtype === "TEXT") {
+            msg.text = action.data.text;
+          } else if (action.data.msgtype === "FILE") {
+            let base64 = new Buffer(action.data.fileinfo.data).toString(
+              "base64"
+            );
+            msg.image =
+              "data:" + action.data.fileinfo.contentType + ";base64," + base64;
+            console.log("msg img");
+          }
+          this._storeMessages([msg]);
+        }
         this.state.socket.messageSent = action.data.data;
         break;
       }
       case "sendMessage": {
         if (action.data.from === this.state.toUserID) {
-          //console.log("from case sendmesg", action.data);
-          this._storeMessages([
-            {
-              _id: action.data._id,
-              createdAt: action.data.createdAt,
-              text: action.data.message,
-              user: { _id: action.data.from },
-            },
-          ]);
+          console.log("from case sendmesg", action.data);
+          let msg = {
+            _id: action.data._id,
+            createdAt: action.data.createdAt,
+            user: { _id: action.data.from },
+          };
+          if (action.data.msgtype === "TEXT") {
+            msg.text = action.data.text;
+          } else if (action.data.msgtype === "FILE") {
+            let base64 = new Buffer(action.data.fileinfo.data).toString(
+              "base64"
+            );
+            msg.image =
+              "data:" + action.data.fileinfo.contentType + ";base64," + base64;
+            console.log("msg img");
+          }
+          this._storeMessages([msg]);
         }
       }
     }
@@ -129,7 +160,10 @@ class ChatConversationScreen extends React.Component {
     const data = {
       toUserId: userId,
       messageInfo: { text: message.text, file: image },
+      
     };
+    console.log("mesdsageInfo", data.messageInfo.file)
+    
     const action = { type: "chat:chat/message/post", data: data };
     this.state.socket.emit("action", action);
   }
@@ -156,21 +190,51 @@ class ChatConversationScreen extends React.Component {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
-      base64: true
+      base64: true,
     });
+
+    let bufferVal = Buffer.from(result.base64, "base64");
+    //console.log("buffer----", bufferVal)
     if (!result.cancelled) {
       let filename = result.uri.replace(/^.*[\\\/]/, "");
       let file = {
-        uri: result.uri,
+        buffer: bufferVal,
         originalname: filename,
-        mimetype: "image/jpg",
+        mimetype: "image/png",
       };
-      console.log("formdata chat", result);
+      //console.log("formdata chat", result);
       this.setState({ image: file });
     }
-    
+
     //console.log("chat state", this.state.image)
     //console.log("result chat", result)
+  };
+  renderMessageImage = (props) => {
+    //console.log("props image", props);
+    const { currentMessage } = props
+    //console.log("current message", currentMessage.image)
+    return (
+      <View>
+        <Image
+          source={{
+            uri: currentMessage.image,
+          }}
+          resizeMode="cover"
+          style={{
+            width: 170,
+            height: 220,
+            marginTop: 10,
+            borderColor: Colors.primary,
+            borderWidth: 1,
+            overflow: "hidden",
+            borderBottomRightRadius: 10,
+            borderTopLeftRadius: 10,
+            borderBottomLeftRadius: 10,
+            borderTopRightRadius: 10,
+          }}
+        />
+      </View>
+    );
   };
   render() {
     const userId = { _id: this.state.userId || -1 };
@@ -204,7 +268,7 @@ class ChatConversationScreen extends React.Component {
         }}
         renderSend={(props) => (
           <View
-            style={{ flexDirection: "row", alignItems: "center", height: 60 }}
+            style={{ flexDirection: "row", alignItems: "center", height: 50 }}
           >
             {/* <Button icon="camera" iconColor={Colors.primaryBlue} size={40} style={{  }} onPress={() => this.choosePicture()} /> */}
             <Button
@@ -215,7 +279,7 @@ class ChatConversationScreen extends React.Component {
               <Icon
                 active
                 name="md-attach"
-                style={{ fontSize: 16, color: "black" }}
+                style={{ fontSize: 18, color: "black" }}
               />
             </Button>
             <Send {...props}>
@@ -225,6 +289,9 @@ class ChatConversationScreen extends React.Component {
             </Send>
           </View>
         )}
+        // renderMessageImage={(props) => {
+        //   this.renderMessageImage(props);
+        // }}
         user={userId}
         // inverted={false}
       />
@@ -250,7 +317,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginRight: 10,
-    backgroundColor: Colors.primary,
     borderRadius: 50,
   },
 });

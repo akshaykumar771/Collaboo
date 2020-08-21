@@ -5,7 +5,8 @@ const initState = {
     userId: null,
     userRole: null,
     socket: null,
-    error:""
+    loginError:"",
+    signupError:""
 }
 
 export const userReducer = (state = initState, action) => {
@@ -15,12 +16,14 @@ export const userReducer = (state = initState, action) => {
             //     AsyncStorage.setItem('token', action.payload.token)
             // }
             //console.log("actionnnn", action.payload)
-            if(action.payload.error){
-              return {...state, error: action.payload.error}
-            }
-            else{
-          return {...state, currentUser: action.payload.user, token: action.payload.token}
-            }
+           
+          return {...state, currentUser: action.payload.user, token: action.payload.token, loginError:"", signupError:""}
+          
+          case 'LOGIN_USER_ERROR' :
+            console.log("actionnnn", action.payload)
+          return {...state, loginError: action.payload.error }
+          case 'SIGNUP_USER_ERROR' : 
+          return {...state, signupError: action.payload.error }
           case 'AUTHENTICATE':
             //console.log("Reducer::: ", action);
               return {

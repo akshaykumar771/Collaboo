@@ -275,6 +275,11 @@ class SignUpScreen extends Component {
                 {this.state.passwordVal}
               </Text>
             </Form>
+            <View>
+            {this.props.signupError ? ( <Text style={{ color: "red", marginLeft: 10, fontSize: 16 }}>
+                Please enter valid details
+              </Text>) : null}
+            </View>
             <View style={styles.buttonContainer}>
               <FormButton
                 buttonType="outline"
@@ -310,8 +315,12 @@ const styles = StyleSheet.create({
     margin: 25,
   },
 });
+const mapStateToProps = (state) => ({
+  signupError: state.userReducer.signupError,
+});
+
 const mapDispatchToProps = (dispatch) => ({
   userPostFetch: (userInfo) => dispatch(userPostFetch(userInfo)),
 });
 
-export default connect(null, mapDispatchToProps)(SignUpScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen);

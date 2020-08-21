@@ -371,7 +371,7 @@ ChatScreen.navigationOptions = {
             {/* {console.log("image value", 'data:'+item.fileid.contentType + ';base64,'  + item.buffer)} */}
 {/* })} */}
             ////
-
+/// {/* <Picker.Item label={item.title} value={item._id} key={item._id} /> */}
   showDatepicker = () => {
     console.log("Date picker")
     this.showMode("date");

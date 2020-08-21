@@ -8,7 +8,6 @@ import {
   TextInput,
   Alert,
   Platform,
-  Picker,
 } from "react-native";
 import {
   Container,
@@ -18,7 +17,7 @@ import {
   Label,
   Icon,
   Button,
-  
+  Picker
 } from "native-base";
 import Colors from "../constants/Colors";
 import WorkLogCard from "../components/WorkLogCard";
@@ -136,6 +135,7 @@ class WorkLogScreen extends Component {
     this.setState({ isModalOpen: false });
   }
   render() {
+    console.log("datasource state", this.state.dataSource)
     return (
       <View style={{flex: 1}}>
         {/* <KeyboardAwareScrollView
@@ -169,23 +169,30 @@ class WorkLogScreen extends Component {
                   onPress={() => this.closeModal()}
                 />
                 <Text style={styles.modalHeader}>Work Log</Text>
-                  <Picker
+                <Item>
+                <Picker
                   style={styles.picker}
-                    mode ='dropdown'
-                    selectedValue={this.state.selected}
-                    onValueChange={(itemValue, itemIndex) => {
-                        this.setState({
-                          selected: itemValue
-                        });
-                      }} 
-                  >
-                  {console.log("item value", this.state.selected)}
-                  {this.state.dataSource &&
-                        this.state.dataSource.length > 0 &&
-                        this.state.dataSource.map((item, index) => (
-                          <Picker.Item label={item.title} value={item._id} key={index} />
-                        ))}
-                  </Picker>
+                  mode="dropdown"
+                  onValueChange={(itemValue, itemIndex) => {
+                    this.setState({ selected: itemValue });
+                  }}
+                  selectedValue={this.state.selected}
+                  
+                >
+                  <Picker.Item
+                    style={{ paddingVertical: 10 }}
+                    label="Choose your role"
+                    value={null}
+                    key={0}
+                  />
+                  {this.state.dataSource && this.state.dataSource.map((item, index) => (
+                    <Picker.Item label={item.title} value={item._id} key={item._id} />
+                    
+                  ))}
+                  
+                </Picker>
+                  
+                  </Item>
                 <View style= {styles.dateInput}>
                   <TextInput
                     placeholder="YYYY-MM-DD"
@@ -219,6 +226,7 @@ class WorkLogScreen extends Component {
                       placeholder="HH:MM"
                       maxLength={5}
                       onChangeText={(text) => {
+                        console.log("time text", text)
                         this.setState({
                           time: text,
                         });
@@ -380,3 +388,8 @@ const styles = StyleSheet.create({
 });
 
 export default connect(mapStateToProps, null)(WorkLogScreen);
+
+
+/*
+
+*/

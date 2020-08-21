@@ -15,6 +15,7 @@ import * as Permissions from "expo-permissions";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
 import FitImage from 'react-native-fit-image';
+import { NavigationEvents } from "react-navigation";
 class InventoryScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -25,17 +26,10 @@ class InventoryScreen extends React.Component {
     };
   }
   componentDidMount() {
+    if(this.props.token){
     this.fetchImagesFromServer();
+    }
   }
-  // shouldComponentUpdate(nextProps) {
-  //   console.log(nextProps.token, this.props.token);
-  //   if (nextProps.token == this.props.token) {
-  //     this.fetchImagesFromServer();
-  //   }
-  //   return true;
-  // }
- 
-
   fetchImagesFromServer = () => {
     console.log("fetch image");
     const url = "http://81.89.193.99:3001/api/inventory?inventorytype=OTHER";
@@ -62,9 +56,18 @@ class InventoryScreen extends React.Component {
       }
     })
       .then((responseJson) => {
-        //console.log("INVENTORY RESPONSE", responseJson);
+        console.log("INVENTORY RESPONSE", responseJson);
+        if(responseJson === undefined){
+          Alert.alert(
+            "No Images",
+            "Please add images from your galley",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: false }
+          );
+        }
+        else{
         Promise.all(
-          responseJson.map((item) => {
+          responseJson && responseJson.map((item) => {
             return new Promise((resolve, reject) => {
               let inventoryid = item._id;
               this.fetchInventory(resolve, reject,item)
@@ -93,6 +96,7 @@ class InventoryScreen extends React.Component {
             });
           })
         )
+        
           .then((result) => {
             //console.log("------------", result);
             this.setState({
@@ -102,6 +106,7 @@ class InventoryScreen extends React.Component {
           .catch((error) => {
             console.log(error);
           });
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -125,7 +130,7 @@ class InventoryScreen extends React.Component {
           buffer: response.bufferBase64,
           ...item,
         };
-        //console.log("inventory res", inventory)
+        console.log("inventory res", inventory)
         resolve(inventory);
       })
       .catch((err) => {
@@ -201,6 +206,7 @@ class InventoryScreen extends React.Component {
     return (
       <View style={{ flex: 1 }}>
         <View style={{ padding: 10 }}>
+        <NavigationEvents onDidFocus={() => this.fetchImagesFromServer()} />
           <TouchableOpacity
             style={styles.requestButton}
             underlayColor="#fff"

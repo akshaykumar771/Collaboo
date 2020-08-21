@@ -60,6 +60,7 @@ class Login extends Component {
   //   }
   // };
   handleSubmit = async () => {
+    console.log("handlesubmit login")
     const pushToken = await AsyncStorage.getItem("pushtoken");
     this.setState({
       pushToken: pushToken,
@@ -72,6 +73,7 @@ class Login extends Component {
   };
 
   render() {
+    console.log("error", this.props.loginError)
     return (
       <Container style={{backgroundColor: Colors.primary }}>
        <View
@@ -122,11 +124,10 @@ class Login extends Component {
                 onBlur={this.validatePassword}
               />
             </Item>
-            {/* <Text style={{ color: "red", marginLeft: 10 }}>
-                {this.state.passwordVal}
-              </Text> */}
+              {this.props.loginError ? ( <Text style={{ color: "red", marginLeft: 10, fontSize: 16 }}>
+                Please enter valid details
+              </Text>) : null}
           </Form>
-
           <View style={styles.buttonContainer}>
             <FormButton
               buttonType="outline"
@@ -180,8 +181,12 @@ const styles = StyleSheet.create({
     top: 15,
   },
 });
+
 const mapDispatchToProps = (dispatch) => ({
   userLoginFetch: (userInfo) => dispatch(userLoginFetch(userInfo)),
 });
 
-export default connect(null, mapDispatchToProps)(Login);
+const mapStateToProps = (state) => ({
+  loginError: state.userReducer.loginError,
+});
+export default connect(mapStateToProps, mapDispatchToProps,)(Login);
