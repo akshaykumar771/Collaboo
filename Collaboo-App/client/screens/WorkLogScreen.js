@@ -8,21 +8,12 @@ import {
   TextInput,
   Alert,
   Platform,
+  Picker,
 } from "react-native";
-import {
-  Container,
-  Content,
-  Form,
-  Item,
-  Label,
-  Icon,
-  Button,
-  Picker
-} from "native-base";
+import { Icon, Button } from "native-base";
 import Colors from "../constants/Colors";
 import WorkLogCard from "../components/WorkLogCard";
 import { MaterialIcons } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import DateTimePicker from "react-native-modal-datetime-picker";
 import { connect } from "react-redux";
 class WorkLogScreen extends Component {
@@ -36,16 +27,13 @@ class WorkLogScreen extends Component {
       date: "",
       time: "",
       worklogCard: "",
-      selected:""
+      selected: "",
     };
   }
- 
 
   saveWorklog = () => {
-    //console.log("token in worklog", this.props.token);
     const url = "http://81.89.193.99:3001/api/craftsmen/worklogs";
     const bearer = "Bearer " + this.props.token;
-    //console.log("bearer", bearer);
     const data = {
       appointmentid: this.state.selected,
       logs: [{ date: this.state.date, time: this.state.time }],
@@ -61,8 +49,6 @@ class WorkLogScreen extends Component {
         this.setState({
           worklogCard: Date.now(),
         });
-        // const {navigation, position} = this.props
-         //console.log("response from worklog :", responseJson);
         Alert.alert(
           "Successfully added the worklog",
           "To update the worklog, please click the add icon on your worklogs",
@@ -99,7 +85,6 @@ class WorkLogScreen extends Component {
   handleAppointments = () => {
     const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -113,8 +98,8 @@ class WorkLogScreen extends Component {
         } else if (status === 204) {
           console.log("Response in 204", response);
           Alert.alert(
-            "No Worklogs Found",
-            "Please add your work to see the worklogs",
+            "Keine Arbeitsprotokoll gefunden",
+            "Bitte fügen Sie Ihre Arbeit hinzu, um die Arbeitsprotokoll zu sehen",
             [{ text: "OK", onPress: () => console.log("OK Pressed") }],
             { cancelable: false }
           );
@@ -135,41 +120,37 @@ class WorkLogScreen extends Component {
     this.setState({ isModalOpen: false });
   }
   render() {
-    console.log("datasource state", this.state.dataSource)
+    console.log("datasource state", this.state.dataSource);
     return (
-      <View style={{flex: 1}}>
-        {/* <KeyboardAwareScrollView
-          enableOnAndroid={true}
-          // enableAutomaticScroll={Platform.OS === "ios"}
-        > */}
-          <WorkLogCard key={this.state.worklogCard} />
-          <Modal transparent={true} visible={this.state.isModalOpen}>
+      <View style={{ flex: 1 }}>
+        <WorkLogCard key={this.state.worklogCard} />
+        <Modal transparent={true} visible={this.state.isModalOpen}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              backgroundColor: "#00000080",
+            }}
+          >
             <View
               style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#00000080",
+                width: 300,
+                height: 400,
+                backgroundColor: "#fff",
+                paddingVertical: 40,
+                paddingHorizontal: 10,
               }}
             >
-              <View
-                style={{
-                  width: 300,
-                  height: 400,
-                  backgroundColor: "#fff",
-                  paddingVertical: 40,
-                  paddingHorizontal: 10,
-                }}
-              >
-                <MaterialIcons
-                  style={styles.modalCloseIcon}
-                  name="close"
-                  size={24}
-                  onPress={() => this.closeModal()}
-                />
-                <Text style={styles.modalHeader}>Work Log</Text>
-                <Item>
+              <MaterialIcons
+                style={styles.modalCloseIcon}
+                name="close"
+                size={24}
+                onPress={() => this.closeModal()}
+              />
+              <Text style={styles.modalHeader}>Arbeitsprotokoll</Text>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Picker
                   style={styles.picker}
                   mode="dropdown"
@@ -177,92 +158,92 @@ class WorkLogScreen extends Component {
                     this.setState({ selected: itemValue });
                   }}
                   selectedValue={this.state.selected}
-                  
                 >
                   <Picker.Item
                     style={{ paddingVertical: 10 }}
-                    label="Choose your role"
+                    label="Wählen Sie Ihre Aufgabe"
                     value={null}
                     key={0}
                   />
-                  {this.state.dataSource && this.state.dataSource.map((item, index) => (
-                    <Picker.Item label={item.title} value={item._id} key={item._id} />
-                    
-                  ))}
-                  
+                  {this.state.dataSource &&
+                    this.state.dataSource.map((item, index) => (
+                      <Picker.Item
+                        label={item.title}
+                        value={item._id}
+                        key={item._id}
+                      />
+                    ))}
                 </Picker>
-                  
-                  </Item>
-                <View style= {styles.dateInput}>
-                  <TextInput
-                    placeholder="YYYY-MM-DD"
-                    maxLength={10}
-                    value={this.state.date}
-                    onChange={(text) => {
-                      this.setState({
-                        date: text,
-                      });
-                    }}
-                  />
-                  <Button
-                    transparent
-                    style={styles.chooseDateBtn}
-                    onPress={() => this.showDateTimePicker()}
-                  >
-                    <Icon
-                      active
-                      name="calendar"
-                      style={{ fontSize: 30, color: "black" }}
-                    />
-                  </Button>
-                  <DateTimePicker
-                    isVisible={this.state.isDateTimePickerVisible}
-                    onConfirm={this.handleDatePicked}
-                    onCancel={this.hideDateTimePicker}
-                  />
-                  <View style={styles.chooseHoursTxtInput}>
-                    <TextInput
-                      style={{justifyContent:'center', alignItems:'center'}}
-                      placeholder="HH:MM"
-                      maxLength={5}
-                      onChangeText={(text) => {
-                        console.log("time text", text)
-                        this.setState({
-                          time: text,
-                        });
-                        console.log("time state", this.state.time);
-                      }}
-                      value={this.state.time}
-                    />
-                  </View>
-                </View>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-evenly",
-                    marginVertical: 60,
+              </View>
+              <View style={styles.dateInput}>
+                <TextInput
+                  placeholder="YYYY-MM-DD"
+                  maxLength={10}
+                  value={this.state.date}
+                  onChange={(text) => {
+                    this.setState({
+                      date: text,
+                    });
                   }}
+                />
+                <Button
+                  transparent
+                  style={styles.chooseDateBtn}
+                  onPress={() => this.showDateTimePicker()}
                 >
-                  <TouchableOpacity
-                    style={styles.requestButton}
-                    underlayColor="#fff"
-                    onPress={() => this.saveWorklog()}
-                  >
-                    <Text style={styles.buttonText}>Log Work</Text>
-                  </TouchableOpacity>
+                  <Icon
+                    active
+                    name="calendar"
+                    style={{ fontSize: 30, color: "black" }}
+                  />
+                </Button>
+                <DateTimePicker
+                  isVisible={this.state.isDateTimePickerVisible}
+                  onConfirm={this.handleDatePicked}
+                  onCancel={this.hideDateTimePicker}
+                />
+                <View style={styles.chooseHoursTxtInput}>
+                  <TextInput
+                    style={{ textAlign: "center" }}
+                    placeholder="HH:MM"
+                    maxLength={5}
+                    onChangeText={(text) => {
+                      console.log("time text", text);
+                      this.setState({
+                        time: text,
+                      });
+                      console.log("time state", this.state.time);
+                    }}
+                    value={this.state.time}
+                  />
                 </View>
               </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  marginVertical: 60,
+                }}
+              >
+                <TouchableOpacity
+                  style={styles.requestButton}
+                  underlayColor="#fff"
+                  onPress={() => this.saveWorklog()}
+                >
+                  <Text style={styles.buttonText}>Arbeit protokollieren</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </Modal>
-        {/* </KeyboardAwareScrollView> */}
+          </View>
+        </Modal>
         <View style={{ position: "absolute", bottom: 0, width: "100%" }}>
           <TouchableOpacity
             style={styles.workLogButton}
             underlayColor="#fff"
             onPress={() => this.openModal()}
           >
-            <Text style={styles.buttonText}>Add Work</Text>
+            <Text style={styles.buttonText}>Füge Arbeit hinzu</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -278,34 +259,37 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  modalText:{
+  modalText: {
     ...Platform.select({
       ios: {
-        //marginTop: -55,
-        bottom: 110
+        bottom: 110,
       },
-      android:{
-        top: 15
-      }
-    })
+      android: {
+        top: 15,
+      },
+    }),
   },
-  dateInput:{
+  dateInput: {
     flexDirection: "row",
     ...Platform.select({
-      ios:{
-        bottom: 70
+      ios: {
+        bottom: 60,
       },
-      android:{
-        top: 30
-      }
-    })
+      android: {
+        top: 30,
+      },
+    }),
   },
-  picker:{
+  picker: {
     ...Platform.select({
-      ios:{
-        bottom: 60
-      }
-    })
+      ios: {
+        bottom: 70,
+        width: 190,
+      },
+      android: {
+        width: 250,
+      },
+    }),
   },
   textStyle: {
     padding: 10,
@@ -317,28 +301,27 @@ const styles = StyleSheet.create({
   },
   requestButton: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    borderWidth: 1,
-    borderColor: "#fff",
-    bottom: 85
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        bottom: 85,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "#fff",
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "#fff",
+      },
     }),
-    
   },
   workLogButton: {
     position: "absolute",
@@ -375,7 +358,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     fontSize: 15,
-    borderRadius: 20,
     left: 50,
     width: 80,
     height: 35,
@@ -384,12 +366,6 @@ const styles = StyleSheet.create({
   chooseDateBtn: {
     width: 60,
   },
-
 });
 
 export default connect(mapStateToProps, null)(WorkLogScreen);
-
-
-/*
-
-*/

@@ -18,12 +18,12 @@ import AgentAppointmentScreen from "../screens/AgentAppointmentScreen";
 import UserProfileScreen from "../screens/UserProfileScreen";
 import AgentWorkLogScreen from "../screens/AgentWorkLogScreen";
 import ACWorkLogScreen from "../screens/ACWorkLogScreen";
-import { FontAwesome5 } from '@expo/vector-icons'; 
+import { FontAwesome } from "@expo/vector-icons";
+import EditProfileScreen from "../screens/EditProfileScreen";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
       Platform.OS === "android" ? Colors.primary : Colors.primary,
-      //marginTop: Expo.Constants.statusBarHeight
   },
   headerTitleStyle: {
     fontFamily: "raleway-bold",
@@ -35,7 +35,7 @@ const defaultNavOptions = {
 };
 const AppointmentNavigator = createStackNavigator(
   {
-    Appointments: AgentAppointmentScreen
+    Termine: AgentAppointmentScreen,
   },
   {
     navigationOptions: {
@@ -47,7 +47,7 @@ const AppointmentNavigator = createStackNavigator(
     },
     defaultNavigationOptions: defaultNavOptions,
   }
-)
+);
 const chatNavigator = createStackNavigator(
   {
     Chats: ChatScreen,
@@ -69,16 +69,17 @@ const chatNavigator = createStackNavigator(
   }
 );
 
-
 const WorkLogNavigator = createStackNavigator(
   {
-    WorkLog: AgentWorkLogScreen,
-    ACWorkLog: ACWorkLogScreen
+    Stundenzettel: AgentWorkLogScreen,
+    ACStundenzettel: ACWorkLogScreen,
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="ios-log-in" size={25} color={tabInfo.tintColor} />;
+        return (
+          <Ionicons name="ios-log-in" size={25} color={tabInfo.tintColor} />
+        );
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -86,13 +87,18 @@ const WorkLogNavigator = createStackNavigator(
 );
 const UserProfileNavigator = createStackNavigator(
   {
-    Profile: UserProfileScreen,
+    Profil: UserProfileScreen,
+    EditProfil: EditProfileScreen,
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-          <FontAwesome name="user-circle-o" size={25} color={tabInfo.tintColor} />
+          <FontAwesome
+            name="user-circle-o"
+            size={25}
+            color={tabInfo.tintColor}
+          />
         );
       },
     },
@@ -104,10 +110,10 @@ const AgentNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
-          Appointments: AppointmentNavigator,
+          Termine: AppointmentNavigator,
           Chat: chatNavigator,
-          WorkLog: WorkLogNavigator,
-          Profile: UserProfileNavigator
+          Stundenzettel: WorkLogNavigator,
+          Profil: UserProfileNavigator,
         },
         {
           activeTintColor: "white",
@@ -119,10 +125,10 @@ const AgentNavigator =
       )
     : createBottomTabNavigator(
         {
-          Appointments: AppointmentNavigator,
+          Termine: AppointmentNavigator,
           Chat: chatNavigator,
-          WorkLog: WorkLogNavigator,
-          Profile: UserProfileNavigator,
+          Stundenzettel: WorkLogNavigator,
+          Profil: UserProfileNavigator,
         },
         {
           tabBarOptions: {
@@ -130,6 +136,5 @@ const AgentNavigator =
           },
         }
       );
-
 
 export default AgentNavigator;

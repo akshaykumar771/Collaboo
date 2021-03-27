@@ -5,10 +5,6 @@ import {
   FlatList,
   ActivityIndicator,
   Platform,
-  Modal,
-  Button,
-  Text,
-  TouchableOpacity,
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
@@ -17,12 +13,10 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
-import SingleChatScreen from "../screens/SingleChatScreen";
 import { connect } from "react-redux";
 import { NavigationEvents } from "react-navigation";
 class ChatScreen extends Component {
   constructor(props) {
-    //console.log("testing constructor props: ",props)
     super(props);
     this.state = {
       isLoading: true,
@@ -34,52 +28,42 @@ class ChatScreen extends Component {
   }
 
   getAllChats() {
-    //console.log("gettttt");
-    // const userId = this.props.navigation.getParam("userId");
-    // const messages = this.state.messages
     const action = { type: "chat:allchats/get", data: {} };
     this.state.socket.emit("action", action);
     this.state.socket.on("action", (action) => {
-      console.log("from getAllChats: ", action)
-      if(action.data.status == 204){
+      if (action.data.status == 204) {
         Alert.alert(
-          "No Chats Found",
-          "Please add a contact from appointments to begin the conversation",
+          "Keine Chats gefunden",
+          "Bitte fügen Sie einen Kontakt aus Terminen hinzu, um das Gespräch zu beginnen",
           [{ text: "OK", onPress: () => console.log("OK Pressed") }],
           { cancelable: false }
         );
+      } else {
+        const allChats = action.type === "chats" ? action.data : "";
+        console.log("Get all chats: ", allChats);
+        this.setState({
+          isLoading: false,
+          users: allChats.data,
+          arrayHolder: allChats.data,
+        });
       }
-   else{
-      const allChats = action.type === "chats" ? action.data : "";
-      console.log("Get all chats: ", allChats);
-      this.setState({
-        isLoading: false,
-        users: allChats.data,
-        arrayHolder: allChats.data,
-      });
-    }
-      console.log("from chat screen :", this.state.users);
     });
 
     this.state.socket.on("error", (error) => {
       Alert.alert(
-        "No Chats Found",
-        "Please add a contact from appointments to begin the conversation",
+        "Keine Chats gefunden",
+        "Bitte fügen Sie einen Kontakt aus Terminen hinzu, um das Gespräch zu beginnen",
         [{ text: "OK", onPress: () => console.log("OK Pressed") }],
         { cancelable: false }
       );
     });
   }
 
-  search = (text) => {
-    console.log(text);
-  };
   clear = () => {
     this.search.clear();
   };
   SearchFilterFunction(text) {
     //passing the inserted text in textinput
-    //console.log("users of get all chats", this.state.arrayHolder);
     const newData = this.arrayHolder.filter(function (item) {
       //applying filter for the inserted text in search bar
       console.log("itemdata", item.toUser);
@@ -97,7 +81,6 @@ class ChatScreen extends Component {
       dataSource: newData,
       search: text,
     });
-    //console.log("data", this.state.dataSource);
   }
 
   ListViewItemSeparator = () => {
@@ -150,31 +133,34 @@ class ChatScreen extends Component {
               placeholder="Type Here..."
               value={this.state.search}
             />
-            {this.state.users === []? (console.log("fullname")) : (<FlatList
-              data={this.state.users}
-              ItemSeparatorComponent={this.ListViewItemSeparator}
-              ListFooterComponent={this.renderFooter}
-              //Item Separator View
-              renderItem={({ item }) => (
-                // Single Comes here which will be repeatative for the FlatListItems
-                <ListItem
-                  title={item.toUser.fname + item.toUser.lname}
-                  subtitle={item.toUser.phno}
-                  containerStyle={{ borderBottomWidth: 0 }}
-                  rightIcon={{ name: "message" }}
-                  onPress={() =>
-                    this.props.navigation.navigate("SingleChat", {
-                      name: item.toUser.fullname,
-                      userId: item.toUser._id,
-                    })
-                  }
-                />
-              )}
-              enableEmptySections={true}
-              style={{ marginTop: 10 }}
-              keyExtractor={(item, index) => index.toString()}
-            />)}
-            
+            {this.state.users === [] ? (
+              console.log("fullname")
+            ) : (
+              <FlatList
+                data={this.state.users}
+                ItemSeparatorComponent={this.ListViewItemSeparator}
+                ListFooterComponent={this.renderFooter}
+                //Item Separator View
+                renderItem={({ item }) => (
+                  // Single Comes here which will be repeatative for the FlatListItems
+                  <ListItem
+                    title={item.toUser.fname + item.toUser.lname}
+                    subtitle={item.toUser.phno}
+                    containerStyle={{ borderBottomWidth: 0 }}
+                    rightIcon={{ name: "message" }}
+                    onPress={() =>
+                      this.props.navigation.navigate("SingleChat", {
+                        name: item.toUser.fullname,
+                        userId: item.toUser._id,
+                      })
+                    }
+                  />
+                )}
+                enableEmptySections={true}
+                style={{ marginTop: 10 }}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            )}
           </View>
         </TouchableWithoutFeedback>
       </View>
@@ -197,7 +183,6 @@ ChatScreen.navigationOptions = {
 };
 
 const mapStateToProps = (state) => ({
-  //token: state.userReducer.token,
   socket: state.userReducer.socket,
 });
 

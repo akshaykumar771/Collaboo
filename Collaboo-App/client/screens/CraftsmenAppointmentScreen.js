@@ -1,11 +1,15 @@
 import React, { Component } from "react";
 import { View, StyleSheet, Alert } from "react-native";
-import { Container, Header, Content, Tab, Tabs } from "native-base";
+import { Container, Tab, Tabs } from "native-base";
 import AppointmentCard from "../components/AppointmentCard";
 import AcceptedAppointmentCard from "../components/AcceptedAppointmentCard";
 import RejectedAppointmentCard from "../components/RejectedAppointmentCard";
-import { HeaderButton,HeaderButtons, Item } from "react-navigation-header-buttons";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  HeaderButton,
+  HeaderButtons,
+  Item,
+} from "react-navigation-header-buttons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import { NavigationEvents } from "react-navigation";
 class CraftsmenAppointmentScreen extends Component {
@@ -22,29 +26,17 @@ class CraftsmenAppointmentScreen extends Component {
     if (this.props.token) {
       this.makeRemoteRequest();
     }
-    // this.interval = setInterval(() => {
-    //   if(this.props.token){
-    //   this.makeRemoteRequest();
-    //   }
-    // }, 2000)
   }
 
-  // componentWillUnmount(){
-  //   clearInterval(this.interval)
-  // }
-
   shouldComponentUpdate(nextProps) {
-    //console.log(nextProps.token, this.props.token);
     if (nextProps.token != this.props.token) {
       this.makeRemoteRequest();
     }
     return true;
   }
   makeRemoteRequest = () => {
-    //console.log("test");
     const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -54,7 +46,6 @@ class CraftsmenAppointmentScreen extends Component {
         if (status === 200) {
           return response.json();
         } else if (status === 204) {
-          //console.log(response);
           Alert.alert(
             "Sorry",
             "No Appointments Found",
@@ -77,45 +68,26 @@ class CraftsmenAppointmentScreen extends Component {
               item.custconfirmation === "DEFAULT"
             ) {
               newAppointments.push(item);
-              //console.log("arr", newAppointments)
             } else if (
               item.status === "OPEN" &&
               item.crafconfirmation === "YES" &&
               item.custconfirmation === "DEFAULT"
             ) {
               acceptedAppointments.push(item);
-             
             } else if (
-              item.status === "CANCELLED" &&
-              item.crafconfirmation === "NO" || item.crafconfirmation === "YES" &&
-              item.custconfirmation === "DEFAULT" || item.custconfirmation === 'NO'
+              (item.status === "CANCELLED" && item.crafconfirmation === "NO") ||
+              (item.crafconfirmation === "YES" &&
+                item.custconfirmation === "DEFAULT") ||
+              item.custconfirmation === "NO"
             ) {
               rejectedAppointments.push(item);
-              
             }
-            //  else {
-            //   this.setState({
-            //     appointments: [],
-            //     acceptedAppoinments: [],
-            //     rejectedAppointments: [],
-            //   });
-            // }
           });
-          this.setState({
-            appointments: newAppointments,
-            acceptedAppointments: acceptedAppointments,
-            rejectedAppointments: rejectedAppointments,
-          });
-        //console.log("response crfatsmenapptscreen", responseJson);
-        //console.log("appointment state", this.state.appointments);
-        // console.log(
-        //   "accepted appointment state",
-        //   this.state.acceptedAppointments
-        // );
-        // console.log(
-        //   "rejected appointment state",
-        //   this.state.rejectedAppointments
-        // );
+        this.setState({
+          appointments: newAppointments,
+          acceptedAppointments: acceptedAppointments,
+          rejectedAppointments: rejectedAppointments,
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -124,21 +96,21 @@ class CraftsmenAppointmentScreen extends Component {
   render() {
     return (
       <View style={styles.screen}>
-      <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
+        <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
         <Container>
           <Tabs style={{ backgroundColor: "white" }}>
-            <Tab heading="New">
+            <Tab heading="Neu">
               <AppointmentCard
                 appointments={this.state.appointments}
                 makeRemoteRequest={this.makeRemoteRequest}
               />
             </Tab>
-            <Tab heading="Accepted">
+            <Tab heading="Angenommen">
               <AcceptedAppointmentCard
                 acceptedAppoinments={this.state.acceptedAppointments}
               />
             </Tab>
-            <Tab heading="Rejected">
+            <Tab heading="Abgelehnt">
               <RejectedAppointmentCard
                 rejectedAppointments={this.state.rejectedAppointments}
               />
@@ -150,21 +122,26 @@ class CraftsmenAppointmentScreen extends Component {
   }
 }
 const MaterialCommunityIconsHeader = (props) => (
-  <HeaderButton {...props} IconComponent={MaterialCommunityIcons} iconSize={23} color="white" />
+  <HeaderButton
+    {...props}
+    IconComponent={MaterialCommunityIcons}
+    iconSize={23}
+    color="#f68ba7"
+  />
 );
-CraftsmenAppointmentScreen.navigationOptions = navData => {
+CraftsmenAppointmentScreen.navigationOptions = (navData) => {
   return {
     headerRight: (
       <HeaderButtons HeaderButtonComponent={MaterialCommunityIconsHeader}>
         <Item
-          title="Change Requests"
+          title="Ändere Anfrage"
           iconName="history"
           onPress={() => {
-            navData.navigation.navigate("ChangeRequests");
+            navData.navigation.navigate("ÄndereAnfrage");
           }}
         />
       </HeaderButtons>
-    )
+    ),
   };
 };
 const mapStateToProps = (state) => ({

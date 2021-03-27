@@ -35,7 +35,6 @@ class EditProfileScreen extends Component {
   makeRemoteRequest = () => {
     const url = "http://81.89.193.99:3001/api/user/me";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -44,10 +43,8 @@ class EditProfileScreen extends Component {
         console.log("Response 1", response);
         const status = response.status;
         if (status === 200) {
-          console.log("Response in 200", response);
           return response.json();
         } else if (status === 204) {
-          console.log("Response in 204", response);
           Alert.alert(
             "Error",
             "Could not read your profile",
@@ -57,7 +54,6 @@ class EditProfileScreen extends Component {
         }
       })
       .then((responseJson) => {
-        console.log("response from edit profile :", responseJson);
         this.setState({
           response: responseJson,
           fname: responseJson.fname,
@@ -76,7 +72,6 @@ class EditProfileScreen extends Component {
             pcode: responseJson.address.pcode,
           });
         }
-        console.log("data source state", this.state.dataSource);
       })
       .catch((error) => {
         console.error(error);
@@ -85,18 +80,17 @@ class EditProfileScreen extends Component {
   handleUpdate = () => {
     const url = "http://81.89.193.99:3001/api/user/me";
     const bearer = "Bearer " + this.props.token;
-    let address = {street:"", city:"", pcode:""}
-    address.street = this.state.street,
-    address.city = this.state.city,
-    address.pcode = this.state.pcode
+    let address = { street: "", city: "", pcode: "" };
+    (address.street = this.state.street),
+      (address.city = this.state.city),
+      (address.pcode = this.state.pcode);
     const data = {
       fname: this.state.fname,
       lname: this.state.lname,
       phno: this.state.phno,
       password: this.state.password,
-      address: address
+      address: address,
     };
-    console.log("data", data);
 
     fetch(url, {
       method: "PUT",
@@ -105,8 +99,12 @@ class EditProfileScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        //this.props.makeRemoteRequest();
-        console.log("response after update profile", responseJson);
+        Alert.alert(
+          "Erfolg",
+          "Profil erfolgreich aktualisiert",
+          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+          { cancelable: false }
+        );
       })
       .catch((error) => {
         console.log(error);
@@ -118,9 +116,9 @@ class EditProfileScreen extends Component {
         <Content style={{ paddingVertical: 15 }}>
           <Form>
             <Item stackedLabel>
-              <Label>First Name</Label>
+              <Label>Vorname</Label>
               <Input
-                placeholder="First Name"
+                placeholder="Vorname"
                 value={this.state.fname}
                 autoCapitalize="none"
                 onChangeText={(text) => {
@@ -129,9 +127,9 @@ class EditProfileScreen extends Component {
               />
             </Item>
             <Item stackedLabel>
-              <Label>Last Name</Label>
+              <Label>Nachname</Label>
               <Input
-                placeholder="Last Name"
+                placeholder="Nachname"
                 value={this.state.lname}
                 onChangeText={(text) => {
                   this.setState({ lname: text });
@@ -148,10 +146,10 @@ class EditProfileScreen extends Component {
               />
             </Item>
             <Item stackedLabel>
-              <Label>Mobile</Label>
+              <Label>Telefon-/Mobilfunknummer</Label>
               <Input
                 keyboardType="numeric"
-                placeholder="Mobile Number"
+                placeholder="Telefon-/Mobilfunknummer"
                 value={this.state.phno}
                 onChangeText={(text) => {
                   this.setState({ phno: text });
@@ -162,9 +160,9 @@ class EditProfileScreen extends Component {
             this.state.response.selfemployed === true ? (
               <View>
                 <Item stackedLabel>
-                  <Label>Street</Label>
+                  <Label>Straße</Label>
                   <Input
-                    placeholder="Street"
+                    placeholder="Straße"
                     value={this.state.street}
                     onChangeText={(text) => {
                       this.setState({ street: text });
@@ -184,9 +182,9 @@ class EditProfileScreen extends Component {
                   />
                 </Item>
                 <Item stackedLabel>
-                  <Label>City</Label>
+                  <Label>Stadt</Label>
                   <Input
-                    placeholder="City"
+                    placeholder="Stadt"
                     value={this.state.city}
                     onChangeText={(text) => {
                       this.setState({ city: text });
@@ -197,9 +195,9 @@ class EditProfileScreen extends Component {
             ) : this.state.response.role === "AGENT" ? (
               <View>
                 <Item stackedLabel>
-                  <Label>Street</Label>
+                  <Label>Straße</Label>
                   <Input
-                    placeholder="Street"
+                    placeholder="Straße"
                     value={this.state.response.compid.address.street}
                     onChangeText={(text) => {
                       this.setState({ street: text });
@@ -217,9 +215,9 @@ class EditProfileScreen extends Component {
                   />
                 </Item>
                 <Item stackedLabel>
-                  <Label>City</Label>
+                  <Label>Stadt</Label>
                   <Input
-                    placeholder="City"
+                    placeholder="Stadt"
                     value={this.state.response.compid.address.city}
                     onChangeText={(text) => {
                       this.setState({ city: text });
@@ -236,7 +234,7 @@ class EditProfileScreen extends Component {
             <FormButton
               buttonType="outline"
               onPress={this.handleUpdate}
-              title="Done"
+              title="Fertig"
               buttonColor="#039BE5"
             />
           </View>

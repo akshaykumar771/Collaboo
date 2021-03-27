@@ -7,18 +7,13 @@ import {
   Text,
   Button,
   Modal,
-  TouchableOpacity,
   ScrollView,
-  TouchableHighlight,
-  FlatList,
 } from "react-native";
-import { CheckBox, ListItem, Body, Container, Content } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import Colors from "../constants/Colors";
 import PickerCheckBox from "react-native-picker-checkbox";
-import SelectMultiple from "react-native-select-multiple";
-import CheckboxFormX from 'react-native-checkbox-form';
+import CheckboxFormX from "react-native-checkbox-form";
 export default class Categories extends Component {
   constructor(props) {
     super(props);
@@ -44,7 +39,6 @@ export default class Categories extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("Response from categories", responseJson);
         this.setState({
           isLoading: false,
           dataSource: responseJson,
@@ -57,42 +51,32 @@ export default class Categories extends Component {
   closeModal() {
     this.setState({ isModalOpen: false });
   }
-  
+
   handleConfirm = (pItems) => {
-    console.log("inside handleConfirm", pItems)
     const catName = pItems.map((item) => {
-      console.log("catname", item.catname)
       return item.catname;
     });
 
     this.setState({ categories: catName }, () => {
-      console.log("final state", this.state.categories)
       this.props.showCategories(this.state.categories);
     });
   };
 
-  _onSelect = ( pItems ) => {
-    console.log("pitems", pItems)
-    let iosCatName = []
+  _onSelect = (pItems) => {
+    let iosCatName = [];
     const item = pItems.filter((item) => {
-      if(item.RNchecked === true){
-        console.log("item", item.catname)
-        iosCatName.push(item.catname)
+      if (item.RNchecked === true) {
+        iosCatName.push(item.catname);
       }
-    })
-    console.log("item var", item)
+    });
     this.setState({
-      iosCategories: iosCatName
-    })
-    console.log("state cat", this.state.iosCategories)
-    
-    //this.handleConfirm(pItems)
+      iosCategories: iosCatName,
+    });
   };
   handleIosConfirm = () => {
-    console.log("checkkkkk")
     this.props.showCategories(this.state.iosCategories);
-    this.closeModal()
-  }
+    this.closeModal();
+  };
   render() {
     if (this.state.isLoading) {
       return (
@@ -105,25 +89,22 @@ export default class Categories extends Component {
         <PickerCheckBox
           data={this.state.dataSource}
           headerComponent={
-            <Text style={{ fontSize: 25 }}>Select your Categories</Text>
+            <Text style={{ fontSize: 25 }}>Wähle deine Kategorie aus</Text>
           }
           OnConfirm={(pItems) => this.handleConfirm(pItems)}
           ConfirmButtonTitle="OK"
           DescriptionField="catname"
           KeyField="_id"
-          placeholder="       Selct your specializations"
+          placeholder="       Wähle deine Spezialisierung aus"
           arrowColor="#FFD740"
           arrowSize={10}
-          placeholderSelectedItems="       $count categories selected"
+          placeholderSelectedItems="       $count ausgewählte Kategorien"
         />
       );
     } else if (Platform.OS === "ios") {
       return (
         <View>
-          <KeyboardAwareScrollView
-            enableOnAndroid={true}
-            // enableAutomaticScroll={Platform.OS === "ios"}
-          >
+          <KeyboardAwareScrollView enableOnAndroid={true}>
             <ScrollView>
               <Modal transparent={true} visible={this.state.isModalOpen}>
                 <View
@@ -150,34 +131,34 @@ export default class Categories extends Component {
                       size={24}
                       onPress={() => this.closeModal()}
                     />
-                    <Text style={styles.modalHeader}>Categories</Text>
+                    <Text style={styles.modalHeader}>Kategorien</Text>
                     <View
                       style={{
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "space-evenly",
                         marginVertical: 40,
-                        
                       }}
                     >
-                      {/* {console.log("state", this.state.dataSource)} */}
                       <CheckboxFormX
-                      
-                  dataSource={this.state.dataSource}
-                  itemShowKey="catname"
-                  itemCheckedKey="RNchecked"
-                  iconSize={30}
-                  formHorizontal={false}
-                  labelHorizontal={true}
-                  onChecked={(pItems) => this._onSelect(pItems)}
-              />
-              <Button title="Confirm" onPress={() => this.handleIosConfirm()} />
+                        dataSource={this.state.dataSource}
+                        itemShowKey="catname"
+                        itemCheckedKey="RNchecked"
+                        iconSize={30}
+                        formHorizontal={false}
+                        labelHorizontal={true}
+                        onChecked={(pItems) => this._onSelect(pItems)}
+                      />
+                      <Button
+                        title="Bestätigen"
+                        onPress={() => this.handleIosConfirm()}
+                      />
                     </View>
                   </View>
                 </View>
               </Modal>
               <View>
-              <Text>         Categories selected</Text>
+                <Text> ausgewählte Kategorien</Text>
               </View>
             </ScrollView>
           </KeyboardAwareScrollView>

@@ -1,37 +1,43 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text, Modal, TouchableOpacity, Platform, TextInput, Button, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Modal,
+  TouchableOpacity,
+  Platform,
+} from "react-native";
 import {
   Container,
-  Header,
   Content,
   Card,
   CardItem,
-  Icon,
   Right,
   Body,
-  Label
+  Label,
 } from "native-base";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import DateTimePicker from "react-native-modal-datetime-picker";
- class AppointmentCard extends Component {
+class AppointmentCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isModalOpen: false,
       isDateTimePickerVisible: false,
-      crafconfirmation:"NO",
+      crafconfirmation: "NO",
       appointmentid: "",
-      date: ""
+      date: "",
     };
   }
-  
-  openModal =  (item) => {
-    this.setState({ isModalOpen: true, crafconfirmation: "YES", appointmentid: item._id });
-    //console.log("state in open modal", this.state);
-   
+
+  openModal = (item) => {
+    this.setState({
+      isModalOpen: true,
+      crafconfirmation: "YES",
+      appointmentid: item._id,
+    });
   };
 
   closeModal() {
@@ -46,26 +52,21 @@ import DateTimePicker from "react-native-modal-datetime-picker";
   };
 
   handleDatePicked = (date) => {
-    console.log("A date has been picked: ", date);
     let formattedDate =
       date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     this.setState({
       date: date,
     });
-    console.log("state date", this.state.date);
     this.hideDateTimePicker();
   };
 
   sendInvitation = () => {
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
-    console.log("url", url)
     const bearer = "Bearer " + this.props.token;
-    console.log("bearer", bearer)
     const data = {
-        crafconfirmation: this.state.crafconfirmation,
-        apntdatime: this.state.date
+      crafconfirmation: this.state.crafconfirmation,
+      apntdatime: this.state.date,
     };
-    console.log("data", data)
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -73,29 +74,24 @@ import DateTimePicker from "react-native-modal-datetime-picker";
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson);
         this.closeModal();
         this.props.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
-  cancelAppointment =  async (item) => {
-      console.log("item", item)
-      await this.setState({
-          appointmentid: item._id
-      })
-      console.log(this.state)
+  cancelAppointment = async (item) => {
+    await this.setState({
+      appointmentid: item._id,
+    });
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
-    console.log("url", url)
     const bearer = "Bearer " + this.props.token;
     const data = {
-        crafconfirmation: "NO",
-        apntdatime: ""
+      crafconfirmation: "NO",
+      apntdatime: "",
     };
-    console.log("data", data)
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -104,56 +100,59 @@ import DateTimePicker from "react-native-modal-datetime-picker";
       .then((response) => response.json())
       .then((responseJson) => {
         this.props.makeRemoteRequest();
-        console.log("response after update", responseJson);
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
   render() {
-      if(this.props.appointments.length <= 0){
-          return (  
-            <View style = {{justifyContent:'center', alignItems:'center'}}>
-                <Text style = {{color: 'red'}}>No appointmens found! Come back later</Text>
-            </View>
-          );
-      }
+    if (this.props.appointments.length <= 0) {
+      return (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Text style={{ color: "red" }}>
+            No appointmens found! Come back later
+          </Text>
+        </View>
+      );
+    }
     return (
       <Container>
         <Content style={{ padding: 10 }}>
-          {this.props.appointments && this.props.appointments.length > 0 &&
-             this.props.appointments.map((item) => {
-              console.log(item.title);
+          {this.props.appointments &&
+            this.props.appointments.length > 0 &&
+            this.props.appointments.map((item) => {
               return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
-                      <Label style={{ color: "grey" }}>Title</Label>
+                      <Label style={{ color: "grey" }}>Titel</Label>
                       <Text style={styles.cardText}>{item.title}</Text>
-                      <Label style={{ color: "grey" }}>Customer Name</Label>
+                      <Label style={{ color: "grey" }}>Kunde Name</Label>
                       <Text style={styles.cardText}>
                         {item.customerid.fullname}
                       </Text>
                     </Body>
                     <Right>
-                    <View style={{bottom: 30}}>
-                    <TouchableOpacity
-                    style={styles.acceptBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.openModal(item)}
-                  >
-                    <Text style={styles.chooseDateBtnTxt}>Accept</Text>
-                  </TouchableOpacity>
-                  </View>
-                  <View style={{bottom: 20}}>
-                  <TouchableOpacity
-                    style={styles.rejectBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.cancelAppointment(item)}
-                  >
-                    <Text style={styles.chooseDateBtnTxt}>Reject</Text>
-                  </TouchableOpacity>
-                  </View>
+                      <View style={{ bottom: 30 }}>
+                        <TouchableOpacity
+                          style={styles.acceptBtn}
+                          underlayColor="#fff"
+                          onPress={() => this.openModal(item)}
+                        >
+                          <Text style={styles.chooseDateBtnTxt}>
+                            Akzeptieren
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                      <View style={{ bottom: 20 }}>
+                        <TouchableOpacity
+                          style={styles.rejectBtn}
+                          underlayColor="#fff"
+                          onPress={() => this.cancelAppointment(item)}
+                        >
+                          <Text style={styles.chooseDateBtnTxt}>Anlehnen</Text>
+                        </TouchableOpacity>
+                      </View>
                     </Right>
                   </CardItem>
                 </Card>
@@ -184,27 +183,30 @@ import DateTimePicker from "react-native-modal-datetime-picker";
                   size={24}
                   onPress={() => this.closeModal()}
                 />
-                <Text style={styles.modalHeader}>Invitation</Text>
+                <Text style={styles.modalHeader}>Einladungen</Text>
                 <View>
-                <Text style={{color: 'green'}}>**please choose a date and time to make an appointment with the customer**</Text>
+                  <Text style={{ color: "green" }}>
+                    **Bitte wähle ein anderes Datum / Zeit für den Kundentermin
+                    aus**
+                  </Text>
                 </View>
-                
+
                 <View style={styles.dateInput}>
-                
-                   <TouchableOpacity
+                  <TouchableOpacity
                     style={styles.chooseDateBtn}
                     underlayColor="#fff"
                     onPress={() => this.showDateTimePicker()}
                   >
-                    <Text style={styles.chooseDateBtnTxt}>Choose Date and Time</Text>
+                    <Text style={styles.chooseDateBtnTxt}>
+                      Wähle Datum und Zeit aus
+                    </Text>
                   </TouchableOpacity>
                   <DateTimePicker
-                    mode='datetime'
+                    mode="datetime"
                     isVisible={this.state.isDateTimePickerVisible}
                     onConfirm={this.handleDatePicked}
                     onCancel={this.hideDateTimePicker}
                   />
-                 
                 </View>
                 <View
                   style={{
@@ -219,7 +221,7 @@ import DateTimePicker from "react-native-modal-datetime-picker";
                     underlayColor="#fff"
                     onPress={() => this.sendInvitation()}
                   >
-                    <Text style={styles.buttonText}>Send</Text>
+                    <Text style={styles.buttonText}>Senden</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -231,9 +233,9 @@ import DateTimePicker from "react-native-modal-datetime-picker";
   }
 }
 const mapStateToProps = (state) => ({
-    token: state.userReducer.token,
-    role: state.userReducer.userRole,
-  });
+  token: state.userReducer.token,
+  role: state.userReducer.userRole,
+});
 const styles = StyleSheet.create({
   iconCheck: {
     fontSize: 40,
@@ -260,27 +262,26 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     marginBottom: 10,
   },
-  modalText:{
+  modalText: {
     ...Platform.select({
       ios: {
-        //marginTop: -55,
-        bottom: 110
+        bottom: 110,
       },
-      android:{
-        top: 15
-      }
-    })
+      android: {
+        top: 15,
+      },
+    }),
   },
-  dateInput:{
+  dateInput: {
     flexDirection: "row",
     ...Platform.select({
-      ios:{
-        bottom: 70
+      ios: {
+        bottom: 70,
       },
-      android:{
-        top: 30
-      }
-    })
+      android: {
+        top: 30,
+      },
+    }),
   },
   modalInput: {
     paddingVertical: 20,
@@ -289,76 +290,76 @@ const styles = StyleSheet.create({
   },
   requestButton: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    borderWidth: 1,
-    borderColor: "#fff",
-    top: 50
+        paddingBottom: 10,
+        backgroundColor: Colors.accent,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        top: 50,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.accent,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "black",
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.accent,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "black",
+      },
     }),
   },
-  acceptBtn:{
+  acceptBtn: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "black",
-    borderRadius: 10,
-    marginTop: 50,
-    borderWidth: 1,
-    borderColor: "#fff",
-    width: 80
+        paddingBottom: 10,
+        backgroundColor: "black",
+        borderRadius: 10,
+        marginTop: 50,
+        borderWidth: 1,
+        borderColor: "#fff",
+        width: 100,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "black",
-    width: 80
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "black",
+        width: 100,
+      },
     }),
   },
-  rejectBtn:{
+  rejectBtn: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: "black",
-    borderRadius: 10,
-    marginTop: 0,
-    borderWidth: 1,
-    borderColor: "#fff",
-    width: 80
+        paddingBottom: 10,
+        backgroundColor: "black",
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        width: 100,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "black",
-    width: 80
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "black",
+        width: 100,
+      },
     }),
   },
   buttonText: {
@@ -367,7 +368,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-  chooseDateBtnTxt:{
+  chooseDateBtnTxt: {
     color: "white",
     textAlign: "center",
     paddingLeft: 10,
@@ -399,32 +400,32 @@ const styles = StyleSheet.create({
   },
   chooseDateBtn: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    top: 130,
-    justifyContent:'center',
-    alignItems:'center',
-    left: 60,
-    borderWidth: 1,
-    borderColor: "#fff",
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        top: 130,
+        justifyContent: "center",
+        alignItems: "center",
+        left: 50,
+        borderWidth: 1,
+        borderColor: "#fff",
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "#fff",
-    justifyContent:'center',
-    alignItems:'center',
-    left: 60
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+        left: 50,
+      },
     }),
   },
 });
-export default connect(mapStateToProps, null)(AppointmentCard)
+export default connect(mapStateToProps, null)(AppointmentCard);

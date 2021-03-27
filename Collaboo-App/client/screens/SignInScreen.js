@@ -1,25 +1,14 @@
 import React, { Component } from "react";
 import {
   StyleSheet,
-  SafeAreaView,
   View,
   Text,
   TouchableHighlight,
   Image,
   AsyncStorage,
-  KeyboardAvoidingView,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import FormButton from "../components/FormButton";
-import {
-  Container,
-  Content,
-  Form,
-  Item,
-  Input,
-  Picker,
-  Icon,
-} from "native-base";
+import { Container, Content, Form, Item, Input, Icon } from "native-base";
 import { userLoginFetch } from "../actions/action";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
@@ -42,30 +31,16 @@ class Login extends Component {
     let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     let isValid = regEx.test(this.state.email);
     if (!isValid) {
-      this.setState({ emailVal: "Please enter valid email" });
+      this.setState({ emailVal: "Bitte gültige E-Mail eingeben" });
     } else {
       this.setState({ emailVal: "" });
     }
   };
-  // validatePassword = () => {
-  //   let regEx = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-  //   let isValid = regEx.test(this.state.password);
-  //   if (!isValid) {
-  //     this.setState({
-  //       passwordVal:
-  //         "Password should contain atleast 8 characters with atlease one letter and one number ",
-  //     });
-  //   } else {
-  //     this.setState({ passwordVal: "" });
-  //   }
-  // };
   handleSubmit = async () => {
-    console.log("handlesubmit login")
     const pushToken = await AsyncStorage.getItem("pushtoken");
     this.setState({
       pushToken: pushToken,
     });
-    console.log("sign in pushtoken", this.state.pushToken);
     this.props.userLoginFetch(this.state);
   };
   goToSignup = () => {
@@ -73,17 +48,16 @@ class Login extends Component {
   };
 
   render() {
-    console.log("error", this.props.loginError)
     return (
-      <Container style={{backgroundColor: Colors.primary }}>
-       <View
-          style={{ alignItems: "center", justifyContent: "center", top:80}}
-      >
+      <Container style={{ backgroundColor: Colors.primary }}>
+        <View
+          style={{ alignItems: "center", justifyContent: "center", top: 80 }}
+        >
           <Image
             source={require("../constants/src_assets_icon.png")}
             style={{ width: 200, height: 150 }}
           />
-          </View>
+        </View>
         <Content
           style={{ paddingVertical: 15, paddingHorizontal: 20, top: 150 }}
         >
@@ -115,7 +89,7 @@ class Login extends Component {
             >
               <Icon active name="ios-lock" />
               <Input
-                placeholder="Enter Password"
+                placeholder="Passwort"
                 secureTextEntry={true}
                 onChangeText={(text) => {
                   this.setState({ password: text });
@@ -124,15 +98,17 @@ class Login extends Component {
                 onBlur={this.validatePassword}
               />
             </Item>
-              {this.props.loginError ? ( <Text style={{ color: "red", marginLeft: 10, fontSize: 16 }}>
-                Please enter valid details
-              </Text>) : null}
+            {this.props.loginError ? (
+              <Text style={{ color: "red", marginLeft: 10, fontSize: 16 }}>
+                Bitte gültige Daten eingeben
+              </Text>
+            ) : null}
           </Form>
           <View style={styles.buttonContainer}>
             <FormButton
               buttonType="outline"
               onPress={this.handleSubmit}
-              title="LOGIN"
+              title="Anmeldung"
               buttonColor={Colors.primary}
             />
           </View>
@@ -143,7 +119,7 @@ class Login extends Component {
             <Text
               style={{ color: "#f68ba7", fontSize: 16, textAlign: "center" }}
             >
-              Don't have an account? Sign up
+              Sie haben noch kein Konto? Anmelden
             </Text>
           </TouchableHighlight>
           <View style={{ flex: 1, flexDirection: "row", top: 20, padding: 15 }}>
@@ -152,18 +128,18 @@ class Login extends Component {
                 flex: 1,
                 flexWrap: "wrap",
                 fontSize: 18,
-                lineHeight:30,
+                lineHeight: 30,
                 textAlign: "center",
                 color: "orange",
                 fontStyle: "italic",
               }}
             >
-              "Craftsmanship happens to be a skill without any imagination."
+              "Handwerkliches Geschick ist zufällig eine Fähigkeit ohne jede
+              Vorstellung."
             </Text>
           </View>
         </Content>
       </Container>
-     
     );
   }
 }
@@ -189,4 +165,4 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   loginError: state.userReducer.loginError,
 });
-export default connect(mapStateToProps, mapDispatchToProps,)(Login);
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

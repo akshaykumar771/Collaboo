@@ -1,18 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, CheckBox } from "react-native";
-import {
-  Container,
-  Content,
-  Form,
-  Item,
-  Input,
-  Label,
-  Picker,
-  Icon,
-} from "native-base";
+import { StyleSheet, View } from "react-native";
+import { Form, Item, Input, Icon } from "native-base";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default class RegisterAgent extends Component {
   constructor(props) {
@@ -25,7 +16,7 @@ export default class RegisterAgent extends Component {
       city: "",
     };
   }
-  
+
   showCategories = (categories) => {
     this.setState(
       {
@@ -48,7 +39,6 @@ export default class RegisterAgent extends Component {
         pcode: add.pcode && add.pcode,
         city: add.city && add.city,
       },
-      //console.log("++++++", this.state),
       () =>
         this.props.showAgentDetails(
           this.state.street,
@@ -57,7 +47,6 @@ export default class RegisterAgent extends Component {
           this.state.company,
           this.state.categories
         )
-        // console.log("Agent", this.state)
     );
   };
   render() {
@@ -66,7 +55,7 @@ export default class RegisterAgent extends Component {
         <Item>
           <Icon active name="ios-business" />
           <Input
-            placeholder=" Enter your Company Name"
+            placeholder=" Gebe deinen Firmennamen ein"
             onChangeText={(text) => {
               this.setState({ company: text });
             }}
@@ -74,7 +63,12 @@ export default class RegisterAgent extends Component {
           />
         </Item>
         <View style={styles.category}>
-        <MaterialCommunityIcons style = {styles.categoryIcon} name="briefcase-plus" size={24} color="black" />
+          <MaterialCommunityIcons
+            style={styles.categoryIcon}
+            name="briefcase-plus"
+            size={24}
+            color="black"
+          />
           <Categories showCategories={this.showCategories} />
         </View>
         <RegisterAddress addAddress={this.addAddress} />
@@ -92,26 +86,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: 50,
   },
   category: {
-   
     ...Platform.select({
-      ios:{
+      ios: {
         padding: 15,
         borderBottomColor: "black",
         borderBottomWidth: 0.25,
-        marginTop: 10
+        marginTop: 10,
       },
-      android:{
+      android: {
         padding: 5,
-    borderBottomColor: "black",
-    borderBottomWidth: 0.25,
-    marginTop: 10
-      }
+        borderBottomColor: "black",
+        borderBottomWidth: 0.25,
+        marginTop: 10,
+      },
     }),
   },
-  
+
   categoryIcon: {
     position: "absolute",
     top: 15,
-    paddingLeft: 13.5
-  }
+    paddingLeft: 13.5,
+  },
 });

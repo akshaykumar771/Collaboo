@@ -8,10 +8,10 @@ export default class SearchBarExample extends Component {
         <Header searchBar rounded>
           <Item>
             <Icon name={Platform.OS === 'android' ? 'md-locate' : 'ios-locate'} />
-            <Input placeholder="Location" />
+            <Input placeholder="Standort" />
           </Item>
           <Button transparent>
-            <Text>Search</Text>
+            <Text>Suche</Text>
           </Button>
         </Header>
       </Container>

@@ -11,7 +11,6 @@ import {
   Right,
   Body,
   Label,
-  Button,
 } from "native-base";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
@@ -26,14 +25,12 @@ class ViewAppointmentsScreen extends Component {
   }
   componentDidMount() {
     if (this.props.token) {
-      //console.log(props.token)
       this.makeRemoteRequest();
     }
   }
   makeRemoteRequest = () => {
     const url = "http://81.89.193.99:3001/api/customer/appointments";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -51,7 +48,6 @@ class ViewAppointmentsScreen extends Component {
         }
       })
       .then(async (responseJson) => {
-        console.log("CUSTOMER RESPONSE", responseJson);
         this.setState({
           customerAppointments: responseJson,
         });
@@ -61,22 +57,17 @@ class ViewAppointmentsScreen extends Component {
       });
   };
   navigateToChat = (item) => {
-    console.log("item naviagte", item)
-    if(item.craftsmenid != undefined){
-      console.log("user details", item.craftsmenid, item.agentid)
-    this.props.navigation.navigate("SingleChat", {
-      name: item.craftsmenid.fname,
-      userId: item.craftsmenid._id,
-    })
-  }
-  else if (item.agentid != undefined)
-  {
-    this.props.navigation.navigate("SingleChat", {
-    name: item.agentid.fname,
-    userId: item.agentid._id,
-  })
-
-  }
+    if (item.craftsmenid != undefined) {
+      this.props.navigation.navigate("SingleChat", {
+        name: item.craftsmenid.fname,
+        userId: item.craftsmenid._id,
+      });
+    } else if (item.agentid != undefined) {
+      this.props.navigation.navigate("SingleChat", {
+        name: item.agentid.fname,
+        userId: item.agentid._id,
+      });
+    }
   };
   render() {
     return (
@@ -84,25 +75,22 @@ class ViewAppointmentsScreen extends Component {
         <Content style={{ padding: 10 }}>
           {this.state.customerAppointments &&
             this.state.customerAppointments.map((item) => {
-              {/* {
-                console.log("inside render", item);
-              } */}
               return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
-                      <Label style={{ color: "grey" }}>Title</Label>
+                      <Label style={{ color: "grey" }}>Titel</Label>
                       <Text style={styles.cardText}>{item.title}</Text>
                       {item.craftsmenid ? (
                         <View>
-                          <Label style={{ color: "grey" }}>Craftsmen</Label>
+                          <Label style={{ color: "grey" }}>Handwerker</Label>
                           <Text style={styles.cardText}>
                             {item.craftsmenid.fullname}
                           </Text>
                         </View>
                       ) : (
                         <View>
-                          <Label style={{ color: "grey" }}>Agent</Label>
+                          <Label style={{ color: "grey" }}>Verwaltung</Label>
                           <Text style={styles.cardText}>
                             {item.agentid.fullname}
                           </Text>
@@ -166,7 +154,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 40,
     textAlign: "justify",
-    // color: Colors.primary,
     fontWeight: "500",
   },
   card: {

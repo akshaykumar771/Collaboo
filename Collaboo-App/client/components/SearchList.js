@@ -1,18 +1,16 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
-import { SearchBar, ListItem } from "react-native-elements";
-import { MaterialIcons } from "@expo/vector-icons";
+import { View } from "react-native";
+import { SearchBar } from "react-native-elements";
 
 export default class SearchList extends Component {
   constructor(props) {
     super(props);
-    //setting default state
     this.state = {
       isLoading: true,
       isModalOpen: false,
       title: "",
       description: "",
-      search: ""
+      search: "",
     };
     this.arrayholder = [];
   }
@@ -20,10 +18,7 @@ export default class SearchList extends Component {
     this.makeRemoteRequest();
   }
   makeRemoteRequest = () => {
-    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent"
-      // Platform.OS === "android"
-      //   ? "http://10.0.2.2:3000/craftsmen"
-      //   : "http://192.168.0.213:3000/craftsmen";
+    const url = "http://81.89.193.99:3001/api/search/craftsmen_agent";
     fetch(url, { method: "GET" })
       .then((response) => response.json())
       .then((responseJson) => {
@@ -48,14 +43,18 @@ export default class SearchList extends Component {
     this.search.clear();
   };
   SearchFilterFunction(text) {
-    //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
-      //applying filter for the inserted text in search bar
-      console.log("itemdata", item)
-      const fNameData = item.fname ? item.fname.toUpperCase() : "".toUpperCase();
-      const lNameData = item.lname ? item.lname.toUpperCase() : "".toUpperCase();
-      //const companyName = item.compid.compname
-      const companyData = item && item.compid ? item.compid.compname.toUpperCase() : "".toUpperCase();
+      console.log("itemdata", item);
+      const fNameData = item.fname
+        ? item.fname.toUpperCase()
+        : "".toUpperCase();
+      const lNameData = item.lname
+        ? item.lname.toUpperCase()
+        : "".toUpperCase();
+      const companyData =
+        item && item.compid
+          ? item.compid.compname.toUpperCase()
+          : "".toUpperCase();
       const textData = text.toUpperCase();
       const itemData = fNameData + lNameData + companyData;
       return itemData.indexOf(textData) > -1;
@@ -70,25 +69,22 @@ export default class SearchList extends Component {
   }
 
   render() {
-      return (
-        <View>
+    return (
+      <View>
         <SearchBar
-        lightTheme={true}
-        platform="default"
-        only
-        round
-        platform="default"
-        only
-        searchIcon={{ size: 24 }}
-        onChangeText={(text) => this.SearchFilterFunction(text)}
-        onClear={(text) => this.SearchFilterFunction("")}
-        placeholder="Type Here..."
-        value={this.state.search}
-      />
+          lightTheme={true}
+          platform="default"
+          only
+          round
+          platform="default"
+          only
+          searchIcon={{ size: 24 }}
+          onChangeText={(text) => this.SearchFilterFunction(text)}
+          onClear={(text) => this.SearchFilterFunction("")}
+          placeholder="Hier tippen..."
+          value={this.state.search}
+        />
       </View>
-      )
+    );
   }
 }
-
-const styles = StyleSheet.create({
-});

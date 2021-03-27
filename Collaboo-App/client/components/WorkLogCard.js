@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
-  ScrollView,
   Dimensions,
 } from "react-native";
 import {
@@ -21,17 +20,14 @@ import {
   Right,
   Icon,
   Button,
-  Input,
 } from "native-base";
 
 import { MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 import moment from "moment";
 import Colors from "../constants/Colors";
-import 'moment-timezone';
+import "moment-timezone";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
-const window = Dimensions.get("window");
 class WorkLogCard extends Component {
   constructor(props) {
     super(props);
@@ -59,7 +55,6 @@ class WorkLogCard extends Component {
     }
   }
   shouldComponentUpdate(nextProps) {
-    //console.log(nextProps.token, this.props.token);
     if (nextProps.token != this.props.token) {
       this.makeRemoteRequest();
     }
@@ -67,10 +62,8 @@ class WorkLogCard extends Component {
   }
 
   makeRemoteRequest() {
-    //console.log("token in worklog", this.props.token);
     const url = "http://81.89.193.99:3001/api/craftsmen/worklogs";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -89,17 +82,14 @@ class WorkLogCard extends Component {
         }
       })
       .then(async (responseJson) => {
-        console.log("response from worklog :", responseJson);
         let arrayOfLogs = [];
         responseJson &&
           responseJson.length > 0 &&
           (await responseJson.map(async (item) => {
             const title = item.appointmentid.title;
             const startDate = item.appointmentid.apntdatime;
-            const formatedStartDate = moment(startDate).format(
-              "dddd, MMM DD"
-            )
-            
+            const formatedStartDate = moment(startDate).format("dddd, MMM DD");
+
             const totalWorkingHours = item.totalWorkingTime;
             const logs = await item.logs.map((item) => {
               return {
@@ -120,8 +110,6 @@ class WorkLogCard extends Component {
         this.setState({
           newLogs: arrayOfLogs,
         });
-        console.log("new logs state", this.state.newLogs);
-        // return this.state.newLogs
       })
       .catch((error) => {
         console.error(error);
@@ -130,7 +118,6 @@ class WorkLogCard extends Component {
 
   openModal = (item) => {
     this.setState({ isModalOpen: true, selectedItem: item, logs: item.logs });
-    console.log("state in open modal", this.state);
   };
 
   closeModal() {
@@ -150,25 +137,20 @@ class WorkLogCard extends Component {
     this.setState({
       addDate: formattedDate,
     });
-    console.log("A date has been picked: ", formattedDate);
     this.hideDateTimePicker();
   };
 
   updateWorkLog = () => {
-    //console.log("token in worklog", this.props.token);
     const url = `http://81.89.193.99:3001/api/craftsmen/worklogs/${this.state.selectedItem.worklogId}`;
     const bearer = "Bearer " + this.props.token;
-    //console.log("bearer", bearer);
     const transformedLogs = this.state.selectedItem.logs.map((item) => ({
       date: item.date,
       time: item.time,
     }));
-    console.log("transformed logs", transformedLogs);
     const data = {
       appointmentid: this.state.selectedItem.appointmentid,
       logs: transformedLogs,
     };
-    console.log("data", data);
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -176,8 +158,11 @@ class WorkLogCard extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson);
         this.closeModal();
+        this.setState({
+          addDate: null,
+          addTime: null,
+        });
         this.makeRemoteRequest();
       })
       .catch((error) => {
@@ -186,23 +171,14 @@ class WorkLogCard extends Component {
   };
 
   handleDateAndTime = (text, time, myIndex) => {
-    console.log("Time", time);
     const newLogs = [...this.state.selectedItem.logs];
     newLogs[myIndex] = { ...newLogs[myIndex], date: text, time };
-    // let obj = { date: "", time: "" };
-    // obj.date = text;
-    // obj.time = time;
-    // console.log("obj", obj);
-    // let logs = this.state.logs;
-    // logs[myIndex] = obj;
-    // console.log("Logs", logs);
     this.setState({
       selectedItem: { ...this.state.selectedItem, logs: newLogs },
     });
   };
 
   addWorkLog = () => {
-    console.log("inside add work log", this.state.addDate);
     let obj = { date: "", time: "" };
     obj.date = this.state.addDate;
     obj.time = this.state.addTime;
@@ -215,9 +191,7 @@ class WorkLogCard extends Component {
         },
         () => this.updateWorkLog()
       );
-    }
-    // this.textInput.clear();
-    else {
+    } else {
       this.updateWorkLog();
     }
   };
@@ -227,10 +201,6 @@ class WorkLogCard extends Component {
       <View key={this.state.worklogCard} style={{ flex: 1 }}>
         <Container style={{ bottom: "5%" }}>
           <Content style={{ padding: 10 }}>
-            {/* <KeyboardAwareScrollView
-              enableOnAndroid={true}
-              // enableAutomaticScroll={Platform.OS === "ios"}
-            > */}
             <Modal transparent={true} visible={this.state.isModalOpen}>
               <View
                 style={{
@@ -263,11 +233,13 @@ class WorkLogCard extends Component {
                     </Item>
                   </View>
                   <View style={{ flexDirection: "row", top: 20 }}>
-                    <Label style={{ color: Colors.primary, fontSize: 16, left:10 }}>
+                    <Label
+                      style={{ color: Colors.primary, fontSize: 16, left: 10 }}
+                    >
                       Date (YYYY.MM.DD)
                     </Label>
                     <Label
-                      style={{ left: 100, color: Colors.primary, fontSize: 16,}}
+                      style={{ left: 100, color: Colors.primary, fontSize: 16 }}
                     >
                       No.hours(HH:MM)
                     </Label>
@@ -275,7 +247,6 @@ class WorkLogCard extends Component {
                   {this.state.selectedItem.logs &&
                   this.state.selectedItem.logs.length
                     ? this.state.selectedItem.logs.map((item, myIndex) => {
-                        console.log("map item", item);
                         return (
                           <View
                             style={{ flexDirection: "row", top: 40 }}
@@ -383,26 +354,21 @@ class WorkLogCard extends Component {
                 </View>
               </View>
             </Modal>
-            {/* </KeyboardAwareScrollView> */}
             {this.state.newLogs.map((item, index) => {
-              {
-                console.log("item inside card", item);
-              }
-              
               return (
                 <Card key={index} style={styles.card}>
                   <CardItem bordered style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
                       <Item stackedLabel>
-                        <Label>Title</Label>
+                        <Label>Titel</Label>
                         <Text style={styles.cardText}>{item.title}</Text>
                       </Item>
                       <Item stackedLabel>
-                        <Label>Start Date</Label>
+                        <Label>Beginn Datum</Label>
                         <Text style={styles.cardText}>{item.startDate}</Text>
                       </Item>
                       <Item stackedLabel>
-                        <Label>Number of Hours</Label>
+                        <Label>Anzahl Stunden</Label>
                         <Text style={styles.hoursCardText}>
                           {item.totalWorkingHours}
                         </Text>
@@ -441,22 +407,20 @@ const styles = StyleSheet.create({
     textAlign: "justify",
   },
   modalContainer: {
-   
     ...Platform.select({
       ios: {
         width: 400,
-    height: 700,
-    backgroundColor: "#fff",
-    paddingVertical: 40,
-    paddingHorizontal: 30,
- 
+        height: 700,
+        backgroundColor: "#fff",
+        paddingVertical: 40,
+        paddingHorizontal: 30,
       },
       android: {
-         width: 400,
-    height: 700,
-    backgroundColor: "#fff",
-    paddingVertical: 40,
-    paddingHorizontal: 10,
+        width: 400,
+        height: 700,
+        backgroundColor: "#fff",
+        paddingVertical: 40,
+        paddingHorizontal: 10,
       },
     }),
   },
@@ -506,8 +470,8 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingLeft: 10,
     paddingRight: 10,
-    justifyContent:"center",
-    alignItems:"center"
+    justifyContent: "center",
+    alignItems: "center",
   },
   modalHeader: {
     ...Platform.select({
@@ -559,7 +523,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     width: 110,
     textAlign: "center",
-    left: 10
+    left: 10,
   },
   dateBtnTxt: {
     color: "#fff",

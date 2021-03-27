@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, View, Text } from "react-native";
-import { Form, Item, Icon,CheckBox } from "native-base";
-//import CheckBox from 'react-native-check-box'
-//import { CheckBox } from "react-native-elements";
+import { Form, Item, Icon, CheckBox } from "native-base";
 import Categories from "./Categories";
 import RegisterAddress from "./RegisterAddress";
 import Company from "../components/CompanyAC";
@@ -21,7 +19,6 @@ export default class RegisterCraftsmen extends Component {
   }
 
   showCompanies = (name) => {
-    //console.log("---------", name[0].compname)
     this.setState(
       {
         company: name && name,
@@ -39,7 +36,6 @@ export default class RegisterCraftsmen extends Component {
     );
   };
   showCategories = (categories, selfEmployed) => {
-    console.log("register craftsmen cat", categories)
     this.setState(
       {
         categories: categories && categories,
@@ -62,7 +58,6 @@ export default class RegisterCraftsmen extends Component {
         pcode: add.pcode && add.pcode,
         city: add.city && add.city,
       },
-      //console.log("++++++", this.state),
       () =>
         this.props.showCompany(
           this.state.selfEmployed,
@@ -75,19 +70,18 @@ export default class RegisterCraftsmen extends Component {
     );
   };
   onChangeCheck = () => {
-    console.log("check box")
     this.setState({ selfEmployed: !this.state.selfEmployed });
-  }
+  };
   render() {
     return (
       <Form>
-          <CheckBox
-            style={styles.selfEmployed}
-            checked={this.state.selfEmployed}
-            onPress={() => this.onChangeCheck()}
-          />
-        <View style = {{top: 20, left: 35}}>
-          <Text style={styles.checkText}>Self Employed</Text>
+        <CheckBox
+          style={styles.selfEmployed}
+          checked={this.state.selfEmployed}
+          onPress={() => this.onChangeCheck()}
+        />
+        <View style={{ top: 20, left: 35 }}>
+          <Text style={styles.checkText}>Selbständig</Text>
         </View>
         {this.state.selfEmployed === true ? (
           <View style={styles.category}>
@@ -125,22 +119,21 @@ const styles = StyleSheet.create({
   },
   category: {
     ...Platform.select({
-      ios:{
+      ios: {
         top: 10,
         padding: 30,
         borderBottomColor: "black",
-        borderBottomWidth: 0.25
+        borderBottomWidth: 0.25,
       },
-      android:{
+      android: {
         top: 10,
         padding: 10,
         borderBottomColor: "black",
-        borderBottomWidth: 0.25
-      }
+        borderBottomWidth: 0.25,
+      },
     }),
   },
-  
- 
+
   categoryIcon: {
     position: "absolute",
     top: 15,

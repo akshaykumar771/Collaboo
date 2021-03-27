@@ -6,10 +6,10 @@ import Colors from '../constants/Colors';
 const CustomerPicker = () => {
     return (
         <View>
-        <Text>Choose the Customer below</Text>
+        <Text>Wähle Datum und Zeit aus</Text>
         <RNPickerSelect
         placeholder={{
-                label:"Choose the Customer",
+                label:"Wähle Datum und Zeit aus",
                 color:Colors.primary
             }}
             onValueChange={(value) => console.log(value)}

@@ -1,33 +1,30 @@
 import React, { Component } from "react";
-import {View, StyleSheet} from 'react-native';
-import { Container, Header, Content, Tab, Tabs } from 'native-base';
+import { View, StyleSheet } from "react-native";
+import { Container, Header, Content, Tab, Tabs } from "native-base";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import HeaderButton from "../components/HeaderButton"
-import Colors from "../constants/Colors";
+import HeaderButton from "../components/HeaderButton";
 import { connect } from "react-redux";
 import InProcessAppointments from "../components/InProcessAppointments";
 import ClosedAppointments from "../components/ClosedAppointments";
 import { NavigationEvents } from "react-navigation";
-import { FontAwesome5 } from '@expo/vector-icons'; 
 class ToDoScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      newAppointments:[],
-      inProcessAppointments:[],
-      closedAppointments:[]
+      newAppointments: [],
+      inProcessAppointments: [],
+      closedAppointments: [],
     };
   }
-  componentDidMount(){
-    if(this.props.token){
-      this.makeRemoteRequest()
+  componentDidMount() {
+    if (this.props.token) {
+      this.makeRemoteRequest();
     }
   }
   makeRemoteRequest = () => {
     console.log("test");
     const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -40,44 +37,28 @@ class ToDoScreen extends Component {
           console.log(response);
           Alert.alert(
             "Sorry",
-            "No Appointments Found",
+            "Keine Termine gefunden",
             [{ text: "OK", onPress: () => console.log("OK Pressed") }],
             { cancelable: true }
           );
         }
       })
       .then(async (responseJson) => {
-        let newAppointments = [];
         let inProcessAppointments = [];
         let closedAppointments = [];
         const defaultResponse =
           (await responseJson) &&
           responseJson.map((item) => {
-         if (
-              item.status === "INPROCESS" || item.status === 'REOPENED'
-            ) {
+            if (item.status === "INPROCESS" || item.status === "REOPENED") {
               inProcessAppointments.push(item);
-              
-            } else if (
-              item.status === "COMPLETED"
-            ) {
+            } else if (item.status === "COMPLETED") {
               closedAppointments.push(item);
-             
             }
-            //  else {
-            //   this.setState({
-            //     appointments: [],
-            //     acceptedAppoinments: [],
-            //     rejectedAppointments: [],
-            //   });
-            // }
           });
-          this.setState({
-            inProcessAppointments: inProcessAppointments,
-            closedAppointments: closedAppointments,
-          });
-        console.log("response todoScreen", responseJson);
-        console.log("appointment state", this.state.inProcessAppointments);
+        this.setState({
+          inProcessAppointments: inProcessAppointments,
+          closedAppointments: closedAppointments,
+        });
       })
       .catch((error) => {
         console.error(error);
@@ -86,46 +67,51 @@ class ToDoScreen extends Component {
   render() {
     return (
       <View style={styles.screen}>
-      <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
+        <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
         <Container>
-        <Tabs>
-          <Tab heading="In Process">
-           <InProcessAppointments inProcessAppointments = {this.state.inProcessAppointments}/>
-          </Tab>
-          <Tab heading="Closed">
-            <ClosedAppointments closedAppointments = {this.state.closedAppointments}/>
-          </Tab>
-        </Tabs>
-      </Container>
+          <Tabs>
+            <Tab heading="In Bearbeitung">
+              <InProcessAppointments
+                inProcessAppointments={this.state.inProcessAppointments}
+                makeRemoteRequest={this.makeRemoteRequest}
+              />
+            </Tab>
+            <Tab heading="Abgeschlossen">
+              <ClosedAppointments
+                closedAppointments={this.state.closedAppointments}
+                makeRemoteRequest={this.makeRemoteRequest}
+              />
+            </Tab>
+          </Tabs>
+        </Container>
       </View>
     );
   }
 }
 
-
 const mapStateToProps = (state) => ({
   token: state.userReducer.token,
 });
 
-ToDoScreen.navigationOptions = navData => {
+ToDoScreen.navigationOptions = (navData) => {
   return {
     headerRight: (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
-          title="Calendar"
+          title="Kalender"
           iconName="ios-calendar"
           onPress={() => {
-            navData.navigation.navigate("Calendar");
+            navData.navigation.navigate("Kalendar");
           }}
         />
       </HeaderButtons>
-    )
+    ),
   };
 };
 const styles = StyleSheet.create({
   screen: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
-export default connect(mapStateToProps, null) (ToDoScreen);
+export default connect(mapStateToProps, null)(ToDoScreen);

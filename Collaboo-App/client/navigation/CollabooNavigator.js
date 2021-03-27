@@ -5,7 +5,6 @@ import ChatScreen from "../screens/ChatScreen";
 import ToDoScreen from "../screens/ToDoScreen";
 import WorkLogScreen from "../screens/WorkLogScreen";
 import CalendarScreen from "../screens/CalendarScreen";
-import AddToDoScreen from "../screens/AddToDoScreen";
 import UserProfileScreen from "../screens/UserProfileScreen";
 import Colors from "../constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,13 +14,12 @@ import CraftsmenAppointmentScreen from "../screens/CraftsmenAppointmentScreen";
 import ChatConversationScreen from "../screens/ChatConversationScreen";
 import EditProfileScreen from "../screens/EditProfileScreen";
 import CraftsmenCRScreen from "../screens/CraftsmenCRScreen";
-import { FontAwesome5 } from '@expo/vector-icons'; 
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 const defaultNavOptions = {
   headerStyle: {
     backgroundColor:
       Platform.OS === "android" ? Colors.primary : Colors.primary,
-    //marginTop: Expo.Constants.statusBarHeight,
   },
   headerTitleStyle: {
     fontFamily: "raleway-bold",
@@ -33,13 +31,15 @@ const defaultNavOptions = {
 };
 const AppointmentsNavigator = createStackNavigator(
   {
-    Appointments: CraftsmenAppointmentScreen,
-    ChangeRequests: CraftsmenCRScreen
+    Termine: CraftsmenAppointmentScreen,
+    ÄndereAnfrage: CraftsmenCRScreen,
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="md-calendar" size={25} color={tabInfo.tintColor} />
+        return (
+          <Ionicons name="md-calendar" size={25} color={tabInfo.tintColor} />
+        );
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -68,14 +68,13 @@ const chatNavigator = createStackNavigator(
 );
 const ToDoNavigator = createStackNavigator(
   {
-    ToDo: ToDoScreen,
-    Calendar: CalendarScreen,
+    Aufgabe: ToDoScreen,
+    Kalendar: CalendarScreen,
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-          // <Ionicons name="ios-today" size={25} color={tabInfo.tintColor} />
           <FontAwesome5 name="list-alt" size={25} color={tabInfo.tintColor} />
         );
       },
@@ -85,12 +84,14 @@ const ToDoNavigator = createStackNavigator(
 );
 const WorkLogNavigator = createStackNavigator(
   {
-    WorkLog: WorkLogScreen,
+    Stundenzettel: WorkLogScreen,
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
-        return <Ionicons name="ios-log-in" size={25} color={tabInfo.tintColor} />;
+        return (
+          <Ionicons name="ios-log-in" size={25} color={tabInfo.tintColor} />
+        );
       },
     },
     defaultNavigationOptions: defaultNavOptions,
@@ -99,15 +100,18 @@ const WorkLogNavigator = createStackNavigator(
 
 const UserProfileNavigator = createStackNavigator(
   {
-    Profile: UserProfileScreen,
-    EditProfile: EditProfileScreen
+    Profil: UserProfileScreen,
+    EditProfil: EditProfileScreen,
   },
   {
     navigationOptions: {
       tabBarIcon: (tabInfo) => {
         return (
-         <FontAwesome name="user-circle-o" size={25} color={tabInfo.tintColor} />
-          
+          <FontAwesome
+            name="user-circle-o"
+            size={25}
+            color={tabInfo.tintColor}
+          />
         );
       },
     },
@@ -119,11 +123,11 @@ const CollabooNavigator =
   Platform.OS === "android"
     ? createMaterialBottomTabNavigator(
         {
-          Appointments: AppointmentsNavigator,
+          Termine: AppointmentsNavigator,
           Chat: chatNavigator,
-          ToDo: ToDoNavigator,
-          WorkLog: WorkLogNavigator,
-          Profile: UserProfileNavigator,
+          Aufgabe: ToDoNavigator,
+          Stundenzettel: WorkLogNavigator,
+          Profil: UserProfileNavigator,
         },
         {
           activeTintColor: "white",
@@ -135,7 +139,7 @@ const CollabooNavigator =
       )
     : createBottomTabNavigator(
         {
-          Appointments: AppointmentsNavigator,
+          Termine: AppointmentsNavigator,
           Chat: chatNavigator,
           ToDo: ToDoNavigator,
           WorkLog: WorkLogNavigator,
@@ -144,7 +148,7 @@ const CollabooNavigator =
         {
           tabBarOptions: {
             activeTintColor: Colors.primary,
-            keyboardHidesTabBar: !(Platform.OS === 'ios')
+            keyboardHidesTabBar: !(Platform.OS === "ios"),
           },
         }
       );

@@ -6,27 +6,22 @@ import {
   ActivityIndicator,
   Platform,
   Modal,
-  Button,
   Text,
   TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
   Alert,
-  Picker
+  Picker,
 } from "react-native";
 import { NavigationEvents } from "react-navigation";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
-import { Form, Input, Item, Label, Textarea, Icon } from "native-base";
+import { Form, Input, Item, Label, Textarea } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
 import { MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 
-//import SearchList from "./SearchList";
 class SearchCraftsmen extends Component {
   constructor(props) {
     super(props);
-    //setting default state
     this.state = {
       isLoading: true,
       isModalOpen: false,
@@ -45,33 +40,19 @@ class SearchCraftsmen extends Component {
     }
     // this.interval = setInterval(() => {
     //   this.makeRemoteRequest();
-    // }, 2000)
+    // }, 3000)
   }
 
-  // componentWillUnmount(){
-  //   clearInterval(this.interval)
-  // }
-  // componentWillReceiveProps(nextProps) {
-  //  if(this.props.token != nextProps.token)
-  //   this.makeRemoteRequest();
-  // }
   makeRemoteRequest = () => {
-    //console.log("searchCraftsmen", this.props.token);
     const url = "http://81.89.193.99:3001/api/user/search/craftsmen_agent/";
     const bearer = "Bearer " + this.props.token;
-    //console.log("bearer", bearer);
-    // Platform.OS === "android"
-    //   ? "http://10.0.2.2:3000/craftsmen"
-    //   : "http://192.168.0.213:3000/craftsmen";
+
     fetch(url, {
       method: "GET",
-      // withCredentials: false,
-      // credentials: "include",
       headers: { Authorization: bearer },
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        //console.log("search craftsmen", responseJson)
         this.setState(
           {
             isLoading: false,
@@ -90,41 +71,38 @@ class SearchCraftsmen extends Component {
   requestAppointment = () => {
     const url = "http://81.89.193.99:3001/api/customer/requestappointment";
     const bearer = "Bearer " + this.props.token;
-    //console.log("bearer", bearer);
     const data = {
       crafAgentId: this.state.id,
       categoryId: this.state.selectedValue,
-      title:this.state.title,
-      description:this.state.description
+      title: this.state.title,
+      description: this.state.description,
     };
-    //console.log("request appointment", data)
     fetch(url, {
       method: "POST",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
       body: JSON.stringify(data),
     })
-    .then((response) => {
-      const status = response.status;
-      if (status === 200) {
-        return response.json();
-      } else if (status === 404) {
-        Alert.alert(
-          "Something went wrong",
-          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-          { cancelable: false }
-        );
-      }
-    })
+      .then((response) => {
+        const status = response.status;
+        if (status === 200) {
+          return response.json();
+        } else if (status === 404) {
+          Alert.alert(
+            "Etwas ist schief gelaufen",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: false }
+          );
+        }
+      })
       .then((responseJson) => {
-        //console.log("response from post", responseJson);
-        // this.setState({
-        //   worklogCard: Date.now(),
-        // });
-        // const {navigation, position} = this.props
-        // console.log("response from worklog :", responseJson);
+        this.setState({
+          title: "",
+          description: "",
+          selectedValue: "",
+        });
         Alert.alert(
-          "Appointment Requested Successfully",
-          "You can check your appointments in the history",
+          "Termin angefragt Erfolgreich",
+          "Sie können Ihre Termine in der Historie überprüfen",
           [{ text: "OK", onPress: () => this.closeModal() }],
           { cancelable: false }
         );
@@ -132,25 +110,19 @@ class SearchCraftsmen extends Component {
       .catch((error) => {
         console.error(error);
       });
-  }
-  search = (text) => {
-    console.log(text);
   };
+
   clear = () => {
     this.search.clear();
   };
-  SearchFilterFunction =(text) => {
-    //passing the inserted text in textinput
+  SearchFilterFunction = (text) => {
     const newData = this.arrayholder.filter(function (item) {
-      //applying filter for the inserted text in search bar
-      //console.log("itemdata", item);
       const fNameData = item.fname
         ? item.fname.toUpperCase()
         : "".toUpperCase();
       const lNameData = item.lname
         ? item.lname.toUpperCase()
         : "".toUpperCase();
-      //const companyName = item.compid.compname
       const companyData =
         item && item.compid
           ? item.compid.compname.toUpperCase()
@@ -166,20 +138,17 @@ class SearchCraftsmen extends Component {
       dataSource: newData,
       search: text,
     });
-  }
+  };
 
   openModal = (item) => {
-    //console.log("categories", item)
-    
-    if(item.selfemployed === true){
+    if (item.selfemployed === true) {
       this.setState({
         isModalOpen: true,
-      id: item._id,
-      role: item.role,
-        selectedCats: item.catid
-      })
-    }
-    else{
+        id: item._id,
+        role: item.role,
+        selectedCats: item.catid,
+      });
+    } else {
       this.setState({
         isModalOpen: true,
         selectedCats: item.compid.categories,
@@ -187,26 +156,21 @@ class SearchCraftsmen extends Component {
         role: item.role,
       });
     }
-   
-    //console.log("request modal", this.state)
   };
 
   closeModal = () => {
     this.setState({ isModalOpen: false });
-  }
+  };
   showPicker = (category) => {
     this.setState({
       categoryValues: category && category,
     });
   };
   handleChange = (value) => {
-    console.log("handlechange", value)
     this.setState({ selectedValue: value, categoryValues: value });
   };
-  
+
   render() {
-    //const value = useContext(UserContext);
-    //console.log("props", this.props);
     if (this.state.isLoading) {
       //Loading View while data is loading
       return (
@@ -221,7 +185,7 @@ class SearchCraftsmen extends Component {
         enableAutomaticScroll={Platform.OS === "ios"}
       >
         <View style={styles.viewStyle}>
-        <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
+          <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
           <SearchBar
             lightTheme={true}
             platform="default"
@@ -232,7 +196,7 @@ class SearchCraftsmen extends Component {
             searchIcon={{ size: 24 }}
             onChangeText={(text) => this.SearchFilterFunction(text)}
             onClear={(text) => this.SearchFilterFunction("")}
-            placeholder="Type Here..."
+            placeholder="Hier tippen..."
             value={this.state.search}
           />
 
@@ -246,7 +210,6 @@ class SearchCraftsmen extends Component {
                 backgroundColor: "#00000080",
               }}
             >
-              {/* {this.state.craftsmenData.map((item)=>{console.log("22", item)})} */}
               <View
                 style={{
                   width: 300,
@@ -256,56 +219,50 @@ class SearchCraftsmen extends Component {
                   paddingHorizontal: 10,
                 }}
               >
-                {/* {this.state.dataSource.filter((item) => {
-                console.log("filterrr",item._id !== this.state.id)
-              })} */}
                 <MaterialIcons
                   style={styles.modalCloseIcon}
                   name="close"
                   size={24}
                   onPress={() => this.closeModal()}
                 />
-                <Text style={styles.modalHeader}>Give your Request</Text>
+                <Text style={styles.modalHeader}>Geben Sie Ihre Anfrage</Text>
                 <Form>
-                  {/* <Item>
-                    <Icon active name="ios-people" /> */}
-                    <Picker
-                      style = {styles.picker}
-                      selectedValue={this.state.selectedValue}
-                      onValueChange={(value) => {
-                        this.handleChange(value);
-                      }}
-                    >
-                    <Picker.Item label="Select category" />
-                      {this.state.selectedCats && this.state.selectedCats.length
-                        ? this.state.selectedCats.map((item, myIndex) => {
-                            return (
-                              <Picker.Item
-                                label={item.catname}
-                                value={item._id}
-                                key={myIndex}
-                              />
-                            );
-                          })
-                        : null}
-                    </Picker>
-                  {/* </Item> */}
-                  {/* {console.log("ok",this.state)} */}
+                  <Picker
+                    style={styles.picker}
+                    selectedValue={this.state.selectedValue}
+                    onValueChange={(value) => {
+                      this.handleChange(value);
+                    }}
+                  >
+                    <Picker.Item label="Kategorie auswählen" />
+                    {this.state.selectedCats && this.state.selectedCats.length
+                      ? this.state.selectedCats.map((item, myIndex) => {
+                          return (
+                            <Picker.Item
+                              label={item.catname}
+                              value={item._id}
+                              key={myIndex}
+                            />
+                          );
+                        })
+                      : null}
+                  </Picker>
+
                   <Item stackedLabel style={styles.title}>
-                    <Label style={{paddingVertical: 10}}>Title</Label>
+                    <Label style={{ paddingVertical: 10 }}>Titel</Label>
                     <Input
-                      placeholder="Write your problem here"
+                      placeholder="Schreiben Sie hier Ihr Problem"
                       value={this.state.title}
                       onChangeText={(title) => this.setState({ title })}
                     />
                   </Item>
                   <Item stackedLabel style={styles.description}>
-                    <Label style={{paddingVertical: 10}}>Description</Label>
+                    <Label style={{ paddingVertical: 10 }}>Beschreibung</Label>
                     <Textarea
                       value={this.state.description}
                       rowSpan={5}
                       bordered
-                      placeholder="Enter your description"
+                      placeholder="Geben Sie Ihre Beschreibung ein"
                       width="100%"
                       borderColor={"grey"}
                       onChangeText={(description) =>
@@ -328,7 +285,7 @@ class SearchCraftsmen extends Component {
                     underlayColor="#fff"
                     onPress={() => this.requestAppointment()}
                   >
-                    <Text style={styles.buttonText}>Request Appointment</Text>
+                    <Text style={styles.buttonText}>Termin anfragen</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -341,7 +298,6 @@ class SearchCraftsmen extends Component {
             ListFooterComponent={this.renderFooter}
             //Item Separator View
             renderItem={({ item, index }) => (
-             
               // Single Comes here which will be repeatative for the FlatListItems
               //<Text style={styles.textStyle}>{item.name}</Text>
               <ListItem
@@ -373,36 +329,36 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     marginTop: Platform.OS == "ios" ? 10 : 0,
   },
-  title:{
+  title: {
     ...Platform.select({
-      ios:{
-        bottom: 100
+      ios: {
+        bottom: 100,
       },
-      android:{
-        top: 10
-      }
-    })
-  },
-  description:{
-    ...Platform.select({
-      ios:{
-        bottom: 80
-      },
-      android:{
-        top: 20
-      }
-    })
-  },
-  picker:{
-    ...Platform.select({
-      ios:{
-        bottom: 100
-      },
-      android:{
+      android: {
         top: 10,
-        left: 10
-      }
-    })
+      },
+    }),
+  },
+  description: {
+    ...Platform.select({
+      ios: {
+        bottom: 80,
+      },
+      android: {
+        top: 20,
+      },
+    }),
+  },
+  picker: {
+    ...Platform.select({
+      ios: {
+        bottom: 100,
+      },
+      android: {
+        top: 10,
+        left: 10,
+      },
+    }),
   },
   textStyle: {
     padding: 10,
@@ -413,33 +369,33 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
   },
   requestButton: {
-  ...Platform.select({
-    ios:{
-    marginRight: 40,
-    marginLeft: 40,
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    bottom: 100,
-    position: "relative",
-    borderWidth: 1,
-    borderColor: "#fff",
-    },
-    android:{
-      marginRight: 40,
-      marginLeft: 40,
-      paddingTop: 10,
-      paddingBottom: 10,
-      backgroundColor: Colors.primary,
-      borderRadius: 10,
-      top: 20,
-      position: "relative",
-      borderWidth: 1,
-      borderColor: "#fff",
-    }
-  }),
-},
+    ...Platform.select({
+      ios: {
+        marginRight: 40,
+        marginLeft: 40,
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        bottom: 100,
+        position: "relative",
+        borderWidth: 1,
+        borderColor: "#fff",
+      },
+      android: {
+        marginRight: 40,
+        marginLeft: 40,
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        top: 20,
+        position: "relative",
+        borderWidth: 1,
+        borderColor: "#fff",
+      },
+    }),
+  },
   buttonText: {
     color: "#fff",
     textAlign: "center",

@@ -1,22 +1,10 @@
 import React from "react";
-import {
-  View,
-  Text,
-  AsyncStorage,
-  KeyboardAvoidingView,
-  Alert,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { View, Alert, StyleSheet, Image } from "react-native";
 import { GiftedChat, Bubble, Send } from "react-native-gifted-chat";
 import { Button, Icon } from "native-base";
 import { connect } from "react-redux";
 import Colors from "../constants/Colors";
-import KeyboardSpacer from "react-native-keyboard-spacer";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
 import * as ImagePicker from "expo-image-picker";
-import Constants from "expo-constants";
-import * as Permissions from "expo-permissions";
 import { Buffer } from "buffer";
 
 class ChatConversationScreen extends React.Component {
@@ -24,7 +12,6 @@ class ChatConversationScreen extends React.Component {
     title: (navigation.state.params || {}).name || "Chat!",
   });
   constructor(props) {
-    //console.log("socket", props.socket);
     super(props);
     this.state = {
       messages: [],
@@ -33,7 +20,6 @@ class ChatConversationScreen extends React.Component {
       toUserID: this.props.navigation.getParam("userId"),
     };
     this.postUserChats = this.postUserChats.bind(this);
-    // this.onReceivedMessage = this.onReceivedMessage.bind(this);
     this.onSend = this.onSend.bind(this);
     this._storeMessages = this._storeMessages.bind(this);
     this.receiveSockets = this.receiveSockets.bind(this);
@@ -47,10 +33,6 @@ class ChatConversationScreen extends React.Component {
   }
 
   receiveSockets(action) {
-    //const toUserId = this.props.navigation.getParam("userId");
-    //console.log("toUserID in recieve", this.state.toUserID)
-    // return await socket.on("action", (action) => {
-    //console.log("recieve sockets", action);
     switch (action.type) {
       case "messages": {
         if (action.data.status == 204) {
@@ -74,31 +56,24 @@ class ChatConversationScreen extends React.Component {
             if (chatMessage.msgtype === "TEXT") {
               gcm.text = chatMessage.msgtext;
             } else if (chatMessage.msgtype === "FILE") {
-              //console.log("gcm file", chatMessage.fileid);
               let base64 = new Buffer(chatMessage.fileid.data).toString(
                 "base64"
               );
-              //console.log("base64", base64)
 
               gcm.image =
                 "data:" + chatMessage.fileid.contentType + ";base64," + base64;
-              console.log("gcm msg img", gcm.image);
             }
             return gcm;
           });
           this.setState({
             messages: gcmMessages.reverse(),
           });
-          //console.log("from messages state:", this.state.messages)
         }
         break;
       }
 
       case "messageSent": {
-        console.log("from message sent: ", action.data);
         if (action.data != undefined) {
-          // this._storeMessages(messages);
-          //console.log("data in msg sent: ", action.data)
           let msg = {
             _id: action.data._id,
             createdAt: action.data.createdAt,
@@ -112,7 +87,6 @@ class ChatConversationScreen extends React.Component {
             );
             msg.image =
               "data:" + action.data.fileinfo.contentType + ";base64," + base64;
-            console.log("msg img");
           }
           this._storeMessages([msg]);
         }
@@ -121,7 +95,6 @@ class ChatConversationScreen extends React.Component {
       }
       case "sendMessage": {
         if (action.data.from === this.state.toUserID) {
-          console.log("from case sendmesg", action.data);
           let msg = {
             _id: action.data._id,
             createdAt: action.data.createdAt,
@@ -135,54 +108,34 @@ class ChatConversationScreen extends React.Component {
             );
             msg.image =
               "data:" + action.data.fileinfo.contentType + ";base64," + base64;
-            console.log("msg img");
           }
           this._storeMessages([msg]);
         }
       }
     }
-    // });
   }
   getUserChats() {
     const userId = this.state.toUserID;
-    //console.log("toUserID in get", userId)
     const data = { toUserId: userId };
     const action = { type: "chat:chat/messages/get", data: data };
     this.state.socket.emit("action", action);
-    //this.receiveSockets(this.state.socket);
   }
   async postUserChats(message, image) {
     const userId = this.state.toUserID;
-    //console.log("userid: ", userId);
     if (image != undefined) {
       message.text = "";
     }
     const data = {
       toUserId: userId,
       messageInfo: { text: message.text, file: image },
-      
     };
-    console.log("mesdsageInfo", data.messageInfo.file)
-    
+
     const action = { type: "chat:chat/message/post", data: data };
     this.state.socket.emit("action", action);
   }
 
-  /**
-   * ss(this.state.socket).emit('profile-image', stream, {name: filename});
-      
-   * When a message is sent, send the message to the server
-   * and store it in this component's state.
-   */
   async onSend(messages = [], image) {
-    console.log("message", messages[0]);
     await this.postUserChats(messages[0], image);
-    //  console.log("from on send function: ", messages[0]);
-    // if (socket.messageSent) {
-    //   this._storeMessages(messages);
-    // } else {
-    //   console.log("error");
-    // }
   }
   choosePicture = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -194,7 +147,6 @@ class ChatConversationScreen extends React.Component {
     });
 
     let bufferVal = Buffer.from(result.base64, "base64");
-    //console.log("buffer----", bufferVal)
     if (!result.cancelled) {
       let filename = result.uri.replace(/^.*[\\\/]/, "");
       let file = {
@@ -202,17 +154,11 @@ class ChatConversationScreen extends React.Component {
         originalname: filename,
         mimetype: "image/png",
       };
-      //console.log("formdata chat", result);
       this.setState({ image: file });
     }
-
-    //console.log("chat state", this.state.image)
-    //console.log("result chat", result)
   };
   renderMessageImage = (props) => {
-    //console.log("props image", props);
-    const { currentMessage } = props
-    //console.log("current message", currentMessage.image)
+    const { currentMessage } = props;
     return (
       <View>
         <Image
@@ -270,7 +216,6 @@ class ChatConversationScreen extends React.Component {
           <View
             style={{ flexDirection: "row", alignItems: "center", height: 50 }}
           >
-            {/* <Button icon="camera" iconColor={Colors.primaryBlue} size={40} style={{  }} onPress={() => this.choosePicture()} /> */}
             <Button
               transparent
               style={{ marginHorizontal: 5 }}
@@ -289,19 +234,13 @@ class ChatConversationScreen extends React.Component {
             </Send>
           </View>
         )}
-        // renderMessageImage={(props) => {
-        //   this.renderMessageImage(props);
-        // }}
         user={userId}
-        // inverted={false}
       />
     );
   }
 
   // Helper functions
   _storeMessages(messages) {
-    //console.log("previousState", this.state.messages);
-    //console.log("store messages", messages);
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, messages),

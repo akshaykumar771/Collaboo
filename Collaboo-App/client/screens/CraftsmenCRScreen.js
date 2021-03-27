@@ -1,15 +1,22 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Text, Modal, TouchableOpacity, Platform, TextInput, Button, Alert } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Text,
+  Modal,
+  TouchableOpacity,
+  Platform,
+  Alert,
+} from "react-native";
 import {
   Container,
   Header,
   Content,
   Card,
   CardItem,
-  Icon,
   Right,
   Body,
-  Label
+  Label,
 } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import DateTimePicker from "react-native-modal-datetime-picker";
@@ -23,30 +30,24 @@ class CraftsmenCRScreen extends Component {
       appointments: [],
       isModalOpen: false,
       isDateTimePickerVisible: false,
-      appointmentid: ""
+      appointmentid: "",
     };
   }
   componentDidMount() {
     if (this.props.token) {
       this.makeRemoteRequest();
     }
-    // setTimeout(() => {
-    //   this.makeRemoteRequest();
-    // }, 3000);
   }
 
   shouldComponentUpdate(nextProps) {
-    console.log(nextProps.token, this.props.token);
     if (nextProps.token != this.props.token) {
       this.makeRemoteRequest();
     }
     return true;
   }
   makeRemoteRequest = () => {
-    console.log("test");
     const url = "http://81.89.193.99:3001/api/craftsmen/appointments";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -56,7 +57,6 @@ class CraftsmenCRScreen extends Component {
         if (status === 200) {
           return response.json();
         } else if (status === 204) {
-          console.log(response);
           Alert.alert(
             "Sorry",
             "No appointments found",
@@ -75,32 +75,23 @@ class CraftsmenCRScreen extends Component {
               item.crafconfirmation === "YES" &&
               item.custconfirmation === "REQUEST_DATE_CHANGE"
             ) {
-            changeRequestAppointments.push(item);
-              //console.log("arr", changeRequestAppointments)
+              changeRequestAppointments.push(item);
               this.setState({
                 appointments: changeRequestAppointments,
               });
-              console.log("new appointments", this.state.appointments)
-            } 
-            //  else {
-            //   this.setState({
-            //     appointments: [],
-            //     acceptedAppoinments: [],
-            //     rejectedAppointments: [],
-            //   });
-            // }
+            }
           });
-        console.log("response craftsmencrscreen", responseJson);
-        console.log("appointment state", this.state.appointments);
       })
       .catch((error) => {
         console.error(error);
       });
   };
-  openModal =  (item) => {
-    this.setState({ isModalOpen: true, crafconfirmation: "YES", appointmentid: item._id });
-    console.log("state in open modal", this.state);
-   
+  openModal = (item) => {
+    this.setState({
+      isModalOpen: true,
+      crafconfirmation: "YES",
+      appointmentid: item._id,
+    });
   };
 
   closeModal() {
@@ -115,26 +106,21 @@ class CraftsmenCRScreen extends Component {
   };
 
   handleDatePicked = (date) => {
-    console.log("A date has been picked: ", date);
     let formattedDate =
       date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
     this.setState({
       date: date,
     });
-    console.log("state date", this.state.date);
     this.hideDateTimePicker();
   };
 
   sendInvitation = () => {
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
-    console.log("url", url)
     const bearer = "Bearer " + this.props.token;
-    console.log("bearer", bearer)
     const data = {
-        crafconfirmation: this.state.crafconfirmation,
-        apntdatime: this.state.date
+      crafconfirmation: this.state.crafconfirmation,
+      apntdatime: this.state.date,
     };
-    console.log("data", data)
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -142,35 +128,29 @@ class CraftsmenCRScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson);
         this.closeModal();
         Alert.alert(
-          "Success",
-          "Please wait until the customer accepts the appointment",
+          "Erfolgreich!",
+          "Bitte warten Sie, bis der Kunde den Termin annimmt",
           [{ text: "OK", onPress: () => this.makeRemoteRequest() }],
           { cancelable: true }
         );
-        
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
-  cancelAppointment =  async (item) => {
-      console.log("item", item)
-      await this.setState({
-          appointmentid: item._id
-      })
-      console.log(this.state)
+  cancelAppointment = async (item) => {
+    await this.setState({
+      appointmentid: item._id,
+    });
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
-    console.log("url", url)
     const bearer = "Bearer " + this.props.token;
     const data = {
-        crafconfirmation: "NO",
-        apntdatime: ""
+      crafconfirmation: "NO",
+      apntdatime: "",
     };
-    console.log("data", data)
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -179,123 +159,127 @@ class CraftsmenCRScreen extends Component {
       .then((response) => response.json())
       .then((responseJson) => {
         this.makeRemoteRequest();
-        console.log("response after update", responseJson);
       })
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
   render() {
     return (
       <View style={styles.screen}>
-       <Container>
-        <Content style={{ padding: 10 }}>
-          {this.state.appointments.length > 0 ? (
-            this.state.appointments && this.state.appointments.map((item) => {
-              console.log(item.title);
-              return (
-                <Card style={styles.card}>
-                  <CardItem style={{ backgroundColor: "#f5f5f5" }}>
-                    <Body>
-                      <Label style={{ color: "grey" }}>Title</Label>
-                      <Text style={styles.cardText}>{item.title}</Text>
-                      <Label style={{ color: "grey" }}>Customer Name</Label>
-                      <Text style={styles.cardText}>
-                        {item.customerid.fullname}
-                      </Text>
-                    </Body>
-                    <Right>
-                    <View>
-                      <TouchableOpacity
-                    style={styles.acceptBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.openModal(item)}
-                  >
-                    <Text style={{color: 'white'}}>Accept</Text>
-                  </TouchableOpacity>
-                  </View>
-                  <View>
-                      <TouchableOpacity
-                    style={styles.rejectBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.cancelAppointment(item)}
-                  >
-                    <Text style={{color:'white'}}>Reject</Text>
-                  </TouchableOpacity>
-                  </View>
-                      {/* <Icon style={styles.iconCancel} name="ios-close"  /> */}
-                    </Right>
-                  </CardItem>
-                </Card>
-              );
-            })) : [] }
-          <Modal transparent={true} visible={this.state.isModalOpen}>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#00000080",
-              }}
-            >
+        <Container>
+          <Content style={{ padding: 10 }}>
+            {this.state.appointments.length > 0
+              ? this.state.appointments &&
+                this.state.appointments.map((item) => {
+                  return (
+                    <Card style={styles.card}>
+                      <CardItem style={{ backgroundColor: "#f5f5f5" }}>
+                        <Body>
+                          <Label style={{ color: "grey" }}>Titel</Label>
+                          <Text style={styles.cardText}>{item.title}</Text>
+                          <Label style={{ color: "grey" }}>Kunde Name</Label>
+                          <Text style={styles.cardText}>
+                            {item.customerid.fullname}
+                          </Text>
+                        </Body>
+                        <Right>
+                          <View>
+                            <TouchableOpacity
+                              style={styles.acceptBtn}
+                              underlayColor="#fff"
+                              onPress={() => this.openModal(item)}
+                            >
+                              <Text style={{ color: "white" }}>
+                                Akzeptieren
+                              </Text>
+                            </TouchableOpacity>
+                          </View>
+                          <View>
+                            <TouchableOpacity
+                              style={styles.rejectBtn}
+                              underlayColor="#fff"
+                              onPress={() => this.cancelAppointment(item)}
+                            >
+                              <Text style={{ color: "white" }}>Anlehnen</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </Right>
+                      </CardItem>
+                    </Card>
+                  );
+                })
+              : []}
+            <Modal transparent={true} visible={this.state.isModalOpen}>
               <View
                 style={{
-                  width: 300,
-                  height: 400,
-                  backgroundColor: "#fff",
-                  paddingVertical: 40,
-                  paddingHorizontal: 10,
+                  flex: 1,
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#00000080",
                 }}
               >
-                <MaterialIcons
-                  style={styles.modalCloseIcon}
-                  name="close"
-                  size={24}
-                  onPress={() => this.closeModal()}
-                />
-                <Text style={styles.modalHeader}>Invitation</Text>
-                <View>
-                <Text style={{color: 'green'}}>**please choose a date and time to make an appointment with the customer**</Text>
-                </View>
-                <View style={styles.dateInput}>
-                 
-                   <TouchableOpacity
-                    style={styles.chooseDateBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.showDateTimePicker()}
-                  >
-                    <Text style={styles.chooseDateBtnTxt}>Choose Date and Time</Text>
-                  </TouchableOpacity>
-                  <DateTimePicker
-                    mode='datetime'
-                    isVisible={this.state.isDateTimePickerVisible}
-                    onConfirm={this.handleDatePicked}
-                    onCancel={this.hideDateTimePicker}
-                  />
-                 
-                </View>
                 <View
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-evenly",
-                    marginVertical: 60,
+                    width: 300,
+                    height: 400,
+                    backgroundColor: "#fff",
+                    paddingVertical: 40,
+                    paddingHorizontal: 10,
                   }}
                 >
-                  <TouchableOpacity
-                    style={styles.requestButton}
-                    underlayColor="#fff"
-                    onPress={() => this.sendInvitation()}
+                  <MaterialIcons
+                    style={styles.modalCloseIcon}
+                    name="close"
+                    size={24}
+                    onPress={() => this.closeModal()}
+                  />
+                  <Text style={styles.modalHeader}>Einladungen</Text>
+                  <View>
+                    <Text style={{ color: "green" }}>
+                      **Bitte wähle ein anderes Datum / Zeit für den
+                      Kundentermin aus**
+                    </Text>
+                  </View>
+                  <View style={styles.dateInput}>
+                    <TouchableOpacity
+                      style={styles.chooseDateBtn}
+                      underlayColor="#fff"
+                      onPress={() => this.showDateTimePicker()}
+                    >
+                      <Text style={styles.chooseDateBtnTxt}>
+                        Wähle Datum und Zeit aus
+                      </Text>
+                    </TouchableOpacity>
+                    <DateTimePicker
+                      mode="datetime"
+                      isVisible={this.state.isDateTimePickerVisible}
+                      onConfirm={this.handleDatePicked}
+                      onCancel={this.hideDateTimePicker}
+                    />
+                  </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "space-evenly",
+                      marginVertical: 60,
+                    }}
                   >
-                    <Text style={styles.buttonText}>Send</Text>
-                  </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.requestButton}
+                      underlayColor="#fff"
+                      onPress={() => this.sendInvitation()}
+                    >
+                      <Text style={styles.buttonText}>Senden</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </View>
-          </Modal>
-        </Content>
-      </Container>
+            </Modal>
+          </Content>
+        </Container>
       </View>
     );
   }
@@ -303,7 +287,7 @@ class CraftsmenCRScreen extends Component {
 
 const mapStateToProps = (state) => ({
   token: state.userReducer.token,
-  role: state.userReducer.userRole
+  role: state.userReducer.userRole,
 });
 const styles = StyleSheet.create({
   screen: {
@@ -334,27 +318,27 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     marginBottom: 10,
   },
-  modalText:{
+  modalText: {
     ...Platform.select({
       ios: {
         //marginTop: -55,
-        bottom: 110
+        bottom: 110,
       },
-      android:{
-        top: 15
-      }
-    })
+      android: {
+        top: 15,
+      },
+    }),
   },
-  dateInput:{
+  dateInput: {
     flexDirection: "row",
     ...Platform.select({
-      ios:{
-        bottom: 70
+      ios: {
+        bottom: 70,
       },
-      android:{
-        top: 30
-      }
-    })
+      android: {
+        top: 30,
+      },
+    }),
   },
   modalInput: {
     paddingVertical: 20,
@@ -363,26 +347,26 @@ const styles = StyleSheet.create({
   },
   requestButton: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    borderWidth: 1,
-    borderColor: "#fff",
-    bottom: 85
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        bottom: 85,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.accent,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "#fff",
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.accent,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "#fff",
+      },
     }),
   },
   buttonText: {
@@ -391,7 +375,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
-  chooseDateBtnTxt:{
+  chooseDateBtnTxt: {
     color: "white",
     textAlign: "center",
     paddingLeft: 10,
@@ -423,88 +407,85 @@ const styles = StyleSheet.create({
   },
   chooseDateBtn: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    borderWidth: 1,
-    borderColor: "#fff",
-    bottom: 85
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        bottom: 85,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 40,
-    borderWidth: 1,
-    borderColor: "#fff",
-    justifyContent:'center',
-    alignItems:'center',
-    left: 60
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 40,
+        borderWidth: 1,
+        borderColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+        left: 60,
+      },
     }),
   },
-  acceptBtn:{
+  acceptBtn: {
     ...Platform.select({
-        ios:{
-          paddingTop: 10,
-      paddingBottom: 10,
-      backgroundColor: Colors.primary,
-      borderRadius: 10,
-      marginTop: 0,
-      borderWidth: 1,
-      borderColor: "#fff",
-      bottom: 85
-        },
-        android:{
-      paddingTop: 10,
-      paddingBottom: 10,
-      backgroundColor: Colors.primary,
-      borderRadius: 10,
-      top: 10,
-      right: 0,
-      borderWidth: 1,
-      borderColor: "#fff",
-      justifyContent:'center',
-      alignItems:'center',
-      width: 80
+      ios: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        bottom: 85,
+      },
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        top: 10,
+        right: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 80,
+      },
+    }),
   },
-
-}) 
-  },
-  rejectBtn:{
+  rejectBtn: {
     ...Platform.select({
-        ios:{
-          paddingTop: 10,
-      paddingBottom: 10,
-      backgroundColor: Colors.primary,
-      borderRadius: 10,
-      marginTop: 0,
-      borderWidth: 1,
-      borderColor: "#fff",
-      bottom: 85
-        },
-        android:{
-            paddingTop: 10,
-            paddingBottom: 10,
-            backgroundColor: Colors.primary,
-            borderRadius: 10,
-            top: 20,
-            right: 0,
-            borderWidth: 1,
-            borderColor: "#fff",
-            justifyContent:'center',
-            alignItems:'center',
-            width: 80
+      ios: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        bottom: 85,
+      },
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        top: 20,
+        right: 0,
+        borderWidth: 1,
+        borderColor: "#fff",
+        justifyContent: "center",
+        alignItems: "center",
+        width: 80,
+      },
+    }),
   },
-
-}) 
-  }
 });
-
 
 export default connect(mapStateToProps, null)(CraftsmenCRScreen);

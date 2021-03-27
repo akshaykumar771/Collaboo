@@ -7,10 +7,10 @@ import Colors from '../constants/Colors';
 const EmployeePicker = () => {
     return (
         <View>
-        <Text>Select the Employee</Text>
+        <Text>Wählen Sie den Mitarbeiter</Text>
         <RNPickerSelect
             placeholder={{
-                label:"Select the Employee",
+                label:"Wählen Sie den Mitarbeiter",
                 color:Colors.primary
             }}
             onValueChange={(value) => console.log(value)}

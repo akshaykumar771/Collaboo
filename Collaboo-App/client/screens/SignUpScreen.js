@@ -84,9 +84,10 @@ class SignUpScreen extends Component {
   validateName = () => {
     let regEx = /^[a-zA-z]+$/;
     let isValid = regEx.test(this.state.firstName);
-    // console.warn(isValid);
     if (!isValid) {
-      this.setState({ firstNameVal: "Name field must be alphabets" });
+      this.setState({
+        firstNameVal: "Namensfeld muss aus Alphabeten bestehen",
+      });
     } else {
       this.setState({ firstNameVal: "" });
     }
@@ -94,16 +95,15 @@ class SignUpScreen extends Component {
   validateEmail = () => {
     let regEx = /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     let isValid = regEx.test(this.state.emailId);
-    console.warn(isValid);
     if (!isValid) {
-      this.setState({ emailIdVal: "Please enter valid emailId" });
+      this.setState({ emailIdVal: "Bitte gültige emailId eingeben" });
     } else {
       this.setState({ emailIdVal: "" });
     }
   };
   validateRole = () => {
     if ((this.state.role = "")) {
-      this.setState({ roleVal: "Role cannot be empty" });
+      this.setState({ roleVal: "Rolle kann nicht leer sein" });
     } else {
       this.setState({ roleVal: "" });
     }
@@ -114,7 +114,7 @@ class SignUpScreen extends Component {
     let regEx = /^(((\+|00+)49)|0)[1-9]\d+/;
     let isValid = regEx.test(this.state.phNo);
     if (!isValid) {
-      this.setState({ phnoVal: "Please enter valid number" });
+      this.setState({ phnoVal: "Bitte gültige Nummer eingeben" });
     } else {
       this.setState({ phnoVal: "" });
     }
@@ -125,7 +125,7 @@ class SignUpScreen extends Component {
     if (!isValid) {
       this.setState({
         passwordVal:
-          "Password should contain atleast 8 characters with atlease one letter and one number ",
+          "Das Passwort sollte mindestens 8 Zeichen mit mindestens einem Buchstaben und einer Zahl enthalten ",
       });
     } else {
       this.setState({ passwordVal: "" });
@@ -133,23 +133,20 @@ class SignUpScreen extends Component {
   };
   handleSubmit = async () => {
     console.log("state" + JSON.stringify(this.state));
-    //this.makeRemoteRequest();
-   await registerForPushNotificationsAsync()
+    await registerForPushNotificationsAsync()
       .then((token) => {
-        console.log("signup pushtoken", token)
+        console.log("signup pushtoken", token);
         this.setState({
-          pushToken: token
-        })
+          pushToken: token,
+        });
         return token;
       })
       .then(async (pushToken) => {
         await this.props.userPostFetch(this.state);
-      })
-    
+      });
   };
 
   render() {
-    //console.log("role"+this.state.role)
     return (
       <Container>
         <Content style={{ paddingVertical: 15 }}>
@@ -161,7 +158,7 @@ class SignUpScreen extends Component {
               <Item>
                 <Icon active name="ios-person" />
                 <Input
-                  placeholder="Enter your FirstName"
+                  placeholder="Vorname"
                   onChangeText={(text) => {
                     this.setState({ firstName: text });
                   }}
@@ -175,7 +172,7 @@ class SignUpScreen extends Component {
               <Item>
                 <Icon active name="ios-person" />
                 <Input
-                  placeholder="Enter your LastName"
+                  placeholder="Nachname"
                   onChangeText={(text) => {
                     this.setState({ lastName: text });
                   }}
@@ -194,6 +191,8 @@ class SignUpScreen extends Component {
                     this.setState({ emailId: text });
                   }}
                   value={this.state.emailId}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                   onBlur={this.validateEmail}
                 />
               </Item>
@@ -205,8 +204,7 @@ class SignUpScreen extends Component {
                 <Picker
                   style={{ height: 40, width: 400 }}
                   mode="dropdown"
-                  placeholder="Choose your role"
-                  prompt={"Who are you"}
+                  placeholder="Wähle dein Rolle aus"
                   itemStyle={{ backgroundColor: "grey" }}
                   onValueChange={(itemValue, itemIndex) => {
                     this.setState({ role: itemValue });
@@ -216,13 +214,13 @@ class SignUpScreen extends Component {
                 >
                   <Picker.Item
                     style={{ paddingVertical: 10 }}
-                    label="Choose your role"
+                    label="Wähle dein Rolle aus"
                     value={null}
                     key={0}
                   />
-                  <Picker.Item label="Customer" value={"CUSTOMER"} key={1} />
-                  <Picker.Item label="Craftsmen" value={"CRAFTSMEN"} key={2} />
-                  <Picker.Item label="Agent" value={"AGENT"} key={3} />
+                  <Picker.Item label="Kunde" value={"CUSTOMER"} key={1} />
+                  <Picker.Item label="Handwerker" value={"CRAFTSMEN"} key={2} />
+                  <Picker.Item label="Verwaltung" value={"AGENT"} key={3} />
                 </Picker>
               </Item>
               <Text style={{ color: "red", marginLeft: 10 }}>
@@ -247,7 +245,7 @@ class SignUpScreen extends Component {
               <Item>
                 <Icon active name="ios-phone-portrait" />
                 <Input
-                  placeholder=" Enter your Mobile Number"
+                  placeholder="Telefon-/Mobilfunknummer"
                   keyboardType="numeric"
                   onChangeText={(text) => {
                     this.setState({ phNo: text });
@@ -262,7 +260,7 @@ class SignUpScreen extends Component {
               <Item>
                 <Icon active name="ios-lock" />
                 <Input
-                  placeholder="Enter Password"
+                  placeholder="Passwort"
                   secureTextEntry={true}
                   onChangeText={(text) => {
                     this.setState({ pwd: text });
@@ -276,15 +274,17 @@ class SignUpScreen extends Component {
               </Text>
             </Form>
             <View>
-            {this.props.signupError ? ( <Text style={{ color: "red", marginLeft: 10, fontSize: 16 }}>
-                Please enter valid details
-              </Text>) : null}
+              {this.props.signupError ? (
+                <Text style={{ color: "red", marginLeft: 10, fontSize: 16 }}>
+                  Bitte gültige Daten eingeben
+                </Text>
+              ) : null}
             </View>
             <View style={styles.buttonContainer}>
               <FormButton
                 buttonType="outline"
                 onPress={this.handleSubmit}
-                title="SIGN UP"
+                title="Anmelden"
                 buttonColor="#039BE5"
                 onBlur={this.validatePassword}
               />

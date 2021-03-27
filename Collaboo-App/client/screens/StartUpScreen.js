@@ -4,63 +4,26 @@ import {
   StyleSheet,
   ActivityIndicator,
   AsyncStorage,
-  Vibration,
-  Alert,
 } from "react-native";
 import Colors from "../constants/Colors";
-import { useDispatch, connect, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import * as authActions from "../actions/action";
-import userReducer from "../reducers/userReducer";
-import * as Permissions from "expo-permissions";
-import { Notifications } from "expo";
 import io from "socket.io-client";
 import { registerForPushNotificationsAsync } from "../services/push_notifications";
 
 const StartUpScreen = (props) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log("inside startup", props)
+    console.log("inside startup", props);
     registerForPushNotificationsAsync()
       .then((token) => {
-        console.log("startup pushtoken", token)
+        console.log("startup pushtoken", token);
         return token;
       })
       .then((pushToken) => {
         tryLogin();
       })
       .catch((e) => console.log("error push", e));
-    //console.log("testnoti", testNotification);
-    // const tryNotifications = async () => {
-    //   Notifications.addListener((notification) => {
-    //     console.log("notification", notification);
-    //     Vibration.vibrate();
-    //     const {
-    //       data: { message },
-    //       origin,
-    //     } = notification;
-        // if (origin === "selected") {
-        //   if (
-        //     message === "New appointment requested!" ||
-        //     "Craftsmen has accepted the appointment" ||
-        //     "Craftsmen has rejected the appointment. Assign new craftsmen"
-        //   )
-        //     console.log("check notifications");
-        //   props.navigation.navigate("Appointments", { message });
-        // } 
-        // else if (message === "New craftsmen has been assigned.Your request has been accepted.")
-        // {
-        //   console.log("customer")
-        //   props.navigation.navigate("Requests", {message})
-        // }
-        // else if (message === "You have received a new appointment request") {
-        //   console.log("cr appnts");
-        //   props.navigation.navigate("CRAppointments", { message });
-        // }
-    //       if (origin === "received")
-    //         Alert.alert("New Push Notification", message, [{ text: "OK" }]);
-    //   });
-    // };
-    // tryNotifications();
     const tryLogin = async () => {
       const userData = await AsyncStorage.getItem("token");
       if (!userData) {
@@ -74,8 +37,6 @@ const StartUpScreen = (props) => {
         query: { token: token },
       });
 
-      //console.log("socker sconnection", socket);
-      console.log("startupscreen", transformedData);
       if (!token || !userId || !userRole) {
         props.navigation.navigate("Auth");
         return;

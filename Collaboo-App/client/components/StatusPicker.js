@@ -7,10 +7,10 @@ import Colors from '../constants/Colors';
 const StatusPicker = () => {
     return (
         <View>
-        <Text>Status of the Task</Text>
+        <Text>Status der Aufgabe</Text>
         <RNPickerSelect
             placeholder={{
-                label:"Status of the Task",
+                label:"Status der Aufgabe",
                 color:Colors.primary
             }}
             onValueChange={(value) => console.log(value)}

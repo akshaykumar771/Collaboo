@@ -1,8 +1,7 @@
 import React, { Component } from "react";
-import { View, StyleSheet, ScrollView, Picker } from "react-native";
+import { View, StyleSheet, Picker } from "react-native";
 import {
   Container,
-  Header,
   Content,
   Card,
   CardItem,
@@ -13,9 +12,8 @@ import {
   Label,
   Button,
 } from "native-base";
-import Colors from "../constants/Colors";
 import { connect } from "react-redux";
-//import Picker from 'react-native-picker-select';
+import { NavigationEvents } from "react-navigation";
 class AgentNewAppointmentCard extends Component {
   constructor(props) {
     super(props);
@@ -26,52 +24,29 @@ class AgentNewAppointmentCard extends Component {
     };
   }
   componentDidMount() {
-    // setTimeout(() => {
-    //   this.makeRemoteRequest();
-    // }, 4000);
-    if(this.props.token){
-      this.makeRemoteRequest()
+    if (this.props.token) {
+      this.makeRemoteRequest();
     }
   }
-  // shouldComponentUpdate(nextProps) {
-  //   //console.log(nextProps.token, this.props.token);
-  //   if (nextProps.token == this.props.token) {
-  //     this.makeRemoteRequest();
-  //   }
-  //   return true;
-  // }
-
   makeRemoteRequest = () => {
-    //console.log("makeremoterequest");
     const url = "http://81.89.193.99:3001/api/company/search/craftsmen";
     const bearer = "Bearer " + this.props.token;
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
     })
-    .then((response) => {
-      const status = response.status;
-      console.log("agent status", status);
-      if (status === 200) {
-        return response.json();
-      } else if (status === 204) {
-        console.log("agent 204");
-        // Alert.alert(
-        //   "Sorry",
-        //   "No Appointments Found",
-        //   [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-        //   { cancelable: false }
-        // );
-        // return;
-      }
-    })
+      .then((response) => {
+        const status = response.status;
+        if (status === 200) {
+          return response.json();
+        } else if (status === 204) {
+        }
+      })
       .then((responseJson) => {
-    
         this.setState({
           isLoading: false,
           dataSource: responseJson,
         });
-        console.log("checkkk craftsmen name", this.state.dataSource);
       })
 
       .catch((error) => {
@@ -79,24 +54,18 @@ class AgentNewAppointmentCard extends Component {
       });
   };
   selectedValue = (itemValue, index) => {
-    console.log("item", itemValue, index);
     let selectedItem = this.state.selectedCraftsmen;
     selectedItem[index] = itemValue;
-    // console.log("this.state", selectedItem)
     this.setState({
       selectedCraftsmen: selectedItem,
     });
-    console.log("this.state", this.state.selectedCraftsmen)
   };
-  assignTask = (item,index) => {
-    console.log("button item", item.appointmentid);
+  assignTask = (item, index) => {
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${item._id}`;
     const bearer = "Bearer " + this.props.token;
     const data = {
-      craftsmenid: this.state.selectedCraftsmen[index]
+      craftsmenid: this.state.selectedCraftsmen[index],
     };
-    console.log("url", url)
-    console.log("data agent", data)
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -104,7 +73,6 @@ class AgentNewAppointmentCard extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson);
         this.props.makeRemoteRequest();
       })
       .catch((error) => {
@@ -112,65 +80,63 @@ class AgentNewAppointmentCard extends Component {
       });
   };
   render() {
-    //console.log("props", this.state.selectedCraftsmen.length);
     return (
       <Container>
+        <NavigationEvents onDidFocus={() => this.makeRemoteRequest()} />
         <Content style={{ padding: 10 }}>
           {this.props.appointments &&
             this.props.appointments.map((item, index) => {
-             // console.log("appointments", item);
               return (
                 <Card style={styles.card} key={index}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
-                      <Label style={{ color: "grey" }}>Title</Label>
+                      <Label style={{ color: "grey" }}>Titel</Label>
                       <Text style={styles.cardText}>{item.title}</Text>
-                      <Label style={{ color: "grey" }}>Customer Name</Label>
+                      <Label style={{ color: "grey" }}>Kunde Name</Label>
                       <Text style={styles.cardText}>
                         {item.customerid.fullname}
                       </Text>
-                      {item.craftsmenid !=undefined ?
-                      (
-                        (<View>
-                        <Text style={{color:'orange'}}>Waiting for craftsmen confirmation</Text>
-                      </View>)
+                      {item.craftsmenid != undefined ? (
+                        <View>
+                          <Text style={{ color: "orange" }}>
+                            Warte auf die Bestätigung des Handwerkers
+                          </Text>
+                        </View>
                       ) : (
                         <Picker
-                        style={styles.picker}
-                        mode="dropdown"
-                        placeholder="Select Craftsmen"
-                        selectedValue={this.state.selectedCraftsmen[index]}
-                        onValueChange={(itemValue) => {
-                          this.setState({
-                            craftsmen: itemValue,
-                          });
-                          this.selectedValue(itemValue, index);
-                        }}
-                      >
-                        <Picker.Item label="Select Craftsmen" />
-                        {this.state.dataSource &&
-                          this.state.dataSource.length > 0 &&
-                          this.state.dataSource.map((item, key) => (
-                            <Picker.Item
-                              label={item.fullname}
-                              value={item._id}
-                              key={item._id}
-                            />
-                          ))}
-                      </Picker>
-                      ) }
-                      
+                          style={styles.picker}
+                          mode="dropdown"
+                          placeholder="Wähle einen Handwerker aus"
+                          selectedValue={this.state.selectedCraftsmen[index]}
+                          onValueChange={(itemValue) => {
+                            this.setState({
+                              craftsmen: itemValue,
+                            });
+                            this.selectedValue(itemValue, index);
+                          }}
+                        >
+                          <Picker.Item label="Wähle einen Handwerker aus" />
+                          {this.state.dataSource &&
+                            this.state.dataSource.length > 0 &&
+                            this.state.dataSource.map((item, key) => (
+                              <Picker.Item
+                                label={item.fullname}
+                                value={item._id}
+                                key={item._id}
+                              />
+                            ))}
+                        </Picker>
+                      )}
                     </Body>
                     <Right>
                       <Button
                         rounded
                         style={styles.addButton}
                         onPress={() => {
-                         this.assignTask(item,index)
+                          this.assignTask(item, index);
                         }}
                       >
-                      
-                        <Icon style={styles.iconCheck} name="ios-checkmark"/>
+                        <Icon style={styles.iconCheck} name="ios-checkmark" />
                       </Button>
                     </Right>
                   </CardItem>
@@ -192,18 +158,18 @@ const styles = StyleSheet.create({
     width: 190,
   },
   addButton: {
-  ...Platform.select({
-    ios:{
-      backgroundColor: "#f5f5f5",
-      borderColor: "black",
-      height: 100
-    },
-    android:{
-      backgroundColor: "#f5f5f5",
-      borderColor: "black",
-    }
-  }),
-},
+    ...Platform.select({
+      ios: {
+        backgroundColor: "#f5f5f5",
+        borderColor: "black",
+        height: 100,
+      },
+      android: {
+        backgroundColor: "#f5f5f5",
+        borderColor: "black",
+      },
+    }),
+  },
   iconCheck: {
     fontSize: 60,
     color: "green",

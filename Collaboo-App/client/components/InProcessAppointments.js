@@ -1,21 +1,17 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Button, Alert } from "react-native";
+import { StyleSheet, Button, Alert } from "react-native";
 import {
   Container,
-  Header,
   Content,
   Card,
   CardItem,
-  Label,
-  Thumbnail,
   Text,
   Icon,
   Left,
   Body,
   Right,
 } from "native-base";
-import 'moment-timezone';
-import Colors from "../constants/Colors";
+import "moment-timezone";
 import moment from "moment";
 import { connect } from "react-redux";
 class InProcessAppointments extends Component {
@@ -27,19 +23,14 @@ class InProcessAppointments extends Component {
   }
 
   closeTask = async (item) => {
-    console.log("closed items", item);
     await this.setState({
       appointmentid: item._id,
     });
-    console.log("close state", this.state.appointmentid);
     const url = `http://81.89.193.99:3001/api/${this.props.role}/appointments/${this.state.appointmentid}`;
-    console.log("url", url);
     const bearer = "Bearer " + this.props.token;
-    console.log("bearer", bearer);
     const data = {
       status: "COMPLETED",
     };
-    console.log("data", data);
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -47,13 +38,13 @@ class InProcessAppointments extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson);
         Alert.alert(
-          "Warning",
-          "Please make sure you have logged your work",
+          "Success",
+          "Check your Closed tab for the appointment",
           [{ text: "OK", onPress: () => console.log("OK") }],
           { cancelable: true }
         );
+        this.props.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
@@ -65,23 +56,12 @@ class InProcessAppointments extends Component {
         <Content style={{ padding: 10 }}>
           {this.props.inProcessAppointments &&
             this.props.inProcessAppointments.map((item, index) => {
-              console.log("inprocessappointments", item);
               const formatedStartDate = moment(item.apntdatime).format(
                 "dddd, MMM DD at HH:mm a"
               );
-              const startDate = moment(formatedStartDate)
-              startDate.tz('Europe/Berlin').format('ha z')
-              console.log("inporces startdate", startDate)
-              {/* const today = moment().tz("Europe/Berlin");
-              console.log("today", today);
-              const currentTimeZoneOffsetInHours = today.utcOffset();
-              console.log("current",currentTimeZoneOffsetInHours) */}
-              {/* const convertedToLocalTime = formatTimeByOffset(
-                backEndTimeStamp,
-                currentTimeZoneOffsetInHours
-              );
-               */}
-             
+              const startDate = moment(formatedStartDate);
+              startDate.tz("Europe/Berlin").format("ha z");
+
               return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>

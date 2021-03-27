@@ -1,18 +1,14 @@
 import React, { Component } from "react";
-import { View, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 import {
   Container,
-  Header,
   Content,
   Card,
   CardItem,
   Text,
-  Icon,
-  Right,
   Body,
   Label,
 } from "native-base";
-import Colors from "../constants/Colors";
 
 export default class AcceptedAppointmentCard extends Component {
   constructor(props) {
@@ -23,22 +19,23 @@ export default class AcceptedAppointmentCard extends Component {
       <Container>
         <Content style={{ padding: 10 }}>
           {this.props.acceptedAppoinments.map((item) => {
-            console.log("item accepted", item);
             return (
               <Card style={styles.card}>
                 <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                   <Body>
-                    <Label style={{ color: "grey" }}>Title</Label>
+                    <Label style={{ color: "grey" }}>Titel</Label>
                     <Text style={styles.cardText}>{item.title}</Text>
-                    <Label style={{ color: "grey" }}>Customer Name</Label>
+                    <Label style={{ color: "grey" }}>Kunde Name</Label>
                     <Text style={styles.cardText}>
                       {item.customerid.fullname}
                     </Text>
-                    <Label style={{ color: "grey" }}>Customer Address</Label>
+                    <Label style={{ color: "grey" }}>Kunde Adresse</Label>
                     <Text style={styles.cardText}>
-                      {item.customerid.address.street+ "," +
-                         item.customerid.address.city  + "," +
-                         item.customerid.address.pcode}
+                      {item.customerid.address.street +
+                        "," +
+                        item.customerid.address.city +
+                        "," +
+                        item.customerid.address.pcode}
                     </Text>
                   </Body>
                 </CardItem>

@@ -1,50 +1,56 @@
 import React, { Component } from "react";
-import { View, Text, Button, StyleSheet, Modal, TouchableOpacity, TextInput } from "react-native";
+import { View } from "react-native";
 import SearchCraftsmen from "../components/SearchCraftsmen";
-import { HeaderButton,HeaderButtons, Item } from "react-navigation-header-buttons";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  HeaderButton,
+  HeaderButtons,
+  Item,
+} from "react-navigation-header-buttons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { NavigationEvents } from "react-navigation";
 export default class CustomerRequestScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
- 
+
   render() {
-    return( 
-    <View style = {{flex: 1}}>
-     <NavigationEvents onDidFocus={() => console.log("customer screen")} />
-    <SearchCraftsmen />
-    </View>
+    return (
+      <View style={{ flex: 1 }}>
+        <NavigationEvents />
+        <SearchCraftsmen />
+      </View>
     );
   }
 }
 const MaterialCommunityIconsHeader = (props) => (
-  <HeaderButton {...props} IconComponent={MaterialCommunityIcons} iconSize={23} color="white" />
+  <HeaderButton
+    {...props}
+    IconComponent={MaterialCommunityIcons}
+    iconSize={23}
+    color="white"
+  />
 );
 
-CustomerRequestScreen.navigationOptions = navData => {
+CustomerRequestScreen.navigationOptions = (navData) => {
   return {
     headerRight: (
       <HeaderButtons HeaderButtonComponent={MaterialCommunityIconsHeader}>
         <Item
-          title="View Appointments"
+          title="TermineAnsehen"
           iconName="history"
           onPress={() => {
-            navData.navigation.navigate("ViewAppointments");
+            navData.navigation.navigate("TermineAnsehen");
           }}
         />
-         <Item
-          title="View Invitation"
+        <Item
+          title="Einladung"
           iconName="calendar-multiple"
           onPress={() => {
-            navData.navigation.navigate("Invitation");
+            navData.navigation.navigate("Einladung");
           }}
         />
       </HeaderButtons>
-    )
+    ),
   };
 };
-
-const styles = StyleSheet.create({});

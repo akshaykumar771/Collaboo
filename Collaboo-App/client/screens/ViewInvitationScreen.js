@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, StyleSheet, Button, Alert, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import {
   Container,
   Header,
@@ -7,7 +7,6 @@ import {
   Card,
   CardItem,
   Text,
-  Icon,
   Right,
   Body,
   Label,
@@ -28,7 +27,6 @@ class ViewInvitationScreen extends Component {
   }
   componentDidMount() {
     if (this.props.token) {
-      //console.log(props.token)
       this.makeRemoteRequest();
     }
   }
@@ -42,7 +40,6 @@ class ViewInvitationScreen extends Component {
   makeRemoteRequest = () => {
     const url = "http://81.89.193.99:3001/api/customer/appointments";
     const bearer = "Bearer " + this.props.token;
-    // console.log("bearer", bearer);
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
@@ -106,10 +103,10 @@ class ViewInvitationScreen extends Component {
         Alert.alert(
           "Success",
           "Contact craftsmen via chat to know more details",
-          [{ text: "OK", onPress: () => console.log("OK pressed") }],
+          [{ text: "OK", onPress: () => this.makeRemoteRequest() }],
           { cancelable: true }
         );
-        this.makeRemoteRequest()
+        this.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
@@ -126,7 +123,6 @@ class ViewInvitationScreen extends Component {
     const data = {
       custconfirmation: "NO",
     };
-    console.log("data", data);
     fetch(url, {
       method: "PUT",
       headers: { Authorization: bearer, "Content-Type": "application/json" },
@@ -134,11 +130,10 @@ class ViewInvitationScreen extends Component {
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log("response after update", responseJson);
         Alert.alert(
           "Appointment Rejected",
           "Contact other craftsmen according to your requirement",
-          [{ text: "OK", onPress: () => console.log("OK pressed") }],
+          [{ text: "OK", onPress: () => this.makeRemoteRequest() }],
           { cancelable: true }
         );
         this.makeRemoteRequest();
@@ -170,44 +165,45 @@ class ViewInvitationScreen extends Component {
         Alert.alert(
           "Success",
           "Please communicate with the craftsmen via chat for the suitable time"[
-            { text: "OK", onPress: () => console.log("OK pressed") }
+            { text: "OK", onPress: () => this.makeRemoteRequest() }
           ],
           { cancelable: false }
         );
+        this.makeRemoteRequest();
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
   render() {
     return (
       <Container>
         <Content style={{ padding: 10 }}>
           {this.state.customerAppointments &&
             this.state.customerAppointments.map((item) => {
-              {
-                console.log("date", this.state.addDate);
-              }
-              const startDate = item.appointmentid.apntdatime;
-              const formatedStartDate = moment(startDate).format(
-                "dddd,MMM DD at HH:mma"
+              const formatedStartDate = moment(item.apntdatime).format(
+                "dddd, MMM DD at HH:mm a"
               );
+              const startDate = moment(formatedStartDate);
+              startDate.tz("Europe/Berlin").format("ha z");
+              console.log("inporces startdate", startDate);
               return (
                 <Card style={styles.card}>
                   <CardItem style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
-                      <Label style={{ color: "grey" }}>Title</Label>
+                      <Label style={{ color: "grey" }}>Titel</Label>
                       <Text style={styles.cardText}>{item.title}</Text>
                       {item.craftsmenid ? (
                         <View>
-                          <Label style={{ color: "grey" }}>Craftsmen</Label>
+                          <Label style={{ color: "grey" }}>Handwerker</Label>
                           <Text style={styles.cardText}>
                             {item.craftsmenid.fullname}
                           </Text>
                         </View>
                       ) : (
                         <View>
-                          <Label style={{ color: "grey" }}>Agent</Label>
+                          <Label style={{ color: "grey" }}>Verwaltung</Label>
                           <Text style={styles.cardText}>
                             {item.agentid.fullname}
                           </Text>
@@ -215,49 +211,36 @@ class ViewInvitationScreen extends Component {
                       )}
                       <Label style={{ color: "grey" }}>Status</Label>
                       <Text style={styles.cardText}>{item.status}</Text>
-                      <Label style={{ color: "grey" }}>Date and Time</Label>
+                      <Label style={{ color: "grey" }}>Datum und Zeit</Label>
                       <Text style={styles.cardText}>{formatedStartDate}</Text>
                     </Body>
                     <Right>
                       <View>
-                        {/* <Button
-                          title="Accept"
-                          onPress={() => this.acceptAppointment(item)}
-                        /> */}
                         <TouchableOpacity
-                    style={styles.closeBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.acceptAppointment(item)}
-                  >
-                    <Text style={styles.closeBtnTxt}>Accept</Text>
-                  </TouchableOpacity>
+                          style={styles.closeBtn}
+                          underlayColor="#fff"
+                          onPress={() => this.acceptAppointment(item)}
+                        >
+                          <Text style={styles.closeBtnTxt}>Akzeptieren</Text>
+                        </TouchableOpacity>
                       </View>
                       <View style={{ top: 20 }}>
-                        {/* <Button
-                          title="Reject"
-                          onPress={() => this.rejectAppointment(item)}
-                        /> */}
                         <TouchableOpacity
-                    style={styles.closeBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.rejectAppointment(item)}
-                  >
-                    <Text style={styles.closeBtnTxt}>Reject</Text>
-                  </TouchableOpacity>
+                          style={styles.closeBtn}
+                          underlayColor="#fff"
+                          onPress={() => this.rejectAppointment(item)}
+                        >
+                          <Text style={styles.closeBtnTxt}>Anlehnen</Text>
+                        </TouchableOpacity>
                       </View>
                       <View style={{ top: 40 }}>
-                        {/* <Button
-                          title="Re-Schedule"
-                          style={{ marginTop: 140 }}
-                          onPress={() => this.rescheduleAppointment(item)}
-                        /> */}
                         <TouchableOpacity
-                    style={styles.closeBtn}
-                    underlayColor="#fff"
-                    onPress={() => this.rescheduleAppointment(item)}
-                  >
-                    <Text style={styles.closeBtnTxt}>ReSchedule</Text>
-                  </TouchableOpacity>
+                          style={styles.closeBtn}
+                          underlayColor="#fff"
+                          onPress={() => this.rescheduleAppointment(item)}
+                        >
+                          <Text style={styles.closeBtnTxt}>Verlegen</Text>
+                        </TouchableOpacity>
                       </View>
                     </Right>
                   </CardItem>
@@ -293,7 +276,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     lineHeight: 40,
     textAlign: "justify",
-    // color: Colors.primary,
     fontWeight: "500",
   },
   card: {
@@ -308,9 +290,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
     marginBottom: 10,
   },
-  closeBtn:{
+  closeBtn: {
     ...Platform.select({
-      ios:{
+      ios: {
         paddingTop: 10,
         paddingBottom: 10,
         backgroundColor: Colors.primary,
@@ -319,26 +301,26 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: "black",
         width: 110,
-        height: 50
+        height: 50,
       },
-      android:{
-    paddingTop: 10,
-    paddingBottom: 10,
-    backgroundColor: Colors.primary,
-    borderRadius: 10,
-    marginTop: 0,
-    top: 0,
-    borderWidth: 1,
-    borderColor: "black",
-    width: 110,
-    height: 50
-      }
+      android: {
+        paddingTop: 10,
+        paddingBottom: 10,
+        backgroundColor: Colors.primary,
+        borderRadius: 10,
+        marginTop: 0,
+        top: 0,
+        borderWidth: 1,
+        borderColor: "black",
+        width: 110,
+        height: 50,
+      },
     }),
   },
-  closeBtnTxt:{
+  closeBtnTxt: {
     color: "white",
     textAlign: "center",
-    justifyContent:"center",
+    justifyContent: "center",
     alignItems: "center",
     paddingLeft: 10,
     paddingRight: 10,

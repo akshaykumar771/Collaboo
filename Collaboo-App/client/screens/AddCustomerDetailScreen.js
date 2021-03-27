@@ -1,50 +1,46 @@
-import React from 'react';
-import {StyleSheet, View, Button} from 'react-native';
-import { Container, Header, Content, Form, Item, Input, Label } from 'native-base';
-const AddCustomerDetail = props => {
-    return (
-        <Container>
-        <Content>
-          <Form>
-            <Item stackedLabel>
-              <Label>Name</Label>
-              <Input />
-            </Item>
-            <Item stackedLabel>
-              <Label>Street</Label>
-              <Input />
-            </Item>
-            <Item stackedLabel>
-              <Label>City</Label>
-              <Input />
-            </Item>
-            <Item stackedLabel>
-              <Label>Pin Code</Label>
-              <Input />
-            </Item>
-            <Item stackedLabel>
-              <Label>State</Label>
-              <Input />
-            </Item>
-            <Item stackedLabel>
-              <Label>Country</Label>
-              <Input />
-            </Item>
-            <Item stackedLabel last>
-              <Label>Description</Label>
-              <Input />
-            </Item>
-          </Form>
-        </Content>
-        <View>
-        <Button title="Add Customer" />
-        </View>
-      </Container>
-    )
+import React from "react";
+import { View, Button } from "react-native";
+import { Container, Content, Form, Item, Input, Label } from "native-base";
+const AddCustomerDetail = (props) => {
+  return (
+    <Container>
+      <Content>
+        <Form>
+          <Item stackedLabel>
+            <Label>Name</Label>
+            <Input />
+          </Item>
+          <Item stackedLabel>
+            <Label>Straße</Label>
+            <Input />
+          </Item>
+          <Item stackedLabel>
+            <Label>Stadt</Label>
+            <Input />
+          </Item>
+          <Item stackedLabel>
+            <Label>PLZ</Label>
+            <Input />
+          </Item>
+          <Item stackedLabel>
+            <Label>Bundesland</Label>
+            <Input />
+          </Item>
+          <Item stackedLabel>
+            <Label>Land</Label>
+            <Input />
+          </Item>
+          <Item stackedLabel last>
+            <Label>Beschreibung</Label>
+            <Input />
+          </Item>
+        </Form>
+      </Content>
+      <View>
+        <Button title="Füge Kunden hinzu" />
+      </View>
+    </Container>
+  );
 };
-
-const styles = StyleSheet.create({
-
-});
 
 export default AddCustomerDetail;

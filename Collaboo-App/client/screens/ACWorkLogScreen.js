@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Button, View, ScrollView, Alert } from "react-native";
+import { StyleSheet, ScrollView, Alert } from "react-native";
 import {
   Container,
   Content,
@@ -30,18 +30,12 @@ class ACWorkLogScreen extends Component {
   }
 
   componentDidMount() {
-    // setTimeout(() => {
-    //   this.makeRemoteRequest();
-    // }, 3000);
     if (this.props.token) {
       this.makeRemoteRequest();
     }
   }
   makeRemoteRequest() {
-    console.log("token in worklog", this.props.token);
-    //console.log("state craftsmen id:", this.state.craftsmenId);
     const url = `http://81.89.193.99:3001/api/agent/craftsmen/${this.state.craftsmenId}/worklogs`;
-    console.log("url", url);
     const bearer = "Bearer " + this.props.token;
     fetch(url, {
       method: "GET",
@@ -49,14 +43,12 @@ class ACWorkLogScreen extends Component {
     })
     .then((response) => {
       const status = response.status;
-      console.log("agent worklog status", status);
       if (status === 200) {
         return response.json();
       } else if (status === 204) {
-        console.log("agent 204");
         Alert.alert(
           "Sorry",
-          "No Worklogs Found",
+          "Keine Arbeitsstunden gefunden",
           [{ text: "OK", onPress: () => console.log("OK Pressed") }],
           { cancelable: false }
         );
@@ -64,24 +56,10 @@ class ACWorkLogScreen extends Component {
       }
     })
       .then((responseJson) => {
-        //console.log("response from worklog :", responseJson);
         const response = responseJson;
         this.setState({
           response: response,
         });
-        // responseJson.map((item) => {
-        //   const title = item.appointmentid.title;
-        //   const startDate = item.starttime;
-        //   const formatedStartDate = moment(startDate).format("dddd, MMM DD at HH:mm a")
-        //   const endDate = item.endtime
-        //   const formatedEndDate = moment(endDate).format("dddd, MMM DD at HH:mm a")
-        //   this.setState({
-        //     title: title,
-        //     startDate: formatedStartDate,
-        //     endDate: formatedEndDate
-        //   })
-        // })
-        //console.log("state", this.state);
       })
       .catch((error) => {
         console.error(error);
@@ -102,22 +80,21 @@ class ACWorkLogScreen extends Component {
                 <Card key={index} style={styles.card}>
                   <CardItem bordered style={{ backgroundColor: "#f5f5f5" }}>
                     <Body>
-                      {/* <Button title="Click" onPress={() => this.handleTaskName()} /> */}
                       <Item stackedLabel>
-                        <Label>Title</Label>
+                        <Label>Titel</Label>
                         <Text style={styles.cardText}>
                           {item.appointmentid.title}
                         </Text>
                       </Item>
                       
                       <Item stackedLabel>
-                        <Label>Start Date</Label>
+                        <Label>Beginn Datum</Label>
                         <Text style={styles.cardText}>
                           {formatedStartDate}
                         </Text>
                       </Item>
                       <Item stackedLabel>
-                        <Label>Total Working Hours</Label>
+                        <Label>Gesamtarbeitszeit</Label>
                         <Text style={styles.cardText}>
                           {item.totalWorkingTime}
                         </Text>

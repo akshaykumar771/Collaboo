@@ -5,26 +5,16 @@ import {
   FlatList,
   ActivityIndicator,
   Platform,
-  Modal,
-  Button,
-  Text,
-  TouchableOpacity,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Alert
+  Alert,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scrollview";
-import { Form, Input, Item, Label, Textarea, Picker, Icon } from "native-base";
 import { SearchBar, ListItem } from "react-native-elements";
 import Colors from "../constants/Colors";
-import { MaterialIcons } from "@expo/vector-icons";
 import { connect } from "react-redux";
 
-//import SearchList from "./SearchList";
 class AgentWorkLogScreen extends Component {
   constructor(props) {
     super(props);
-    //setting default state
     this.state = {
       isLoading: true,
       isModalOpen: false,
@@ -38,37 +28,33 @@ class AgentWorkLogScreen extends Component {
     this.arrayholder = [];
   }
   componentDidMount() {
-    // setTimeout(() => {
-    //   this.makeRemoteRequest();
-    // }, 3000);
-    if(this.props.token){
-      this.makeRemoteRequest()
+    if (this.props.token) {
+      this.makeRemoteRequest();
     }
   }
   makeRemoteRequest = () => {
-    console.log("search craftsmen by agent", this.props.token);
     const url = "http://81.89.193.99:3001/api/company/search/craftsmen";
     const bearer = "Bearer " + this.props.token;
     fetch(url, {
       method: "GET",
       headers: { Authorization: bearer },
     })
-    .then((response) => {
-      const status = response.status;
-      console.log("agent worklog status", status);
-      if (status === 200) {
-        return response.json();
-      } else if (status === 204) {
-        console.log("agent 204");
-        Alert.alert(
-          "Sorry",
-          "No Worklogs Found",
-          [{ text: "OK", onPress: () => console.log("OK Pressed") }],
-          { cancelable: false }
-        );
-        return;
-      }
-    })
+      .then((response) => {
+        const status = response.status;
+        console.log("agent worklog status", status);
+        if (status === 200) {
+          return response.json();
+        } else if (status === 204) {
+          console.log("agent 204");
+          Alert.alert(
+            "Sorry",
+            "Keine Arbeitsprotokoll gefunden",
+            [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+            { cancelable: false }
+          );
+          return;
+        }
+      })
       .then((responseJson) => {
         this.setState(
           {
@@ -94,7 +80,6 @@ class AgentWorkLogScreen extends Component {
     //passing the inserted text in textinput
     const newData = this.arrayholder.filter(function (item) {
       //applying filter for the inserted text in search bar
-      //console.log("itemdata", item);
       const fNameData = item.fname
         ? item.fname.toUpperCase()
         : "".toUpperCase();
@@ -115,14 +100,12 @@ class AgentWorkLogScreen extends Component {
   }
 
   openModal = (item) => {
-    //console.log("yyyyy", item.compid.categories)
     this.setState({
       isModalOpen: true,
       selectedCats: item.compid.categories,
       id: item._id,
       role: item.role,
     });
-    //console.log("whatttt", this.state)
   };
 
   closeModal() {
@@ -136,7 +119,7 @@ class AgentWorkLogScreen extends Component {
   handleChange = (value) => {
     this.setState({ selectedValue: value, categoryValues: value });
   };
-  
+
   ListViewItemSeparator = () => {
     //Item sparator view
     return (
@@ -165,8 +148,6 @@ class AgentWorkLogScreen extends Component {
     );
   };
   render() {
-    //const value = useContext(UserContext);
-    //console.log("props", this.props);
     if (this.state.isLoading) {
       //Loading View while data is loading
       return (
@@ -191,7 +172,7 @@ class AgentWorkLogScreen extends Component {
             searchIcon={{ size: 24 }}
             onChangeText={(text) => this.SearchFilterFunction(text)}
             onClear={(text) => this.SearchFilterFunction("")}
-            placeholder="Type Here..."
+            placeholder="Hier tippen..."
             value={this.state.search}
           />
           <FlatList
@@ -201,18 +182,17 @@ class AgentWorkLogScreen extends Component {
             //Item Separator View
             renderItem={({ item, index }) => (
               // Single Comes here which will be repeatative for the FlatListItems
-              //<Text style={styles.textStyle}>{item.name}</Text>
               <ListItem
                 id={index}
                 title={item.fname + item.lname}
                 containerStyle={{ borderBottomWidth: 0 }}
                 rightIcon={{ name: "chevron-right" }}
                 onPress={() =>
-                    this.props.navigation.navigate("ACWorkLog", {
-                      name: item.fullname,
-                      userId: item._id,
-                    })
-                  }
+                  this.props.navigation.navigate("ACWorkLog", {
+                    name: item.fullname,
+                    userId: item._id,
+                  })
+                }
               />
             )}
             enableEmptySections={true}
